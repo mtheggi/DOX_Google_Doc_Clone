@@ -1,10 +1,18 @@
-import './App.css'
+import './index.css'
+import FloatingInput from './Components/authentication/FloatingInput'
+import LogIn from './views/Login'
+import SignUp from './views/Signup'
+import Home from './views/Home'
+import Navbar from './Components/Navbar'
 
 function App() {
   return (
-    <h1 className="text-3xl font-bold underline text-red-500">
-      Hello world!
-    </h1>
+
+    <div className="App h-screen flex flex-col bg-white overflow-x-hidden">
+       <Navbar/>
+       <Home/>
+    </div>
+
   )
 }
 
