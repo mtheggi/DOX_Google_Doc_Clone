@@ -8,9 +8,10 @@ import Navbar from './Components/Navbar'
 function App() {
   return (
 
-    <div className="App h-screen flex flex-col bg-white overflow-x-hidden">
-       <Navbar/>
-       <Home/>
+    <div className="App h-screen flex flex-col bg-gray-300 overflow-x-hidden">
+      <Navbar />
+      {/* <Home/> */}
+      <SignUp />
     </div>
 
   )
