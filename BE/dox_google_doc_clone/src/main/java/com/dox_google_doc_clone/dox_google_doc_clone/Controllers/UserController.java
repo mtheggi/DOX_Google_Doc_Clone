@@ -24,13 +24,11 @@ public class UserController {
 
     @PostMapping("/user/signup")
     public ResponseEntity<User> saveUser(@RequestBody User user) {
-        if(user.getUserName() == null || user.getEmail() == null || user.getPassword() == null) {
+        if (user.getUserName() == null || user.getEmail() == null || user.getPassword() == null) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
         User savedUser = userService.saveUser(user);
-            return new ResponseEntity<>(savedUser, HttpStatus.OK);
-
+        return new ResponseEntity<>(savedUser, HttpStatus.OK);
     }
-
 
 }
