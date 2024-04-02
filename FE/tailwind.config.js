@@ -356,21 +356,21 @@ export default {
       },
     },
     screens: {
-      xs: "470px",
+      xs: "350px",
       // => @media (min-width: 470px) { ... }
 
-      msm: "530px",
+      msm: "500px",
 
-      sm: "640px",
+      sm: "530px",
       // => @media (min-width: 640px) { ... }
 
-      md: "768px",
+      md: "703px",
       // => @media (min-width: 768px) { ... }
 
-      lg: "956px",
+      lg: "906px",
       // => @media (min-width: 956px) { ... }
 
-      xl: "1200px",
+      xl: "1100px",
       // => @media (min-width: 1200px) { ... }
 
       mxl: "1412px",

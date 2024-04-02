@@ -8,7 +8,7 @@ import Navbar from './Components/Navbar'
 function App() {
   return (
 
-    <div className="App h-screen flex flex-col bg-white overflow-x-hidden">
+    <div className="App h-screen flex flex-col bg-gray-200 overflow-x-hidden">
        <Navbar/>
        <Home/>
     </div>
