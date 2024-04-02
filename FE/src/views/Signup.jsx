@@ -9,7 +9,8 @@ const SignUp = ({ setIsOpenedsignupMenu, setIsOpenedSignupMenu }) => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [signupError, setsignupError] = useState(null);
+  const [signupError, setSignupError] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const validateEmail = (email) => {
     var re = /^([a-z A-Z 0-9 \. _]+)@([a-z A-Z]+)\.([a-z A-Z]{2,6})$/;
@@ -35,12 +36,13 @@ const SignUp = ({ setIsOpenedsignupMenu, setIsOpenedSignupMenu }) => {
 
   const handleSignupSubmit = async () => {
     if (signupError == null && email && validateEmail(email) && username && validateUsername(username) && password && validatePassword(password)) {
-      const response = await postRequest(`/user/signup`, { email, username, password });
+      console.log("signup", { email, username, password })
+      const response = await postRequest(`http://localhost:8080/user/signup`, { email: email, userName: username, password: password });
+      console.log(response.status);
       if (response.status != 200 && response.status != 201) {
         setSignupError(response.data.message);
       }
       else {
-        setIsOpenedSecondSignupMenu(false);
         setIsLoggedIn(true);
       }
     }
@@ -73,7 +75,7 @@ const SignUp = ({ setIsOpenedsignupMenu, setIsOpenedSignupMenu }) => {
                 validateInput={validateUsername}
                 setInputNameOnChange={setUsername}
                 backendValidationError={signupError}
-                setBackendValidationError={setsignupError}
+                setBackendValidationError={setSignupError}
               />
             </div>
             <div className="mb-6">
@@ -83,7 +85,7 @@ const SignUp = ({ setIsOpenedsignupMenu, setIsOpenedSignupMenu }) => {
                 validateInput={validateEmail}
                 setInputNameOnChange={setEmail}
                 backendValidationError={signupError}
-                setBackendValidationError={setsignupError}
+                setBackendValidationError={setSignupError}
               />
             </div>
             <div className="mb-2">
@@ -93,7 +95,7 @@ const SignUp = ({ setIsOpenedsignupMenu, setIsOpenedSignupMenu }) => {
                 validateInput={validatePassword}
                 setInputNameOnChange={setPassword}
                 backendValidationError={signupError}
-                setBackendValidationError={setsignupError}
+                setBackendValidationError={setSignupError}
               />
             </div>
             {signupError != null && <div className=" ml-1 h-2 text-xs font-light w-85"> <p className="text-red-400">{signupError}</p> </div>}
