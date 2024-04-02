@@ -87,7 +87,7 @@ const LogIn = ({ setIsOpenedLoginMenu, setIsOpenedSignupMenu }) => {
         </div>
 
         <div className="h-[96px] py-[24px] mt-auto mb-4 msm:mt-0 msm:mb-0 flex items-center">
-          <div onClick={handleLoginSubmit} id="login_submit" className={` ${username && password && validateLoginUsername(username) && validateLoginPassword(password) && loginError == null ? '  hover:bg-blue-800 bg-[#3E82F8] cursor-pointer text-white' : 'text-gray-500 cursor-not-allowed'} w-120 mt-1 h-[48px] items-center justify-center inline-flex mx-auto rounded-3xl bg-gray-200`}>
+          <div onClick={handleLoginSubmit} id="login_submit" className={` ${username && password && validateLoginUsername(username) && validateLoginPassword(password) && loginError == null ? '  hover:bg-blue-800 bg-[#3E82F9] cursor-pointer text-white' : 'text-black cursor-not-allowed'} w-120 mt-1 h-[48px] items-center justify-center inline-flex mx-auto rounded-3xl bg-gray-200`}>
             <span className="flex items-center justify-center">
               <span className="flex items-center gap-[8px] text-[14px] font-[600] ">
                 Log In
