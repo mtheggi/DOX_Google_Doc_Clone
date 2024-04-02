@@ -1,15 +1,10 @@
 package com.dox_google_doc_clone.dox_google_doc_clone.Models;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document
 public class User {
-
 
     @Id
     private String id;
@@ -20,6 +15,7 @@ public class User {
 
     public User() {
     }
+
     public String getId() {
         return id;
     }
@@ -27,6 +23,7 @@ public class User {
     public void setId(String id) {
         this.id = id;
     }
+
     public User(String userName, String password, String email) {
         UserName = userName;
         Password = password;
@@ -40,7 +37,6 @@ public class User {
     public void setUserName(String userName) {
         UserName = userName;
     }
-
 
     public String getPassword() {
         return Password;
