@@ -10,8 +10,7 @@ function App() {
 
     <div className="App h-screen flex flex-col bg-gray-200 overflow-x-hidden">
        <Navbar/>
-       {/* <Home/> */}
-       <LogIn/>
+       <Home/>
     </div>
 
   )
