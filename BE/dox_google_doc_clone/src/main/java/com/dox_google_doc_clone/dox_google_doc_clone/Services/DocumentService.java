@@ -45,12 +45,11 @@ public class DocumentService {
             }
             userIds.add(user.getId());
         }
-        if(jsonNode.get("renamePermission") == null || jsonNode.get("deletePermission") == null || jsonNode.get("editPermission") == null){
+        if( jsonNode.get("viewOnly") == null || jsonNode.get("edit") == null){
             return false;
         }
-        boolean renamePermission = jsonNode.get("renamePermission").asBoolean();
-        boolean deletePermission = jsonNode.get("deletePermission").asBoolean();
-        boolean editPermission = jsonNode.get("editPermission").asBoolean();
+        boolean viewOnly = jsonNode.get("viewOnly").asBoolean();
+        boolean edit = jsonNode.get("edit").asBoolean();
         DocumentModel document = DocumentRepository.findById(documentId).orElse(null);
         if (document == null) {
             return false;
@@ -62,11 +61,10 @@ public class DocumentService {
         for (String userId : userIds) {
             UserPermissions userPermissions = userPermissionService.getUserPermissionByDocumentIdAndUserId(documentId, userId);
             if(userPermissions == null) {
-                userPermissions = new UserPermissions(userId, documentId, deletePermission, renamePermission, editPermission);
+                userPermissions = new UserPermissions(userId, documentId, false,viewOnly , edit);
             }else {
-                userPermissions.setDeletePermission(deletePermission);
-                userPermissions.setEditPermission(editPermission);
-                userPermissions.setRenamePermission(renamePermission);
+                userPermissions.setEdit(edit);
+                userPermissions.setViewOnly(viewOnly);
             }
             userPermissionService.saveUserPermissions(userPermissions);
         }
