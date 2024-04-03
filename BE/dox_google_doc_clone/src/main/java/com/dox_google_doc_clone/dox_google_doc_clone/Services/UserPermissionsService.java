@@ -20,6 +20,9 @@ public class UserPermissionsService {
     public UserPermissions saveUserPermissions(UserPermissions userPermissions) {
         return userPermissionsRepository.save(userPermissions);
     }
+    public UserPermissions getUserPermissionByDocumentIdAndUserId(String documentId, String userId) {
+        return userPermissionsRepository.findByDocumentIdAndUserId(documentId, userId);
+    }
 
     public List<UserPermissions> getAllUserPermissions() {
         return userPermissionsRepository.findAll();

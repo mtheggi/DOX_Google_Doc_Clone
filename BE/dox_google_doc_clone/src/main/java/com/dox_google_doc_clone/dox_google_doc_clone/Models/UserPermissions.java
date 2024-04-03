@@ -1,22 +1,47 @@
 package com.dox_google_doc_clone.dox_google_doc_clone.Models;
 
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document
 public class UserPermissions {
+
+    @Id
+    private String id;
     private String userId;
     private String documentId;
-    private boolean deletePermission;
-    private boolean renamePermission;
-    private boolean editPermission;
 
-    public UserPermissions(String userId, String documentId, boolean deletePermission, boolean renamePermission,
-            boolean editPermission) {
+    private boolean isOwner;
+    private boolean viewOnly;
+
+    public UserPermissions( String userId, String documentId, boolean isOwner, boolean viewOnly, boolean edit) {
         this.userId = userId;
         this.documentId = documentId;
-        this.deletePermission = deletePermission;
-        this.renamePermission = renamePermission;
-        this.editPermission = editPermission;
+        this.isOwner = isOwner;
+        this.viewOnly = viewOnly;
+        this.edit = edit;
+    }
+
+    private boolean edit;
+
+    @Override
+    public String toString() {
+        return "UserPermissions{" +
+                "id='" + id + '\'' +
+                ", userId='" + userId + '\'' +
+                ", documentId='" + documentId + '\'' +
+                ", isOwner=" + isOwner +
+                ", viewOnly=" + viewOnly +
+                ", edit=" + edit +
+                '}';
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getUserId() {
@@ -35,35 +60,27 @@ public class UserPermissions {
         this.documentId = documentId;
     }
 
-    public boolean isDeletePermission() {
-        return deletePermission;
+    public boolean isOwner() {
+        return isOwner;
     }
 
-    public void setDeletePermission(boolean deletePermission) {
-        this.deletePermission = deletePermission;
+    public void setOwner(boolean owner) {
+        isOwner = owner;
     }
 
-    public boolean isRenamePermission() {
-        return renamePermission;
+    public boolean isViewOnly() {
+        return viewOnly;
     }
 
-    public void setRenamePermission(boolean renamePermission) {
-        this.renamePermission = renamePermission;
+    public void setViewOnly(boolean viewOnly) {
+        this.viewOnly = viewOnly;
     }
 
-    public boolean isEditPermission() {
-        return editPermission;
+    public boolean isEdit() {
+        return edit;
     }
 
-    public void setEditPermission(boolean editPermission) {
-        this.editPermission = editPermission;
+    public void setEdit(boolean edit) {
+        this.edit = edit;
     }
-
-    @Override
-    public String toString() {
-        return "UserPermissions [userId=" + userId + ", documentId=" + documentId + ", deletePermission="
-                + deletePermission + ", renamePermission=" + renamePermission + ", editPermission=" + editPermission
-                + "]";
-    }
-
 }

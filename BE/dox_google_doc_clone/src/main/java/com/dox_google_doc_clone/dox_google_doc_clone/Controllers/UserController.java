@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 @CrossOrigin(origins = "http://localhost:5173")
 @RestController
 public class UserController {
-    private UserService userService;
+    private final UserService userService;
 
     public UserController(UserService userService) {
         this.userService = userService;
@@ -20,6 +20,13 @@ public class UserController {
     @GetMapping("/user/all")
     public List<User> getAllUsers() {
         return userService.getAllUsers();
+    }
+
+    @GetMapping("/user/logout")
+    public ResponseEntity<String> logOutUser() {
+        // TODO: Implement the logic of logging out of the user
+
+        return new ResponseEntity<>("User has been logged out " , HttpStatus.OK);
     }
 
     @PostMapping("/user/signup")
