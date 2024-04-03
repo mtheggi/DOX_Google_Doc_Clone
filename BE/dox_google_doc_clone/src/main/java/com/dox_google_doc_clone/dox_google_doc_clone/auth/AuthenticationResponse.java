@@ -10,9 +10,16 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+
 public class AuthenticationResponse {
 
     @JsonProperty("token")
     private String token;
 
+    @JsonProperty("message")
+    private String message;
+
+    public AuthenticationResponse(String message) {
+        this.message = message;
+    }
 }
