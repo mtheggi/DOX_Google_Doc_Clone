@@ -71,6 +71,11 @@ button:focus-visible {
   }
 }
 */
+.overflow-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
 .no-select {
   user-select: none;

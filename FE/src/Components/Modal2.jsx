@@ -13,7 +13,7 @@ const Modal2 = ({ setIsOpenedShareMenu }) => {
 
     return (
         <div className="h-full min-w-[340px] w-full flex justify-center items-center">
-            <div id="navbar_login_menu" className="flex pt-6 w-[470px] flex-col bg-white rounded-lg h-[350px] min-w-88 px-3 msm:px-7">
+            <div id="navbar_login_menu" className="flex pt-6 w-[470px] flex-col bg-white sm:rounded-lg h-[350px] min-w-88 px-3 msm:px-7">
 
                 <div className="h-full flex flex-col">
 
