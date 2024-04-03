@@ -1,9 +1,13 @@
 package com.dox_google_doc_clone.dox_google_doc_clone.Models;
 
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document
 public class UserPermissions {
+
+    @Id
+    private String id;
     private String userId;
     private String documentId;
     private boolean deletePermission;
