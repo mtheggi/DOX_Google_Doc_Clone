@@ -1,25 +1,34 @@
 import { DocumentTextIcon, EllipsisVerticalIcon } from "@heroicons/react/24/outline";
 import { useState, useRef, useEffect } from "react";
+import Modal2 from "../Components/Modal2";
 
 const Home = () => {
     const [sortValue, setSortValue] = useState("All");
     const [sortDropDownOpen, setSortDropDownOpen] = useState(false);
+    const [optionsDropDownOpen, setOptionsDropDownOpen] = useState(false);
+    const [isOpenedShareMenu, setIsOpenedShareMenu] = useState(false);
     const sortMenuRef = useRef();
+    const optionsMenuRef = useRef();
+    const sharedMenuRef = useRef();
 
     useEffect(() => {
         let closeDropdown = (e) => {
-
             if (sortMenuRef.current && !sortMenuRef.current.contains(e.target)) {
                 setSortDropDownOpen(false);
             }
-
+            if (optionsMenuRef.current && !optionsMenuRef.current.contains(e.target)) {
+                setOptionsDropDownOpen(false);
+            }
+            if (sharedMenuRef.current && !sharedMenuRef.current.contains(e.target)) {
+                setIsOpenedShareMenu(false);
+            }
         };
         document.addEventListener('click', closeDropdown);
 
         return () => {
             document.removeEventListener('click', closeDropdown);
         };
-    });
+    }, []);
     return (
         <div className="w-full h-full min-w-[342px] flex mt-[58px]  flex-col">
             <div className="w-full px-4 bg-[#F1F3F4] h-[272px]">
@@ -53,7 +62,7 @@ const Home = () => {
                                         <p onClick={() => setSortValue('Owned')} className={`block px-4 py-2  text-black   ${sortValue == 'Owned' ? 'bg-blue-500' : 'hover:bg-blue-400'}`}>Owned</p>
                                     </li>
                                     <li id="vote_3_day" className={`cursor-pointer rounded-b-lg border-b-[0.5px] border-gray-400`}>
-                                        <p onClick={() => setSortValue('Shared')}w className={`block px-4 py-2 rounded-b-lg  text-black  ${sortValue == 'Shared' ? 'bg-blue-500' : 'hover:bg-blue-400'}`}>Shared</p>
+                                        <p onClick={() => setSortValue('Shared')} w className={`block px-4 py-2 rounded-b-lg  text-black  ${sortValue == 'Shared' ? 'bg-blue-500' : 'hover:bg-blue-400'}`}>Shared</p>
                                     </li>
 
                                 </ul>
@@ -61,47 +70,55 @@ const Home = () => {
                             </div>
                         </div>
                     </div>
-                    <h1 className="text-[14px] sm:-ml-6 mr-4 font-medium">Created</h1>
+                    <h1 className="text-[14px] sm:-ml-13 font-medium">Created</h1>
                     <h1 className="text-[12.5px] text-white mt-1.5 no-select font-medium">11/01/2w</h1>
                 </div>
-                <div className="flex flex-col mt-4 h-full w-full msm:w-[494px] md:w-[685px] space-y-3 lg:w-[885px] xl:w-[1075px] mx-auto">
-                    <div className="flex flex-row w-full h-fit">
-                        <div className="w-full flex flex-row items-center justify-between  h-10 rounded-3xl hover:bg-blue-100 cursor-pointer px-2">
+                <div className={`flex  flex-col mt-4 h-full w-full msm:w-[494px] md:w-[685px] space-y-3 lg:w-[885px] xl:w-[1075px] mx-auto`}>
+                    <div className="flex no-select flex-row w-full h-fit">
+                        <div className={`w-full ${optionsDropDownOpen ? 'bg-blue-100' : ''} flex flex-row items-center justify-between  h-10 rounded-3xl hover:bg-blue-100 cursor-pointer px-2`}>
                             <div className="flex flex-row">
                                 <DocumentTextIcon className="h-full w-7 fill-blue-600 text-gray-200" />
                                 <h1 className="ml-4 text-[13.5px] mt-1.5 font-medium">Resume</h1>
                             </div>
                             <h1 className="text-[12.5px] mt-1.5  font-medium">Me</h1>
                             <h1 className="text-[12.5px] mt-1.5 -mr-3.5 sm:mr-0 no-select font-medium">11/01/2022</h1>
-                            <div className="w-8 h-8 rounded-full mt-0.5 hover:bg-gray-300 flex flex-row justify-center items-center">
-                                <EllipsisVerticalIcon className="w-6 h-7"/>
-                            </div>
-
-                        </div>
-                    </div>
-                    <div className="flex flex-row w-full h-fit">
-                        <div className="w-full flex flex-row items-center justify-between  h-10 rounded-3xl hover:bg-blue-100 cursor-pointer px-2">
-                            <div className="flex flex-row">
-                                <DocumentTextIcon className="h-full w-7 fill-blue-600 text-gray-200" />
-                                <h1 className="ml-4 text-[13.5px] mt-1.5 font-medium">Resume</h1>
-                            </div>
-                            <h1 className="text-[12.5px] mt-1.5  font-medium">Me</h1>
-                            <h1 className="text-[12.5px] mt-1.5 -mr-3.5 sm:mr-0 no-select font-medium">11/01/2022</h1>
-                            <div className="w-8 h-8 rounded-full mt-0.5 hover:bg-gray-300 flex flex-row justify-center items-center">
-                                <EllipsisVerticalIcon className="w-6   h-7" />
+                            <div onClick={(e) => { e.stopPropagation(); setOptionsDropDownOpen(prev => !prev) }} className={`w-8 h-8 rounded-full mt-0.5 hover:bg-gray-300 relative flex flex-row justify-center items-center ${optionsDropDownOpen ? 'bg-gray-300' : ''}`}>
+                                <EllipsisVerticalIcon className="w-6 h-7" />
+                                <div ref={optionsMenuRef} id="options" className={`z-10 absolute mt-34 right-[-2px]  ${optionsDropDownOpen ? '' : 'hidden'} bg-gray-200 rounded-lg shadow w-34  `}>
+                                    <ul onClick={(e) => e.stopPropagation()} className="text-xs border-[0.5px] rounded-lg border-gray-400" aria-labelledby="dropdownInformationButton">
+                                        <li onClick={() => {setOptionsDropDownOpen(false); setIsOpenedShareMenu(true);}} id="vote_1_day" className={`cursor-pointer border-b-[0.5px] border-gray-400`}>
+                                            <p className={`block rounded-t-lg px-4 py-2  text-black   hover:bg-blue-400`}>Share</p>
+                                        </li>
+                                        <li id="vote_2_day" className={`cursor-pointer border-b-[0.5px] border-gray-400`}>
+                                            <p className={`block px-4 py-2  text-black hover:bg-blue-400`}>Rename</p>
+                                        </li>
+                                        <li id="vote_3_day" className={`cursor-pointer rounded-b-lg border-b-[0.5px] border-gray-400`}>
+                                            <p className={`block px-4 py-2 rounded-b-lg  text-black hover:bg-blue-400`}>Delete</p>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
 
                         </div>
                     </div>
 
                 </div>
-
-
-
             </div>
+            {isOpenedShareMenu && (
+                <div className="community-modal flex flex-row items-center justify-center">
+                    <div className='overlay'></div>
+                    <div  ref={sharedMenuRef} className='z-20 flex flex-col w-100% h-100%  msm:w-132 msm:h-160'>
+                        <Modal2 setIsOpenedShareMenu={setIsOpenedShareMenu} />
+                    </div>
+                </div>
+            )}
 
         </div>
     );
 }
 
 export default Home;
+
+
+
+

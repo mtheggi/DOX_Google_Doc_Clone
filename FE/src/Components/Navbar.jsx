@@ -7,9 +7,9 @@ const Navbar = () => {
             </div>
             <h1 className=" font-base mr-30 text-[22px] ml-2 text-black">DocX</h1>
 
-            <div className=" bg-blue-600 ml-auto hover:bg-blue-700 rounded-lg w-fit px-2 mr-3 h-10 hover:no-underline cursor-pointer items-center justify-center  inline-flex">
+            <div className="  ml-auto  rounded-lg w-fit px-2 mr-3 h-10 hover:no-underline  items-center justify-center  inline-flex">
                 <span className="flex items-center justify-center ">
-                    <span className="flex items-center font-medium text-gray-200 text-sm ">Elsaka470</span>
+                    <span className="flex items-center font-medium text-gray-600 no-select text-sm ">Elsaka470</span>
                 </span>
             </div>
 
