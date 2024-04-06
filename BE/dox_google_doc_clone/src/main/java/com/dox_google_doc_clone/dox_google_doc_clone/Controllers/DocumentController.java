@@ -15,14 +15,13 @@ import com.dox_google_doc_clone.dox_google_doc_clone.Services.DocumentService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 @CrossOrigin(origins = "http://localhost:5173")
 @RestController
-@RequestMapping("/api/v1/")
 public class DocumentController {
     private DocumentService documentService;
     private UserPermissionsService userPermissionsService;
+
     public DocumentController(DocumentService documentService, UserPermissionsService userPermissionsService) {
         this.documentService = documentService;
         this.userPermissionsService = userPermissionsService;
@@ -39,28 +38,28 @@ public class DocumentController {
         String title = jsonNode.get("title").asText();
         String content = jsonNode.get("content").asText();
         if (content == null || title == null || userId == null) {
-            return new ResponseEntity<>("userId , title , content are required" , HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("userId , title , content are required", HttpStatus.BAD_REQUEST);
         }
 
         DocumentModel documentModel = documentService.saveDocument(new DocumentModel(title, content));
-        UserPermissions userPermissions = new UserPermissions(userId ,documentModel.getId(), true, true, true);
+        UserPermissions userPermissions = new UserPermissions(userId, documentModel.getId(), true, true, true);
         userPermissionsService.saveUserPermissions(userPermissions);
 
         return new ResponseEntity<>("document created successfully", HttpStatus.OK);
     }
+
     @PostMapping("/document/share")
     public ResponseEntity<String> shareDocument(@RequestBody JsonNode jsonNode) {
         System.out.println(jsonNode.toString());
 
         boolean isShared = documentService.shareDocument(jsonNode);
-        if(isShared){
+        if (isShared) {
             return new ResponseEntity<>("Document has been shared", HttpStatus.OK);
-        }else {
-            return new ResponseEntity<>("invalid User name or invalid documentId or incomplete parameters  ", HttpStatus.BAD_REQUEST);
+        } else {
+            return new ResponseEntity<>("invalid User name or invalid documentId or incomplete parameters  ",
+                    HttpStatus.BAD_REQUEST);
 
         }
     }
-
-
 
 }
