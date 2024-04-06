@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import com.dox_google_doc_clone.dox_google_doc_clone.Repositories.DocumentRepository;
 
 import com.dox_google_doc_clone.dox_google_doc_clone.Models.DocumentModel;
-
+import com.dox_google_doc_clone.dox_google_doc_clone.Dto.SharedDocument;
 @Service
 public class DocumentService {
     private final DocumentRepository DocumentRepository;
@@ -75,6 +75,64 @@ public class DocumentService {
         }
 
         return true;
+
+    }
+
+    public List<DocumentModel> getOwnedDocuments(String userId, int page_num) {
+        int pageSize = 3;
+        List<UserPermissions> userPermissions = userPermissionService.getUserPermissionsByUserId(userId);
+        List<DocumentModel> ownedDocuments = new ArrayList<>();
+        for(UserPermissions userPermission : userPermissions){
+            if(userPermission.isOwner()){
+                DocumentModel document = DocumentRepository.findById(userPermission.getDocumentId()).orElse(null);
+                if(document != null){
+                    ownedDocuments.add(document);
+                }
+            }
+        }
+        // [0 .. 5 .. 9  ]
+        int start = (page_num-1)*pageSize ;
+        int end ;
+        if(start>= ownedDocuments.size()){
+            return new ArrayList<>();
+        }else {
+            end  = start + pageSize -1 ;
+            if(end >=  ownedDocuments.size()){
+                end = ownedDocuments.size()-1 ;
+            }
+
+        }
+        return ownedDocuments.subList(start , end+1);
+
+    }
+
+    public List<SharedDocument> getSharedDocuments(String userId, int page_num) {
+        int pageSize = 3;
+        List<UserPermissions> userPermissions = userPermissionService.getUserPermissionsByUserId(userId);
+        List<SharedDocument> sharedDocuments = new ArrayList<>();
+
+        for(UserPermissions userPermission : userPermissions){
+            if(!(userPermission.isOwner())){
+                DocumentModel document = DocumentRepository.findById(userPermission.getDocumentId()).orElse(null);
+                if(document != null){
+                    SharedDocument shared = new SharedDocument(document.getId(), document.getTitle(), document.getContent(), userPermission.isEdit());
+                    sharedDocuments.add(shared);
+                }
+            }
+        }
+        // [0 .. 5 .. 9  ]
+        int start = (page_num-1)*pageSize ;
+        int end ;
+        if(start>= sharedDocuments.size()){
+            return new ArrayList<>();
+        }else {
+            end  = start + pageSize -1 ;
+            if(end >=  sharedDocuments.size()){
+                end = sharedDocuments.size()-1 ;
+            }
+
+        }
+        return sharedDocuments.subList(start , end+1);
 
     }
 

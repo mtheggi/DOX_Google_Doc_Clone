@@ -13,7 +13,7 @@ public class UserPermissions {
 
     private boolean isOwner;
     private boolean viewOnly;
-
+    private boolean edit;
     public UserPermissions( String userId, String documentId, boolean isOwner, boolean viewOnly, boolean edit) {
         this.userId = userId;
         this.documentId = documentId;
@@ -22,7 +22,7 @@ public class UserPermissions {
         this.edit = edit;
     }
 
-    private boolean edit;
+
 
     @Override
     public String toString() {
