@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 import java.util.List;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @CrossOrigin(origins = "http://localhost:5173")
 @RestController
@@ -31,7 +33,6 @@ public class UserController {
         System.err.println("here" + request);
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
-            System.err.println(token);
             jwtService.expiredToken(token);
             return new ResponseEntity<>("User has been logged out", HttpStatus.OK);
         } else {
@@ -39,14 +40,10 @@ public class UserController {
         }
     }
 
-    // @PostMapping("/user/signup")
-    // public ResponseEntity<User> saveUser(@RequestBody User user) {
-    // if (user.getUserName() == null || user.getEmail() == null ||
-    // user.getPassword() == null) {
-    // return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-    // }
-    // User savedUser = userService.saveUser(user);
-    // return new ResponseEntity<>(savedUser, HttpStatus.OK);
-    // }
+    @GetMapping("/user/exists/{param}")
+    public String getMethodName(@PathVariable String param) {
+        System.err.println(param);
+        return userService.getUserByName(param) != null ? "User exists" : "User does not exist";
+    }
 
 }
