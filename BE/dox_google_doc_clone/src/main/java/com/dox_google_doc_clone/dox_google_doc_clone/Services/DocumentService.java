@@ -19,8 +19,10 @@ public class DocumentService {
     private final DocumentRepository DocumentRepository;
     private final UserService userService;
     private final UserPermissionsService userPermissionService;
+
     @Autowired
-    public DocumentService(DocumentRepository DocumentRepository, UserService userService, UserPermissionsService userPermissionService) {
+    public DocumentService(DocumentRepository DocumentRepository, UserService userService,
+            UserPermissionsService userPermissionService) {
         this.DocumentRepository = DocumentRepository;
         this.userService = userService;
         this.userPermissionService = userPermissionService;
@@ -32,7 +34,7 @@ public class DocumentService {
 
     public boolean shareDocument(JsonNode jsonNode) {
         ArrayNode usernamesNode = (ArrayNode) jsonNode.get("usernames");
-        List<String> usernames = new ArrayList<>();
+
         // Iterate over the array and add each username to the list
         String documentId = jsonNode.get("documentId").asText();
         List<String> userIds = new ArrayList<>();
@@ -40,12 +42,12 @@ public class DocumentService {
         for (JsonNode usernameNode : usernamesNode) {
             User user = userService.getUserByName(usernameNode.asText());
             System.err.println(user.toString());
-            if(user == null){
+            if (user == null) {
                 return false;
             }
             userIds.add(user.getId());
         }
-        if( jsonNode.get("viewOnly") == null || jsonNode.get("edit") == null){
+        if (jsonNode.get("viewOnly") == null || jsonNode.get("edit") == null) {
             return false;
         }
         boolean viewOnly = jsonNode.get("viewOnly").asBoolean();
@@ -54,15 +56,18 @@ public class DocumentService {
         if (document == null) {
             return false;
         }
-        //----all parameters are extacted and valid now we can share the document
-        // get from userPermission table a row that have userId and documentId give from the request
-        // if the row is not exist create a new row with the userId and documentId and the permissions
+        // ----all parameters are extacted and valid now we can share the document
+        // get from userPermission table a row that have userId and documentId give from
+        // the request
+        // if the row is not exist create a new row with the userId and documentId and
+        // the permissions
         // if the row is exist update the permissions
         for (String userId : userIds) {
-            UserPermissions userPermissions = userPermissionService.getUserPermissionByDocumentIdAndUserId(documentId, userId);
-            if(userPermissions == null) {
-                userPermissions = new UserPermissions(userId, documentId, false,viewOnly , edit);
-            }else {
+            UserPermissions userPermissions = userPermissionService.getUserPermissionByDocumentIdAndUserId(documentId,
+                    userId);
+            if (userPermissions == null) {
+                userPermissions = new UserPermissions(userId, documentId, false, viewOnly, edit);
+            } else {
                 userPermissions.setEdit(edit);
                 userPermissions.setViewOnly(viewOnly);
             }
@@ -72,6 +77,7 @@ public class DocumentService {
         return true;
 
     }
+
     public DocumentModel saveDocument(DocumentModel document) {
         return DocumentRepository.save(document);
     }

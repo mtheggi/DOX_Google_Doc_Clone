@@ -15,9 +15,11 @@ import com.dox_google_doc_clone.dox_google_doc_clone.Services.DocumentService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @CrossOrigin(origins = "http://localhost:5173")
 @RestController
+@RequestMapping("/api/v1/")
 public class DocumentController {
     private DocumentService documentService;
     private UserPermissionsService userPermissionsService;
