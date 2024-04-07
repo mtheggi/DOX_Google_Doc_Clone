@@ -24,4 +24,9 @@ https://docs.google.com/document/d/13crG1VhGFKycchIWPu1T3OujaelBUYup1vUjEs1jipQ/
 - [x] 2- bos API documentation implmentation 
 - [x] 3- Atherization {token , jwt, password hashing } (Reviewed needed)
 - [x] 4- front end with malek 
+--------------------------------- 
+- [x] 5- OSAMA help with the front end  
+- [x] 6- search about CRDTS and understand how collborative editing works 
+- [x] 7- implement the collborative editing (websockets , whatever searched ) 
+- [x] 8- test the collborative editing   
 
