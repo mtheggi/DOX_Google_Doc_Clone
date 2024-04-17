@@ -3,9 +3,9 @@ import FloatingInput from "../Components/authentication/FloatingInput";
 import { postRequest } from "../Requests";
 
 
-const SignUp = ({ setIsOpenedsignupMenu, setIsOpenedSignupMenu }) => {
+const SignUp = ({ setIsOpenedSignupMenu }) => {
 
-
+  const baseUrl=""
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -37,13 +37,13 @@ const SignUp = ({ setIsOpenedsignupMenu, setIsOpenedSignupMenu }) => {
   const handleSignupSubmit = async () => {
     if (signupError == null && email && validateEmail(email) && username && validateUsername(username) && password && validatePassword(password)) {
       console.log("signup", { email, username, password })
-      const response = await postRequest(`http://localhost:8080/user/signup`, { email: email, userName: username, password: password });
+      const response = await postRequest(`${baseUrl}/user/signup`, { Email: email, UserName: username, Password: password });
       console.log(response.status);
       if (response.status != 200 && response.status != 201) {
         setSignupError(response.data.message);
       }
       else {
-        setIsLoggedIn(true);
+        setIsOpenedSignupMenu(false);
       }
     }
   }

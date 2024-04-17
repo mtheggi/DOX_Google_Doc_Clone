@@ -99,3 +99,14 @@ button:focus-visible {
   background: #000000;
   opacity: 0.5;
 }
+
+.quill .ql-container.ql-snow {
+  border: none;
+  font-size: 15px;
+}
+.quill .ql-toolbar.ql-snow {
+  border: none;
+  position: absolute;
+  top: 50px;
+  left: 17px;
+}

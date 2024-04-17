@@ -1,6 +1,7 @@
 import { ArrowPathIcon, DocumentIcon, EyeIcon, LockClosedIcon, PencilIcon, UserCircleIcon } from "@heroicons/react/24/outline";
 import { DocumentTextIcon, EllipsisVerticalIcon } from "@heroicons/react/24/outline";
 import { useState, useRef, useEffect } from "react";
+import { postRequest } from "../Requests";
 import { useNavigate } from "react-router-dom";
 import Modal2 from "../Components/Modal2";
 import ReactQuill from 'react-quill';
@@ -13,6 +14,7 @@ const toolbarOptions = [
 
 
 const CustomToolbar = () => {
+    const baseUrl = ""
     const [permissions, setPermissions] = useState("Owner");
     return (
         <div id="toolbar" className="w-full h-9 px-2 flex flex-row items-center rounded-full bg-[#EDF2FB]">
@@ -59,8 +61,8 @@ const TextEditor = () => {
 
     const [isOpenedShareMenu, setIsOpenedShareMenu] = useState(false);
     const [renameMode, setRenameMode] = useState(true);
-    const [inputValue, setInputValue] = useState("Resume");
-    const [lastValidName, setLastValidName] = useState("Resume");
+    const [inputValue, setInputValue] = useState("Untitled Document");
+    const [lastValidName, setLastValidName] = useState("Untitled Document");
     const inputRef = useRef();
     const sharedMenuRef = useRef();
     const navigate = useNavigate();
@@ -85,13 +87,15 @@ const TextEditor = () => {
         }
     }, [renameMode]);
 
+
+
     return (
 
         <div className="w-full overflow-hidden min-w-[350px] h-fit flex flex-col bg-[#F9FBFD]">
             <div className="w-full h-14 px-2 py-2">
                 <div className="w-full h-full flex items-center flex-row ">
 
-                    <div onClick={()=>navigate("/")} className="w-[36px] h-[36px] min-w-[36px] mr-1 ml-2 min-h-[36px]">
+                    <div onClick={() => navigate("/")} className="w-[36px] cursor-pointer h-[36px] min-w-[36px] mr-1 ml-2 min-h-[36px]">
                         <img className="gb_Mc gb_Nd h-full w-full" src="https://www.gstatic.com/images/branding/product/1x/docs_2020q4_48dp.png" srcset="https://www.gstatic.com/images/branding/product/1x/docs_2020q4_48dp.png 1x, https://www.gstatic.com/images/branding/product/2x/docs_2020q4_48dp.png 2x " alt="" aria-hidden="true" role="presentation" ></img>
                     </div >
                     <div className="md:w-6/12 sm:5/12  w-3/12" onDoubleClick={() => setRenameMode(false)}>
@@ -113,17 +117,19 @@ const TextEditor = () => {
                         <ArrowPathIcon className="w-6 h-6" />
                     </div>
 
-                    <div onClick={(e) => { e.stopPropagation(); setIsOpenedShareMenu(true) }} className="w-20 mr-4 h-9 bg-blue-200 cursor-pointer hover:bg-blue-300 rounded-full  flex flex-row justify-center items-center">
+                    <div onClick={(e) => { e.stopPropagation(); setIsOpenedShareMenu(true) }} className="w-20 mr-1 h-9 bg-blue-200 cursor-pointer hover:bg-blue-300 rounded-full  flex flex-row justify-center items-center">
                         <LockClosedIcon className="w-[18px] h-[18px] mr-1" />
                         <h1 className="text-[13px] font-medium">
                             Share
                         </h1>
                     </div>
 
-                    <div className="w-20 h-fit">
-                        <h1 className="text-[14px] font-medium">
-                            Elsaka70
-                        </h1>
+                    <div className=" rounded-lg w-fit px-2 h-10 hover:no-underline  items-center justify-center  inline-flex">
+                        <div className="w-10 cursor-pointer h-10 rounded-full hover:bg-gray-200  flex flex-row items-center justify-center">
+                            <div className="w-8 h-8 rounded-full bg-[#0097A7] flex flex-row items-center justify-center">
+                                <h1 className="text-white text-semibold">M</h1>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -137,7 +143,7 @@ const TextEditor = () => {
                 <div className="w-full h-fit ">
                     <div className="w-full h-full border-[0.5px] border-t-[0px] p-4 flex flex-row border-gray-300">
                         <div className="w-[790px] mx-auto h-fit">
-                        <ReactQuill className="w-full bg-white border-[0.5px] border-gray-300 focus:border-[0.5px] focus:border-gray-300 text-black p-7  h-[1000px] mb-2 resize-none focus:outline-none focus:ring-0" modules={{ toolbar: toolbarOptions }} />
+                            <ReactQuill className="w-full bg-white border-[0.5px] border-gray-300 focus:border-[0.5px] focus:border-gray-300 text-black p-7  h-[1000px] mb-2 resize-none focus:outline-none focus:ring-0" modules={{ toolbar: toolbarOptions }} />
                         </div>
                     </div>
                 </div>

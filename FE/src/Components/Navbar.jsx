@@ -1,7 +1,25 @@
 import { useNavigate } from "react-router-dom";
+import {useState, useRef, useEffect} from "react";
 
 const Navbar = () => {
     const navigate = useNavigate();
+    const [isLogoutMenuOpened, setIsLogoutMenuOpened] = useState(false);
+    const sortMenuRef = useRef();
+
+
+    useEffect(() => {
+        let closeDropdown = (e) => {
+            if (sortMenuRef.current && !sortMenuRef.current.contains(e.target)) {
+                setIsLogoutMenuOpened(false);
+            }
+        };
+        document.addEventListener('click', closeDropdown);
+
+        return () => {
+            document.removeEventListener('click', closeDropdown);
+        };
+    }, []);
+
     return (
         <div className="fixed z-20 w-full flex flex-row items-center h-13 px-4 bg-white">
 
@@ -14,10 +32,32 @@ const Navbar = () => {
             </div>
 
 
-            <div className="  ml-auto  rounded-lg w-fit px-2 mr-3 h-10 hover:no-underline  items-center justify-center  inline-flex">
-                <span className="flex items-center justify-center ">
-                    <span className="flex items-center font-medium text-gray-600 no-select text-sm ">Elsaka470</span>
-                </span>
+            <div className=" ml-auto h-fit relative flex flex-col ">
+                <div className="   rounded-lg w-fit px-2 h-10 hover:no-underline  items-center justify-center  inline-flex">
+                    <div onClick={(e)=>{e.stopPropagation(); setIsLogoutMenuOpened(prev=>!prev)}} className="w-10 cursor-pointer h-10 rounded-full hover:bg-gray-200  flex flex-row items-center justify-center">
+                        <div className="w-8 h-8 rounded-full bg-[#0097A7] flex flex-row items-center justify-center">
+                            <h1 className="text-white text-semibold">M</h1>
+                        </div>
+                    </div>
+                </div>
+
+          { isLogoutMenuOpened && <div ref={sortMenuRef} className="h-fit py-6 w-[350px] items-center -right-1 top-11 rounded-[36px] absolute flex flex-col z-40  bg-blue-50">
+
+                    <h1 className="text-[13px] mt-1">malek13122002@gmail.com</h1>
+                    <div className=" mt-6  rounded-lg w-fit px-2 h-10 hover:no-underline  items-center justify-center  inline-flex">
+                        <div className="w-14 h-14 rounded-full hover:bg-gray-200  flex flex-row items-center justify-center">
+                            <div className="w-14 h-14 rounded-full bg-[#0097A7] flex flex-row items-center justify-center">
+                                <h1 className="text-white text-[28px] text-semibold">M</h1>
+                            </div>
+                        </div>
+                    </div>
+                    <h1 className="text-[20px] mt-3">Hi Malek, </h1>
+                    <div className="bg-white pl-5 items-center flex flex-row w-70 hover:bg-gray-200 cursor-pointer h-11 mt-7 rounded-[45px]">
+                        <svg height="24" viewBox="0 0 24 24" width="24" focusable="false" class=" NMm5M"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"></path><path d="M0 0h24v24H0z" fill="none"></path></svg>
+                        <h1 className="text-[16px] mb-[3px] ml-2 mt-1">Logout</h1>
+                    </div>
+
+                </div>}
             </div>
 
         </div>

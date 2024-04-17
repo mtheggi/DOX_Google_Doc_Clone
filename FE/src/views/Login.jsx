@@ -5,7 +5,7 @@ import { postRequest } from "../Requests";
 
 const LogIn = ({ setIsOpenedLoginMenu, setIsOpenedSignupMenu }) => {
 
-
+  const baseUrl=""
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState(null);
@@ -22,17 +22,17 @@ const LogIn = ({ setIsOpenedLoginMenu, setIsOpenedSignupMenu }) => {
   }
   const handleLoginSubmit = async () => {
     if (username && password && validateLoginUsername(username) && validateLoginPassword(password) && loginError == null) {
-      const response = await postRequest(`/user/login`, { username, password });
+      const UserName=username;
+      const Password=password;
+      const response = await postRequest(`${baseUrl}/user/login`, { UserName, Password });
       if (response.status !== 200 && response.status !== 201) {
         setLoginError(response.data.message);
       }
       else {
           setIsOpenedLoginMenu(false);
-          setIsLoggedIn(true);
       }
     }
   }
-
 
   return (
     <div className="h-full w-full flex justify-center items-center">
