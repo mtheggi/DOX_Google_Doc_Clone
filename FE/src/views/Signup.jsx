@@ -57,14 +57,14 @@ const SignUp = ({ setIsOpenedsignupMenu, setIsOpenedSignupMenu }) => {
           <div className="flex flex-col">
 
             <div className="flex flex-row justify-between">
-              <h1 className="text-2xl h-7 text-black font-bold mb-2 text-neutral">
+              <h1 className="text-2xl h-7 text-blue-500 font-bold mb-2 text-neutral">
                 Sign up
               </h1>
               <div className="flex ">
 
               </div>
             </div>
-            <p className="text-[14px] my-2 h-10 text-black">By continuing, you agree to our{" "} User Agreement and acknowledge that you understand the{" "}Privacy Policy .</p>
+            <p className="text-[14px] my-2 h-10 text-blue-500">By continuing, you agree to our{" "} User Agreement and acknowledge that you understand the{" "}Privacy Policy .</p>
           </div>
 
           <div className="mt-6">
@@ -107,7 +107,7 @@ const SignUp = ({ setIsOpenedsignupMenu, setIsOpenedSignupMenu }) => {
         </div>
 
         <div className="h-[96px] py-[24px] mt-auto mb-4 msm:mt-0 msm:mb-0 flex items-center">
-          <div onClick={handleSignupSubmit} id="signup_submit" className={` ${email && validateEmail(email) && username && password && validateUsername(username) && validatePassword(password) && signupError == null ? ' bg-[#3E82F9] hover:bg-blue-700 cursor-pointer text-white' : 'text-black cursor-not-allowed'} w-120 mt-1 h-[48px] items-center justify-center inline-flex mx-auto rounded-3xl bg-gray-200`}>
+          <div onClick={handleSignupSubmit} id="signup_submit" className={` ${email && validateEmail(email) && username && password && validateUsername(username) && validatePassword(password) && signupError == null ? ' bg-[#3E82F7] hover:bg-blue-700 cursor-pointer text-white' : 'text-gray-400 cursor-not-allowed'} w-120 mt-1 h-[48px] items-center justify-center inline-flex mx-auto rounded-3xl bg-gray-200`}>
             <span className="flex items-center justify-center">
               <span className="flex items-center gap-[8px] text-[14px]  font-[500] ">
                 Sign up

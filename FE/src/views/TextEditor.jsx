@@ -1,7 +1,60 @@
 import { ArrowPathIcon, DocumentIcon, EyeIcon, LockClosedIcon, PencilIcon, UserCircleIcon } from "@heroicons/react/24/outline";
 import { DocumentTextIcon, EllipsisVerticalIcon } from "@heroicons/react/24/outline";
-import { useState, useReducer, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Modal2 from "../Components/Modal2";
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css'; // import the styles
+
+
+const toolbarOptions = [
+    ['bold', 'italic'],        // toggled buttons
+];
+
+
+const CustomToolbar = () => {
+    const [permissions, setPermissions] = useState("Owner");
+    return (
+        <div id="toolbar" className="w-full h-9 px-2 flex flex-row items-center rounded-full bg-[#EDF2FB]">
+
+            {/* <div className=" space-x-5 ml-2">
+                {toolbarOptions[0].map((option) => (
+                    <button className={`ql-${option} text-[20px] ${option == "I" ? ' font-serif italic font-medium' : ' font-semibold'}`}>{option.charAt(0).toUpperCase() + option.slice(1)}</button>
+                ))}
+            </div> */}
+
+            <div className="ml-auto w-20 h-7 mr-2 flex justify-center items-center rounded-xl bg-[#DFE5EA] ">
+
+                {
+                    permissions == "Editor" &&
+                    <>
+                        <PencilIcon className="h-[15px] w-[15px] mr-1" />
+                        <h1 className="text-[12px] font-medium">
+                            Editor
+                        </h1>
+                    </>}
+                {
+                    permissions == "Viewer" &&
+                    <>
+                        <EyeIcon className="h-[17px] w-[17px] mr-1" />
+                        <h1 className="text-[12px] font-medium">
+                            Viewer
+                        </h1>
+                    </>}
+                {
+                    permissions == "Owner" &&
+                    <>
+                        <UserCircleIcon className="h-[17px] w-[17px] mr-1" />
+                        <h1 className="text-[12px] font-medium">
+                            Owner
+                        </h1>
+                    </>}
+            </div>
+        </div>
+    )
+};
+
+
 const TextEditor = () => {
 
     const [isOpenedShareMenu, setIsOpenedShareMenu] = useState(false);
@@ -10,6 +63,7 @@ const TextEditor = () => {
     const [lastValidName, setLastValidName] = useState("Resume");
     const inputRef = useRef();
     const sharedMenuRef = useRef();
+    const navigate = useNavigate();
 
     useEffect(() => {
         let closeDropdown = (e) => {
@@ -36,8 +90,9 @@ const TextEditor = () => {
         <div className="w-full overflow-hidden min-w-[350px] h-fit flex flex-col bg-[#F9FBFD]">
             <div className="w-full h-14 px-2 py-2">
                 <div className="w-full h-full flex items-center flex-row ">
-                    <div className="h-full w-[52px] min-w-[52px]">
-                        <DocumentTextIcon className="w-13 h-10 fill-blue-600 text-white" />
+
+                    <div onClick={()=>navigate("/")} className="w-[36px] h-[36px] min-w-[36px] mr-1 ml-2 min-h-[36px]">
+                        <img className="gb_Mc gb_Nd h-full w-full" src="https://www.gstatic.com/images/branding/product/1x/docs_2020q4_48dp.png" srcset="https://www.gstatic.com/images/branding/product/1x/docs_2020q4_48dp.png 1x, https://www.gstatic.com/images/branding/product/2x/docs_2020q4_48dp.png 2x " alt="" aria-hidden="true" role="presentation" ></img>
                     </div >
                     <div className="md:w-6/12 sm:5/12  w-3/12" onDoubleClick={() => setRenameMode(false)}>
                         {renameMode ? (<h1 className="text-black overflow-text w-full text-[18px] font-base">{inputValue}</h1>)
@@ -74,31 +129,15 @@ const TextEditor = () => {
             </div>
 
             <div className="w-full flex flex-col  h-16 border-gray-300 min-h-9 px-4">
-                <div className="w-full h-9 px-2 flex flex-row items-center rounded-full bg-[#EDF2FB]">
-                    <div className="ml-auto w-20 h-7 mr-2 flex justify-center items-center rounded-xl bg-[#DFE5EA] ">
-                        {/* <PencilIcon className="h-[15px] w-[15px] mr-1"/>
-                        <h1 className="text-[12px] font-medium">
-                            Editor
-                        </h1> */}
-                        {/* <EyeIcon className="h-[17px] w-[17px] mr-1"/>
-                        <h1 className="text-[12px] font-medium">
-                            Viewer
-                        </h1> */}
-                        <UserCircleIcon className="h-[17px] w-[17px] mr-1" />
-                        <h1 className="text-[12px] font-medium">
-                            Owner
-                        </h1>
-
-                    </div>
-                </div>
+                <CustomToolbar />
                 <hr className="mt-auto" />
             </div>
 
             <div className="w-full px-4  overflow-y-auto h-full">
-                <div className="w-full h-full ">
+                <div className="w-full h-fit ">
                     <div className="w-full h-full border-[0.5px] border-t-[0px] p-4 flex flex-row border-gray-300">
                         <div className="w-[790px] mx-auto h-fit">
-                            <textarea className="w-full  bg-white  border-[0.5px] border-gray-300 focus:border-[0.5px] focus:border-gray-300 text-black p-10 h-[1000px] mb-2  resize-none focus:outline-none focus:ring-0"></textarea>
+                        <ReactQuill className="w-full bg-white border-[0.5px] border-gray-300 focus:border-[0.5px] focus:border-gray-300 text-black p-7  h-[1000px] mb-2 resize-none focus:outline-none focus:ring-0" modules={{ toolbar: toolbarOptions }} />
                         </div>
                     </div>
                 </div>
