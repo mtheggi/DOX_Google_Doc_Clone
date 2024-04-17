@@ -1,7 +1,5 @@
 package com.dox_google_doc_clone.dox_google_doc_clone.Models;
 
-import java.util.Date;
-
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 

@@ -23,7 +23,9 @@ public class UserPermissionsService {
     public UserPermissions getUserPermissionByDocumentIdAndUserId(String documentId, String userId) {
         return userPermissionsRepository.findByDocumentIdAndUserId(documentId, userId);
     }
-
+    public List<UserPermissions> getUserPermissionsByUserId(String userId) {
+        return userPermissionsRepository.findByUserId(userId);
+    }
     public List<UserPermissions> getAllUserPermissions() {
         return userPermissionsRepository.findAll();
     }
