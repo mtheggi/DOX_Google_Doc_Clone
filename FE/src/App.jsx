@@ -1,3 +1,5 @@
+window.global = window;
+
 import './index.css'
 import LogIn from './views/Login'
 import SignUp from './views/Signup'
@@ -12,6 +14,26 @@ import SockJS from 'sockjs-client';
 
 function App() {
   const [isNotFound, setIsNotFound] = useState(false);
+  useEffect(() => {
+    const socket = new SockJS('http://localhost:8080/ws');
+    const client = Stomp.over(socket);
+    client.connect({}, () => {
+
+      console.log('connection established');
+      client.subscribe('/app/topic', (message) => {
+        const recievedMessage = JSON.parse(message.body);
+        console.log("messsage recieved", recievedMessage);
+      });
+
+    });
+
+    client.send('/app/broadcast', {}, JSON.stringify({ message: 'Hello' }));
+
+    return () => {
+      client.disconnect();
+    }
+  }, []);
+
   return (
     <Router>
       <div className="App h-screen flex flex-col bg-gray-200 overflow-x-hidden">
