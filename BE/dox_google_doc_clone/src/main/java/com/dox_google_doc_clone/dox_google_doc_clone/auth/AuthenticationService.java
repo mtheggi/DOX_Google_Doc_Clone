@@ -64,10 +64,6 @@ public class AuthenticationService {
                                 .build();
         }
 
-        // public expretAuthenticationResponse(LogoutRequest request) {
-        // var jwtToken=request.getToken();
-        // jwtService.expiredToken(jwtToken);
-        // return
-        // }
+
 
 }
