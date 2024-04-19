@@ -1,5 +1,6 @@
 package com.dox_google_doc_clone.dox_google_doc_clone.Controllers;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,9 +25,11 @@ import javax.print.Doc;
 public class DocumentController {
     private DocumentService documentService;
     private UserPermissionsService userPermissionsService;
-    private  JwtService jwtService ;
+    private JwtService jwtService;
     private UserService userService;
-    public DocumentController(DocumentService documentService, UserPermissionsService userPermissionsService, JwtService jwtService, UserService userService) {
+
+    public DocumentController(DocumentService documentService, UserPermissionsService userPermissionsService,
+            JwtService jwtService, UserService userService) {
         this.documentService = documentService;
         this.userPermissionsService = userPermissionsService;
         this.jwtService = jwtService;
@@ -39,12 +42,13 @@ public class DocumentController {
     }
 
     @PostMapping("/document/create")
-    public ResponseEntity<String> saveDocument(@RequestBody JsonNode jsonNode , @RequestHeader("Authorization") String token){
+    public ResponseEntity<String> saveDocument(@RequestBody JsonNode jsonNode,
+            @RequestHeader("Authorization") String token) {
         String email = jwtService.extractEmail(token.substring(7));
         String userId;
-        if(userService.getUserByEmail(email).isPresent()){
+        if (userService.getUserByEmail(email).isPresent()) {
             userId = userService.getUserByEmail(email).get().getId();
-        }else {
+        } else {
             return new ResponseEntity<>("User not found", HttpStatus.BAD_REQUEST);
         }
         String title = jsonNode.get("title").asText();
@@ -52,7 +56,8 @@ public class DocumentController {
         if (content == null || title == null || userId == null) {
             return new ResponseEntity<>("userId , title , content are required", HttpStatus.BAD_REQUEST);
         }
-        DocumentModel documentModel = documentService.saveDocument(new DocumentModel(title, content));
+        DocumentModel documentModel = documentService
+                .saveDocument(new DocumentModel(title, content, LocalDateTime.now()));
         UserPermissions userPermissions = new UserPermissions(userId, documentModel.getId(), true, true, true);
         userPermissionsService.saveUserPermissions(userPermissions);
 
@@ -72,33 +77,37 @@ public class DocumentController {
 
         }
     }
+
     @GetMapping("/document/owned/{page_num}")
-    public ResponseEntity<List<DocumentModel>> getOwnedDocuments(@PathVariable int page_num , @RequestHeader("Authorization") String token){
+    public ResponseEntity<List<DocumentModel>> getOwnedDocuments(@PathVariable int page_num,
+            @RequestHeader("Authorization") String token) {
         String email = jwtService.extractEmail(token.substring(7));
         String userId;
-        if(userService.getUserByEmail(email).isPresent()){
+        if (userService.getUserByEmail(email).isPresent()) {
             userId = userService.getUserByEmail(email).get().getId();
-        }else {
+        } else {
             List<DocumentModel> emptyList = new ArrayList<>();
-            return new ResponseEntity<>( emptyList , HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(emptyList, HttpStatus.BAD_REQUEST);
         }
 
-        List<DocumentModel>list = documentService.getOwnedDocuments(userId, page_num);
-        return new ResponseEntity<>(list , HttpStatus.OK);
+        List<DocumentModel> list = documentService.getOwnedDocuments(userId, page_num);
+        return new ResponseEntity<>(list, HttpStatus.OK);
     }
+
     @GetMapping("/document/shared/{page_num}")
-    public ResponseEntity<List<SharedDocument>> getSharedDocuments(@PathVariable int page_num , @RequestHeader("Authorization") String token){
+    public ResponseEntity<List<SharedDocument>> getSharedDocuments(@PathVariable int page_num,
+            @RequestHeader("Authorization") String token) {
         String email = jwtService.extractEmail(token.substring(7));
         String userId;
-        if(userService.getUserByEmail(email).isPresent()){
+        if (userService.getUserByEmail(email).isPresent()) {
             userId = userService.getUserByEmail(email).get().getId();
-        }else {
+        } else {
             List<SharedDocument> emptyList = new ArrayList<>();
-            return new ResponseEntity<>( emptyList , HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(emptyList, HttpStatus.BAD_REQUEST);
         }
 
-        List<SharedDocument>list = documentService.getSharedDocuments(userId, page_num);
-        return new ResponseEntity<>(list , HttpStatus.OK);
+        List<SharedDocument> list = documentService.getSharedDocuments(userId, page_num);
+        return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
 }

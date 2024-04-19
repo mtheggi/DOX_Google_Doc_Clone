@@ -18,10 +18,19 @@ public class DocumentModel {
 
     @CreatedDate
     private LocalDateTime createdAt;
-    public DocumentModel(String title, String content) {
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public DocumentModel(String title, String content, LocalDateTime createdAt) {
         this.title = title;
         this.content = content;
-
+        this.createdAt = createdAt;
     }
 
     public String getId() {

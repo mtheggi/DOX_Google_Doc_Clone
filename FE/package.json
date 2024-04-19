@@ -18,8 +18,11 @@
     "react-dom": "^18.2.0",
     "react-quill": "^2.0.0",
     "react-router-dom": "^6.22.3",
+    "react-stomp": "^5.1.0",
     "react-tag-input-component": "^2.0.2",
-    "socket.io-client": "^4.7.5"
+    "socket.io-client": "^4.7.5",
+    "sockjs": "^0.3.24",
+    "sockjs-client": "^1.6.1"
   },
   "devDependencies": {
     "@types/react": "^18.2.56",
