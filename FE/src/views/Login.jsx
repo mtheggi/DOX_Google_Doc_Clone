@@ -1,19 +1,21 @@
 import React, { useState, useEffect, useContext } from "react";
 import FloatingInput from "../Components/authentication/FloatingInput";
 import { postRequest } from "../Requests";
+import { useNavigate } from "react-router-dom";
 
 
-const LogIn = ({ setIsOpenedLoginMenu, setIsOpenedSignupMenu }) => {
+const LogIn = () => {
+  const navigate = useNavigate();
 
-  const baseUrl=""
-  const [username, setUsername] = useState('');
+  const baseUrl = "http://localhost:8080"
+
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState(null);
-  const validateLoginUsername = (username) => {
-    if (username != '' && username)
-      return true;
-    else
-      return false;
+
+  const validateLoginEmail = (email) => {
+    var re = /^([a-z A-Z 0-9 \. _]+)@([a-z A-Z]+)\.([a-z A-Z]{2,6})$/;
+    return re.test(email);
   }
   const validateLoginPassword = (password) => {
     if (password != '' && password) {
@@ -21,15 +23,15 @@ const LogIn = ({ setIsOpenedLoginMenu, setIsOpenedSignupMenu }) => {
     }
   }
   const handleLoginSubmit = async () => {
-    if (username && password && validateLoginUsername(username) && validateLoginPassword(password) && loginError == null) {
-      const UserName=username;
-      const Password=password;
-      const response = await postRequest(`${baseUrl}/user/login`, { UserName, Password });
+    if (email && password && validateLoginEmail(email) && validateLoginPassword(password) && loginError == null) {
+
+      const response = await postRequest(`${baseUrl}/user/login`, { email, password });
       if (response.status !== 200 && response.status !== 201) {
         setLoginError(response.data.message);
       }
       else {
-          setIsOpenedLoginMenu(false);
+        localStorage.setItem('token', response.data.token);
+        navigate("home")
       }
     }
   }
@@ -46,7 +48,7 @@ const LogIn = ({ setIsOpenedLoginMenu, setIsOpenedSignupMenu }) => {
                 Log In
               </h1>
               <div className="flex ">
-         
+
               </div>
             </div>
             <p className="text-[14px] my-2 h-10 text-blue-500">By continuing, you agree to our{" "} User Agreement and acknowledge that you understand the{" "}Privacy Policy .</p>
@@ -55,10 +57,10 @@ const LogIn = ({ setIsOpenedLoginMenu, setIsOpenedSignupMenu }) => {
           <div className="mt-4">
             <div className="mb-8">
               <FloatingInput
-                id={"login_username"}
-                label="Username"
-                validateInput={validateLoginUsername}
-                setInputNameOnChange={setUsername}
+                id={"login_email"}
+                label="Email"
+                validateInput={validateLoginEmail}
+                setInputNameOnChange={setEmail}
                 backendValidationError={loginError}
                 setBackendValidationError={setLoginError}
               />
@@ -79,15 +81,15 @@ const LogIn = ({ setIsOpenedLoginMenu, setIsOpenedSignupMenu }) => {
           <div className="flex flex-col mt-auto">
 
 
-      
+
             <div className={` text-[14px] text-black`}>
-              New to DocX?  <a id="login_signup" onClick={(e) => { e.stopPropagation(); setIsOpenedSignupMenu(true); setIsOpenedLoginMenu(false) }} className=" text-reddit_links cursor-pointer hover:text-blue-300">Sign Up</a>
+              New to DocX?  <a id="login_signup" onClick={(e) => { e.stopPropagation(); navigate("signup") }} className=" text-reddit_links cursor-pointer hover:text-blue-300">Sign Up</a>
             </div>
           </div>
         </div>
 
         <div className="h-[96px] py-[24px] mt-auto mb-4 msm:mt-0 msm:mb-0 flex items-center">
-          <div onClick={handleLoginSubmit} id="login_submit" className={` ${username && password && validateLoginUsername(username) && validateLoginPassword(password) && loginError == null ? '  hover:bg-blue-800 bg-[#3E82F8] cursor-pointer text-white' : 'text-gray-400 cursor-not-allowed'} w-120 mt-1 h-[48px] items-center justify-center inline-flex mx-auto rounded-3xl bg-gray-200`}>
+          <div onClick={handleLoginSubmit} id="login_submit" className={` ${email && password && validateLoginEmail(email) && validateLoginPassword(password) && loginError == null ? '  hover:bg-blue-800 bg-[#3E82F8] cursor-pointer text-white' : 'text-gray-400 cursor-not-allowed'} w-120 mt-1 h-[48px] items-center justify-center inline-flex mx-auto rounded-3xl bg-gray-200`}>
             <span className="flex items-center justify-center">
               <span className="flex items-center gap-[8px] text-[14px] font-[600] ">
                 Log In

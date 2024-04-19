@@ -3,16 +3,19 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import React from 'react';
 import { postRequest } from "../Requests";
-import Modal2 from "../Components/Modal2";
+import ShareModal from "../Components/ShareModal";
 import Navbar from "../Components/Navbar";
+import RenameModal from "../Components/RenameModal";
 
 
 const Home = () => {
-    const baseUrl=""
+    const baseUrl = ""
+    // const baseUrl="http://localhost:8080"
     const [sortValue, setSortValue] = useState("All");
     const [sortDropDownOpen, setSortDropDownOpen] = useState(false);
     const [isOpenedShareMenu, setIsOpenedShareMenu] = useState(false);
     const [optionsDropDownOpen, setOptionsDropDownOpen] = useState(false);
+    const [isNewDocAdded,setIsNewDocAdded] = useState(false);
 
 
     const [renameMode, setRenameMode] = useState(false);
@@ -20,13 +23,11 @@ const Home = () => {
     const [lastValidName, setLastValidName] = useState("Resume");
 
     const sortMenuRef = useRef();
+    const renameMenuRef = useRef();
     const optionsMenuRef = useRef();
     const sharedMenuRef = useRef();
     const inputRef = useRef([]);
     const navigate = useNavigate();
-
-
-
 
     useEffect(() => {
         if (renameMode) {
@@ -46,6 +47,9 @@ const Home = () => {
             if (sharedMenuRef.current && !sharedMenuRef.current.contains(e.target)) {
                 setIsOpenedShareMenu(false);
             }
+            if (renameMenuRef.current && !renameMenuRef.current.contains(e.target)) {
+                setIsNewDocAdded(false);
+            }
         };
         document.addEventListener('click', closeDropdown);
 
@@ -54,18 +58,7 @@ const Home = () => {
         };
     }, []);
 
-    const createDocument = async () => {
-        // const response = await postRequest(`${baseUrl}/document/create`, { title: lastValidName, content: "" });
-        // if (response.status != 200 && response.status != 201) {
-
-        // }
-        // else {
-        //     navigate("texteditor")
-        // }
-
-        navigate("texteditor")
-    }
-
+ 
 
 
     return (
@@ -76,7 +69,7 @@ const Home = () => {
                     <div className="h-full min-h-[252px] mt-4 w-full msm:w-[470px] md:w-[660px] lg:w-[860px] xl:w-[1050px] mx-auto">
                         <div className="flex flex-col w-full h-full font-light text-[14px]">
                             <h1 className="text-black h-fit ml-1.5 w-fit">Start a new document</h1>
-                            <div onClick={createDocument} className="bg-white h-[156px] w-[126px] border-[1px] hover:border-blue-300 cursor-pointer border-gray-200 mt-3.5">
+                            <div onClick={(e)=>{e.stopPropagation();setIsNewDocAdded(true)}} className="bg-white h-[156px] w-[126px] border-[1px] hover:border-blue-300 cursor-pointer border-gray-200 mt-3.5">
                                 <img className="w-full h-full" src="https://ssl.gstatic.com/docs/templates/thumbnails/docs-blank-googlecolors.png" alt=""></img>
                             </div>
                             <h1 className="text-black h-fit text-[12px] font-medium mt-2 ml-4 w-fit">Blank Document</h1>
@@ -126,7 +119,7 @@ const Home = () => {
                         <div className="flex no-select flex-row w-full h-fit">
                             <div className={`w-full ${optionsDropDownOpen ? 'bg-blue-100' : ''} flex flex-row items-center  h-10 sm:rounded-3xl hover:bg-blue-100 cursor-pointer px-2`}>
                                 <div className="flex w-6/12 min-w-[140px] flex-row">
-                                    <img className="gb_Mc gb_Nd h-full min-w-7 w-7 fill-blue-600 text-gray-200" src="https://www.gstatic.com/images/branding/product/1x/docs_2020q4_48dp.png" srcset="https://www.gstatic.com/images/branding/product/1x/docs_2020q4_48dp.png 1x, https://www.gstatic.com/images/branding/product/2x/docs_2020q4_48dp.png 2x " alt="" aria-hidden="true" role="presentation" ></img>
+                                    <img className="gb_Mc gb_Nd h-full min-w-7 w-7 fill-blue-600 text-gray-200" src="https://www.gstatic.com/images/branding/product/1x/docs_2020q4_48dp.png" srcSet="https://www.gstatic.com/images/branding/product/1x/docs_2020q4_48dp.png 1x, https://www.gstatic.com/images/branding/product/2x/docs_2020q4_48dp.png 2x " alt="" aria-hidden="true" role="presentation" ></img>
                                     {!renameMode ? (<h1 onDoubleClick={(e) => { e.stopPropagation; setRenameMode(true) }} className="ml-3 overflow-text w-55% lg:w-60% xl:w-70% text-[13.5px] mt-[6px] font-medium">{inputValue}</h1>) :
                                         (<input maxLength={50} onBlur={(e) => {
                                             setRenameMode(false);
@@ -172,8 +165,17 @@ const Home = () => {
                 {isOpenedShareMenu && (
                     <div className="community-modal flex flex-row items-center justify-center">
                         <div className='overlay'></div>
-                        <div ref={sharedMenuRef} className='z-20 flex flex-col w-100% h-100%  msm:w-132 msm:h-160'>
-                            <Modal2 setIsOpenedShareMenu={setIsOpenedShareMenu} />
+                        <div ref={sharedMenuRef} className='z-20 flex flex-col w-100% msm:w-132 h-100'>
+                            <ShareModal setIsOpenedShareMenu={setIsOpenedShareMenu} />
+                        </div>
+                    </div>
+                )}
+
+                {isNewDocAdded && (
+                    <div className="community-modal flex flex-row items-center justify-center">
+                        <div className='overlay'></div>
+                        <div ref={renameMenuRef} className='z-20 flex flex-col w-100%  msm:w-132 h-[300px]'>
+                            <RenameModal setIsOpenedShareMenu={setIsNewDocAdded} />
                         </div>
                     </div>
                 )}

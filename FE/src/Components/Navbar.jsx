@@ -24,7 +24,7 @@ const Navbar = () => {
         <div className="fixed z-20 w-full flex flex-row items-center h-13 px-4 bg-white">
 
             <div className="w-[36px] h-[36px] min-w-[36px] min-h-[36px]">
-                <img className="gb_Mc gb_Nd h-full w-full" src="https://www.gstatic.com/images/branding/product/1x/docs_2020q4_48dp.png" srcset="https://www.gstatic.com/images/branding/product/1x/docs_2020q4_48dp.png 1x, https://www.gstatic.com/images/branding/product/2x/docs_2020q4_48dp.png 2x " alt="" aria-hidden="true" role="presentation" ></img>
+                <img className="gb_Mc gb_Nd h-full w-full" src="https://www.gstatic.com/images/branding/product/1x/docs_2020q4_48dp.png" srcSet="https://www.gstatic.com/images/branding/product/1x/docs_2020q4_48dp.png 1x, https://www.gstatic.com/images/branding/product/2x/docs_2020q4_48dp.png 2x " alt="" aria-hidden="true" role="presentation" ></img>
             </div>
 
             <div className=" cursor-pointer" onClick={() => navigate("/")}>
