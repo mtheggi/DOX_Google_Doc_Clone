@@ -1,16 +1,17 @@
 import React, { useState, useEffect, useContext } from "react";
 import FloatingInput from "../Components/authentication/FloatingInput";
 import { postRequest } from "../Requests";
+import { useNavigate } from "react-router-dom";
 
 
-const SignUp = ({ setIsOpenedSignupMenu }) => {
+const SignUp = () => {
 
-  const baseUrl=""
+  const baseUrl="http://localhost:8080"
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [signupError, setSignupError] = useState(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
 
   const validateEmail = (email) => {
     var re = /^([a-z A-Z 0-9 \. _]+)@([a-z A-Z]+)\.([a-z A-Z]{2,6})$/;
@@ -36,14 +37,14 @@ const SignUp = ({ setIsOpenedSignupMenu }) => {
 
   const handleSignupSubmit = async () => {
     if (signupError == null && email && validateEmail(email) && username && validateUsername(username) && password && validatePassword(password)) {
-      console.log("signup", { email, username, password })
-      const response = await postRequest(`${baseUrl}/user/signup`, { Email: email, UserName: username, Password: password });
-      console.log(response.status);
+    
+      const response = await postRequest(`${baseUrl}/user/signup`, { email, username, password });
       if (response.status != 200 && response.status != 201) {
         setSignupError(response.data.message);
       }
       else {
-        setIsOpenedSignupMenu(false);
+        localStorage.setItem('token', response.data.token);
+        navigate("/home");
       }
     }
   }

@@ -8,16 +8,15 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Quill from './Components/CustomizedQuill'
 
 function App() {
-  const [isNotFound, setIsNotFound] = useState(false);
+  const [isNotFound, setIsNotFound] = useState(false); 
   return (
     <Router>
       <div className="App h-screen flex flex-col bg-gray-200 overflow-x-hidden">
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<LogIn />} />
-          <Route path="/signup" element={<SignUp />} />
+          <Route path="/" element={<LogIn />} />
+          <Route path="/signup" element={<SignUp/>} />
+          <Route path="/home" element={<Home />} />
           <Route path="/texteditor" element={
-      
               <TextEditor /> 
              } />
         </Routes>

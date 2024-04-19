@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
-import FloatingInput from "../Components/authentication/FloatingInput";
+import FloatingInput from "./authentication/FloatingInput";
 import { postRequest } from "../Requests";
 import TagInput from "./TagInput";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 
 
-const Modal2 = ({ setIsOpenedShareMenu }) => {
+const ShareModal = ({ setIsOpenedShareMenu }) => {
     const [fileName, setFileName] = useState("");
     const [permissionValue, setPermissionValue] = useState("View");
     const [permissionDropDown, setPermissionDropDown] = useState(false);
@@ -13,7 +13,7 @@ const Modal2 = ({ setIsOpenedShareMenu }) => {
 
     return (
         <div className="h-full min-w-[340px] w-full flex justify-center items-center">
-            <div id="navbar_login_menu" className="flex pt-6 w-[470px] flex-col bg-white sm:rounded-lg h-[350px] min-w-88 px-3 msm:px-7">
+            <div id="navbar_login_menu" className="flex pt-6 w-[470px] flex-col bg-white rounded-lg h-[350px] min-w-88 px-3 msm:px-7">
 
                 <div className="h-full flex flex-col">
 
@@ -61,4 +61,4 @@ const Modal2 = ({ setIsOpenedShareMenu }) => {
     );
 };
 
-export default Modal2;
+export default ShareModal;

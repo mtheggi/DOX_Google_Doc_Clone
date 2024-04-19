@@ -3,7 +3,7 @@ import { DocumentTextIcon, EllipsisVerticalIcon } from "@heroicons/react/24/outl
 import { useState, useRef, useEffect } from "react";
 import { postRequest } from "../Requests";
 import { useNavigate } from "react-router-dom";
-import Modal2 from "../Components/Modal2";
+import ShareModal from "../Components/ShareModal";
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css'; // import the styles
 
@@ -96,7 +96,7 @@ const TextEditor = () => {
                 <div className="w-full h-full flex items-center flex-row ">
 
                     <div onClick={() => navigate("/")} className="w-[36px] cursor-pointer h-[36px] min-w-[36px] mr-1 ml-2 min-h-[36px]">
-                        <img className="gb_Mc gb_Nd h-full w-full" src="https://www.gstatic.com/images/branding/product/1x/docs_2020q4_48dp.png" srcset="https://www.gstatic.com/images/branding/product/1x/docs_2020q4_48dp.png 1x, https://www.gstatic.com/images/branding/product/2x/docs_2020q4_48dp.png 2x " alt="" aria-hidden="true" role="presentation" ></img>
+                        <img className="gb_Mc gb_Nd h-full w-full" src="https://www.gstatic.com/images/branding/product/1x/docs_2020q4_48dp.png" srcsSet="https://www.gstatic.com/images/branding/product/1x/docs_2020q4_48dp.png 1x, https://www.gstatic.com/images/branding/product/2x/docs_2020q4_48dp.png 2x " alt="" aria-hidden="true" role="presentation" ></img>
                     </div >
                     <div className="md:w-6/12 sm:5/12  w-3/12" onDoubleClick={() => setRenameMode(false)}>
                         {renameMode ? (<h1 className="text-black overflow-text w-full text-[18px] font-base">{inputValue}</h1>)
@@ -152,7 +152,7 @@ const TextEditor = () => {
                 <div className="community-modal flex flex-row items-center justify-center">
                     <div className='overlay'></div>
                     <div ref={sharedMenuRef} className='z-20 flex flex-col w-100% h-100%  msm:w-132 msm:h-160'>
-                        <Modal2 setIsOpenedShareMenu={setIsOpenedShareMenu} />
+                        <ShareModal setIsOpenedShareMenu={setIsOpenedShareMenu} />
                     </div>
                 </div>
             )}
