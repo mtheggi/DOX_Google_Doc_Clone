@@ -120,11 +120,12 @@ public class DocumentService {
                 DocumentModel document = DocumentRepository.findById(userPermission.getDocumentId()).orElse(null);
                 if (document != null) {
                     SharedDocument shared = new SharedDocument(document.getId(), document.getTitle(),
-                            document.getContent(), userPermission.isEdit());
+                            document.getContent(), userPermission.isEdit(), document.getCreatedAt());
                     sharedDocuments.add(shared);
                 }
             }
         }
+        sharedDocuments.sort(Comparator.comparing(SharedDocument::getCreatedAt).reversed());
         // [0 .. 5 .. 9 ]
         int start = (page_num - 1) * pageSize;
         int end;
