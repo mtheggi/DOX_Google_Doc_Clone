@@ -13,7 +13,7 @@ function App() {
   const [isNotFound, setIsNotFound] = useState(false);
   return (
     <Router>
-      <div className="App h-screen flex flex-col bg-gray-200 overflow-x-hidden">
+      <div className="App h-screen flex flex-col bg-gray-200 overflow-hidden">
         {/* <button onClick={() => sendmessage({ operation: "INSERT", documentId: "5", character: "A" })}>  test </button> */}
         <Routes>
           <Route path="/" element={<LogIn />} />

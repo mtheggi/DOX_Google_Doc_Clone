@@ -97,7 +97,7 @@ button:focus-visible {
 
 .overlay {
   background: #000000;
-  opacity: 0.5;
+  opacity: 0.1;
 }
 
 .quill .ql-container.ql-snow {
@@ -109,4 +109,13 @@ button:focus-visible {
   position: absolute;
   top: 50px;
   left: 17px;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }
