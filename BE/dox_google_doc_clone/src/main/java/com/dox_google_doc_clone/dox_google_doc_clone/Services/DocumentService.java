@@ -1,6 +1,7 @@
 package com.dox_google_doc_clone.dox_google_doc_clone.Services;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import com.dox_google_doc_clone.dox_google_doc_clone.Models.User;
@@ -14,6 +15,7 @@ import com.dox_google_doc_clone.dox_google_doc_clone.Repositories.DocumentReposi
 
 import com.dox_google_doc_clone.dox_google_doc_clone.Models.DocumentModel;
 import com.dox_google_doc_clone.dox_google_doc_clone.Dto.SharedDocument;
+
 @Service
 public class DocumentService {
     private final DocumentRepository DocumentRepository;
@@ -82,27 +84,29 @@ public class DocumentService {
         int pageSize = 9;
         List<UserPermissions> userPermissions = userPermissionService.getUserPermissionsByUserId(userId);
         List<DocumentModel> ownedDocuments = new ArrayList<>();
-        for(UserPermissions userPermission : userPermissions){
-            if(userPermission.isOwner()){
+        for (UserPermissions userPermission : userPermissions) {
+            if (userPermission.isOwner()) {
                 DocumentModel document = DocumentRepository.findById(userPermission.getDocumentId()).orElse(null);
-                if(document != null){
+                if (document != null) {
                     ownedDocuments.add(document);
                 }
             }
         }
-        // [0 .. 5 .. 9  ]
-        int start = (page_num-1)*pageSize ;
-        int end ;
-        if(start>= ownedDocuments.size()){
+        // Sort the documents by createdAt in descending order
+        ownedDocuments.sort(Comparator.comparing(DocumentModel::getCreatedAt).reversed());
+        // [0 .. 5 .. 9 ]
+        int start = (page_num - 1) * pageSize;
+        int end;
+        if (start >= ownedDocuments.size()) {
             return new ArrayList<>();
-        }else {
-            end  = start + pageSize -1 ;
-            if(end >=  ownedDocuments.size()){
-                end = ownedDocuments.size()-1 ;
+        } else {
+            end = start + pageSize - 1;
+            if (end >= ownedDocuments.size()) {
+                end = ownedDocuments.size() - 1;
             }
 
         }
-        return ownedDocuments.subList(start , end+1);
+        return ownedDocuments.subList(start, end + 1);
 
     }
 
@@ -111,28 +115,29 @@ public class DocumentService {
         List<UserPermissions> userPermissions = userPermissionService.getUserPermissionsByUserId(userId);
         List<SharedDocument> sharedDocuments = new ArrayList<>();
 
-        for(UserPermissions userPermission : userPermissions){
-            if(!(userPermission.isOwner())){
+        for (UserPermissions userPermission : userPermissions) {
+            if (!(userPermission.isOwner())) {
                 DocumentModel document = DocumentRepository.findById(userPermission.getDocumentId()).orElse(null);
-                if(document != null){
-                    SharedDocument shared = new SharedDocument(document.getId(), document.getTitle(), document.getContent(), userPermission.isEdit());
+                if (document != null) {
+                    SharedDocument shared = new SharedDocument(document.getId(), document.getTitle(),
+                            document.getContent(), userPermission.isEdit());
                     sharedDocuments.add(shared);
                 }
             }
         }
-        // [0 .. 5 .. 9  ]
-        int start = (page_num-1)*pageSize ;
-        int end ;
-        if(start>= sharedDocuments.size()){
+        // [0 .. 5 .. 9 ]
+        int start = (page_num - 1) * pageSize;
+        int end;
+        if (start >= sharedDocuments.size()) {
             return new ArrayList<>();
-        }else {
-            end  = start + pageSize -1 ;
-            if(end >=  sharedDocuments.size()){
-                end = sharedDocuments.size()-1 ;
+        } else {
+            end = start + pageSize - 1;
+            if (end >= sharedDocuments.size()) {
+                end = sharedDocuments.size() - 1;
             }
 
         }
-        return sharedDocuments.subList(start , end+1);
+        return sharedDocuments.subList(start, end + 1);
 
     }
 
