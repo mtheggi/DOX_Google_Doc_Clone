@@ -51,6 +51,7 @@ public class AuthenticationService {
                 } catch (Exception e) {
 
                         return AuthenticationResponse.builder()
+                                        .token(null)
                                         .message("Invalid email/password")
                                         .build();
                 }

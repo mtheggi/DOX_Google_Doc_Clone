@@ -1,7 +1,10 @@
 package com.dox_google_doc_clone.dox_google_doc_clone.Models;
 
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.time.LocalDateTime;
 
 @Document
 public class DocumentModel {
@@ -13,6 +16,8 @@ public class DocumentModel {
 
     private String content;
 
+    @CreatedDate
+    private LocalDateTime createdAt;
     public DocumentModel(String title, String content) {
         this.title = title;
         this.content = content;

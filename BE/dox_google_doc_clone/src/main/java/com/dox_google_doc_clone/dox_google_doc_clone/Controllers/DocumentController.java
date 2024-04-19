@@ -19,7 +19,7 @@ import com.dox_google_doc_clone.dox_google_doc_clone.Services.DocumentService;
 
 import javax.print.Doc;
 
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "*")
 @RestController
 public class DocumentController {
     private DocumentService documentService;
