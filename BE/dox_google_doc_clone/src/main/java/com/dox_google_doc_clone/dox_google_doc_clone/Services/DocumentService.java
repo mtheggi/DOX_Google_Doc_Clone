@@ -79,7 +79,7 @@ public class DocumentService {
     }
 
     public List<DocumentModel> getOwnedDocuments(String userId, int page_num) {
-        int pageSize = 3;
+        int pageSize = 9;
         List<UserPermissions> userPermissions = userPermissionService.getUserPermissionsByUserId(userId);
         List<DocumentModel> ownedDocuments = new ArrayList<>();
         for(UserPermissions userPermission : userPermissions){
@@ -107,7 +107,7 @@ public class DocumentService {
     }
 
     public List<SharedDocument> getSharedDocuments(String userId, int page_num) {
-        int pageSize = 3;
+        int pageSize = 9;
         List<UserPermissions> userPermissions = userPermissionService.getUserPermissionsByUserId(userId);
         List<SharedDocument> sharedDocuments = new ArrayList<>();
 
