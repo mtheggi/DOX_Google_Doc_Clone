@@ -19,12 +19,6 @@ const CustomToolbar = () => {
     return (
         <div id="toolbar" className="w-full h-9 px-2 flex flex-row items-center rounded-full bg-[#EDF2FB]">
 
-            {/* <div className=" space-x-5 ml-2">
-                {toolbarOptions[0].map((option) => (
-                    <button className={`ql-${option} text-[20px] ${option == "I" ? ' font-serif italic font-medium' : ' font-semibold'}`}>{option.charAt(0).toUpperCase() + option.slice(1)}</button>
-                ))}
-            </div> */}
-
             <div className="ml-auto w-20 h-7 mr-2 flex justify-center items-center rounded-xl bg-[#DFE5EA] ">
 
                 {
@@ -95,8 +89,8 @@ const TextEditor = () => {
             <div className="w-full h-14 px-2 py-2">
                 <div className="w-full h-full flex items-center flex-row ">
 
-                    <div onClick={() => navigate("/")} className="w-[36px] cursor-pointer h-[36px] min-w-[36px] mr-1 ml-2 min-h-[36px]">
-                        <img className="gb_Mc gb_Nd h-full w-full" src="https://www.gstatic.com/images/branding/product/1x/docs_2020q4_48dp.png" srcsSet="https://www.gstatic.com/images/branding/product/1x/docs_2020q4_48dp.png 1x, https://www.gstatic.com/images/branding/product/2x/docs_2020q4_48dp.png 2x " alt="" aria-hidden="true" role="presentation" ></img>
+                    <div onClick={() => navigate("/home")} className="w-[36px] cursor-pointer h-[36px] min-w-[36px] mr-1 ml-2 min-h-[36px]">
+                        <img className="gb_Mc gb_Nd h-full w-full" src="https://www.gstatic.com/images/branding/product/1x/docs_2020q4_48dp.png" srcSet="https://www.gstatic.com/images/branding/product/1x/docs_2020q4_48dp.png 1x, https://www.gstatic.com/images/branding/product/2x/docs_2020q4_48dp.png 2x " alt="" aria-hidden="true" role="presentation" ></img>
                     </div >
                     <div className="md:w-6/12 sm:5/12  w-3/12" onDoubleClick={() => setRenameMode(false)}>
                         {renameMode ? (<h1 className="text-black overflow-text w-full text-[18px] font-base">{inputValue}</h1>)

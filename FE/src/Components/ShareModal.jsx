@@ -5,8 +5,8 @@ import TagInput from "./TagInput";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 
 
-const ShareModal = ({ setIsOpenedShareMenu }) => {
-    const [fileName, setFileName] = useState("");
+const ShareModal = ({ setIsOpenedShareMenu, name, id, owner }) => {
+
     const [permissionValue, setPermissionValue] = useState("View");
     const [permissionDropDown, setPermissionDropDown] = useState(false);
     const permissionMenuRef = useRef();
@@ -19,7 +19,7 @@ const ShareModal = ({ setIsOpenedShareMenu }) => {
 
                     <div className="flex flex-row mb-3 justify-between">
                         <h1 className="text-2xl h-7 text-black font-medium mb-2 text-neutral">
-                            Share '{fileName}'
+                            Share '{name}'
                         </h1>
                         <div onClick={()=>setIsOpenedShareMenu(false)} className="flex flex-row w-8 h-8 justify-center items-center cursor-pointer rounded-full hover:bg-gray-200">
                             <XMarkIcon className="w-7 h-7" />

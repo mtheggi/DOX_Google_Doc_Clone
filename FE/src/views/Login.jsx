@@ -31,7 +31,7 @@ const LogIn = () => {
       }
       else {
         localStorage.setItem('token', response.data.token);
-        navigate("home")
+        navigate("/home")
       }
     }
   }
