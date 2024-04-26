@@ -7,6 +7,7 @@ import ShareModal from "../Components/ShareModal";
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css'; // import the styles
 import { DisconnectWebSocket, ConnectToWebSocket, sendmessage } from '../services/WebSocket';
+import { convertDeltaToCrdt } from '../services/CRTS';
 import { useLocation } from 'react-router-dom';
 const toolbarOptions = [
     ['bold', 'italic'],        // toggled buttons
@@ -147,8 +148,10 @@ const TextEditor = () => {
                             <ReactQuill className="w-full bg-white border-[0.5px] border-gray-300 focus:border-[0.5px] focus:border-gray-300 text-black p-7  h-[1000px] mb-2 resize-none focus:outline-none focus:ring-0" modules={{ toolbar: toolbarOptions }}
                                 value={contentOfDocument}
                                 onChange={(content, delta, source, editor) => {
-                                    console.log(content);
-                                    // console.log(delta);
+                                    // console.log(content);
+                                    console.log(convertDeltaToCrdt(delta));
+                                    console.log("TEST TEST TEST");
+                                    console.log(delta);
                                     // console.log(delta.ops[0].insert); // Logs the HTML content in the editor
                                 }} />
                         </div>
