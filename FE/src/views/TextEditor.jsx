@@ -6,8 +6,8 @@ import { useNavigate } from "react-router-dom";
 import ShareModal from "../Components/ShareModal";
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css'; // import the styles
-
-
+import { DisconnectWebSocket, ConnectToWebSocket, sendmessage } from '../services/WebSocket';
+import { useLocation } from 'react-router-dom';
 const toolbarOptions = [
     ['bold', 'italic'],        // toggled buttons
 ];
@@ -53,15 +53,21 @@ const CustomToolbar = () => {
 
 const TextEditor = () => {
 
+    const location = useLocation();
+    const inputdocmunet = location.state.data
+
     const [isOpenedShareMenu, setIsOpenedShareMenu] = useState(false);
     const [renameMode, setRenameMode] = useState(true);
-    const [inputValue, setInputValue] = useState("Untitled Document");
-    const [lastValidName, setLastValidName] = useState("Untitled Document");
+    const [inputValue, setInputValue] = useState(inputdocmunet.title);
+    const [lastValidName, setLastValidName] = useState(inputdocmunet.title);
+    const [contentOfDocument, setContentOfDocument] = useState(inputdocmunet.content);
     const inputRef = useRef();
     const sharedMenuRef = useRef();
     const navigate = useNavigate();
 
     useEffect(() => {
+
+        ConnectToWebSocket();
         let closeDropdown = (e) => {
             if (sharedMenuRef.current && !sharedMenuRef.current.contains(e.target)) {
                 setIsOpenedShareMenu(false);
@@ -96,12 +102,13 @@ const TextEditor = () => {
                         {renameMode ? (<h1 className="text-black overflow-text w-full text-[18px] font-base">{inputValue}</h1>)
                             : (<input maxLength={50} onBlur={(e) => {
                                 setRenameMode(true);
+
                                 if (e.target.value.trim() === "") {
                                     setInputValue(lastValidName); // If new name is empty, set back to last valid name
                                 } else {
                                     setLastValidName(e.target.value); // If new name is not empty, update last valid name
                                 }
-                            }} onChange={(e) => setInputValue(e.target.value)} ref={inputRef} className=" border-0 text-[18px] focus:ring-0 focus:outline-none w-full font-base bg-transparent focus:border-0" value={inputValue}
+                            }} onChange={(e) => { setInputValue(e.target.value); }} ref={inputRef} className=" border-0 text-[18px] focus:ring-0 focus:outline-none w-full font-base bg-transparent focus:border-0" value={inputValue}
 
                             />)
                         }
@@ -137,7 +144,13 @@ const TextEditor = () => {
                 <div className="w-full h-fit ">
                     <div className="w-full h-full border-[0.5px] border-t-[0px] p-4 flex flex-row border-gray-300">
                         <div className="w-[790px] mx-auto h-fit">
-                            <ReactQuill className="w-full bg-white border-[0.5px] border-gray-300 focus:border-[0.5px] focus:border-gray-300 text-black p-7  h-[1000px] mb-2 resize-none focus:outline-none focus:ring-0" modules={{ toolbar: toolbarOptions }} />
+                            <ReactQuill className="w-full bg-white border-[0.5px] border-gray-300 focus:border-[0.5px] focus:border-gray-300 text-black p-7  h-[1000px] mb-2 resize-none focus:outline-none focus:ring-0" modules={{ toolbar: toolbarOptions }}
+                                value={contentOfDocument}
+                                onChange={(content, delta, source, editor) => {
+                                    console.log(content);
+                                    // console.log(delta);
+                                    // console.log(delta.ops[0].insert); // Logs the HTML content in the editor
+                                }} />
                         </div>
                     </div>
                 </div>
