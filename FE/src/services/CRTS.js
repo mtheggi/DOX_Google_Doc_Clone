@@ -6,26 +6,27 @@
 export function convertDeltaToCrdt(delta) {
     const crdtOperations = [];
 
-    let index = 0;
+    // let index = 0;
+    let insertIndx = 0;
     for (const op of delta.ops) {
-        if (op.insert) {
+        if (op.retain) {
             // For insert operations, add a CRDT insert operation for each character
-            for (const char of op.insert) {
-                crdtOperations.push({ type: 'insert', index, char });
-                index++;
-            }
-        } else if (op.delete) {
+            insertIndx = op.retain;
+        }
+        if (op.insert) {
+            crdtOperations.push({ type: 'insert', index: insertIndx, char: op.insert });
+        }
+
+        if (op.delete) {
             // For delete operations, add a CRDT delete operation for each deleted character
-            for (let i = 0; i < op.delete; i++) {
-                crdtOperations.push({ type: 'delete', index });
-            }
-        } else if (op.retain) {
-            // For retain operations, just move the index forward
-            index += op.retain;
+            crdtOperations.push({ type: 'delete', index: insertIndx });
         }
     }
+    console.log("LAst Element of the crdtOperations")
     console.log(crdtOperations);
-    return crdtOperations;
+    const lastElement = crdtOperations[crdtOperations.length - 1];
+    console.log(lastElement)
+    return { operation: lastElement?.type, documentId: "12", character: lastElement?.char, index: lastElement?.index };
 }
 
 // class CharObject {
