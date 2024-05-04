@@ -177,6 +177,7 @@ const Home = () => {
                             name={document.title}
                             content={document.content}
                             owner={sortValue=="Owned"?"Me":`${document.owner}`}
+                            createdAt={document.createdAt}
                             />
                         ))}
                     </div>

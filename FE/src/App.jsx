@@ -14,25 +14,25 @@ import SockJS from 'sockjs-client';
 
 function App() {
   const [isNotFound, setIsNotFound] = useState(false);
-  useEffect(() => {
-    const socket = new SockJS('http://localhost:8080/ws');
-    const client = Stomp.over(socket);
-    console.log("HHHHHHHHHHHHHHHHHHHHHHHEREE");
-    client.connect({}, () => {
-      console.log('connection established');
-      client.subscribe('/app/topic', (message) => {
-        const recievedMessage = JSON.parse(message.body);
-        console.log("messsage recieved", recievedMessage);
-      });
+  // useEffect(() => {
+  //   const socket = new SockJS('http://localhost:8080/ws');
+  //   const client = Stomp.over(socket);
+  //   console.log("HHHHHHHHHHHHHHHHHHHHHHHEREE");
+  //   client.connect({}, () => {
+  //     console.log('connection established');
+  //     client.subscribe('/app/topic', (message) => {
+  //       const recievedMessage = JSON.parse(message.body);
+  //       console.log("messsage recieved", recievedMessage);
+  //     });
 
-      // Move the send method inside the connect callback
-      client.send('/app/broadcast', {}, JSON.stringify({ message: 'Hello' }));
-    });
+  //     // Move the send method inside the connect callback
+  //     client.send('/app/broadcast', {}, JSON.stringify({ message: 'Hello' }));
+  //   });
 
-    return () => {
-      client.disconnect();
-    }
-  }, []);
+  //   return () => {
+  //     client.disconnect();
+  //   }
+  // }, []);
 
   return (
     <Router>

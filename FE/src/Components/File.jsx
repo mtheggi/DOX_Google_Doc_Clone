@@ -4,7 +4,7 @@ import ShareModal from "../Components/ShareModal";
 import EventEmitter from 'events';
 
 
-const File = ({ name, id, owner, isOpenedShareMenu, setIsOpenedShareMenu, optionsDropDownOpen, setOptionsDropDownOpen }) => {
+const File = ({ name, id, owner, isOpenedShareMenu, setIsOpenedShareMenu, optionsDropDownOpen, setOptionsDropDownOpen, createdAt }) => {
 
     const [renameMode, setRenameMode] = useState(false);
     const [inputValue, setInputValue] = useState(name);
@@ -13,6 +13,14 @@ const File = ({ name, id, owner, isOpenedShareMenu, setIsOpenedShareMenu, option
 
     const optionsMenuRef = useRef();
     const sharedMenuRef = useRef();
+
+    const formatDate = (isoDate) => {
+        const date = new Date(isoDate);
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are 0-indexed in JS
+        const year = date.getFullYear();
+        return `${day}-${month}-${year}`;
+    }
 
 
     useEffect(() => {
@@ -62,7 +70,7 @@ const File = ({ name, id, owner, isOpenedShareMenu, setIsOpenedShareMenu, option
                     <h1 className="text-[12.5px] mt-1.5 ml-1 font-medium">{owner}</h1>
                 </div>
                 <div className="w-4/12 flex flex-row">
-                    <h1 className="text-[12.5px] mt-1.5 no-select font-medium">11/01/2022</h1>
+                    <h1 className="text-[12.5px] mt-1.5 no-select font-medium">{formatDate(createdAt)}</h1>
                 </div>
                 <div className="">
                     <div onClick={(e) => { e.stopPropagation(); setOptionsDropDownOpen(prev => !prev) }} className={`w-8 h-8  sm:mr-0 rounded-full mt-1 hover:bg-gray-300 relative flex flex-row justify-center items-center ${optionsDropDownOpen ? 'bg-gray-300' : ''}`}>

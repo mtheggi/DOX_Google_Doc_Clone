@@ -53,6 +53,32 @@ const CustomToolbar = () => {
 
 const TextEditor = () => {
 
+    const [lastChange, setLastChange] = useState(null);
+
+    const handleTextChange = (content, delta, source, editor) => {
+        console.clear();
+        let index = 0;
+    
+        // Log the operation type, index, and value of the change
+        if (delta.ops.length) {
+            for (let op of delta.ops) {
+                if (op.insert) {
+                    console.log("Operation: insert");
+                    console.log("Value: ", op.insert);
+                    console.log("Index: ", index);
+                    index += op.insert.length;
+                } else if (op.delete) {
+                    console.log("Operation: delete");
+                    console.log("Number of characters deleted: ", op.delete);
+                    console.log("Index: ", index);
+                    index += op.delete;
+                } else if (op.retain) {
+                    index += op.retain;
+                }
+            }
+        }
+    };
+
     const [isOpenedShareMenu, setIsOpenedShareMenu] = useState(false);
     const [renameMode, setRenameMode] = useState(true);
     const [inputValue, setInputValue] = useState("Untitled Document");
@@ -137,7 +163,7 @@ const TextEditor = () => {
                 <div className="w-full h-fit ">
                     <div className="w-full h-full border-[0.5px] border-t-[0px] p-4 flex flex-row border-gray-300">
                         <div className="w-[790px] mx-auto h-fit">
-                            <ReactQuill className="w-full bg-white border-[0.5px] border-gray-300 focus:border-[0.5px] focus:border-gray-300 text-black p-7  h-[1000px] mb-2 resize-none focus:outline-none focus:ring-0" modules={{ toolbar: toolbarOptions }} />
+                            <ReactQuill onChange={handleTextChange} className="w-full bg-white border-[0.5px] border-gray-300 focus:border-[0.5px] focus:border-gray-300 text-black p-7  h-[1000px] mb-2 resize-none focus:outline-none focus:ring-0" modules={{ toolbar: toolbarOptions }} />
                         </div>
                     </div>
                 </div>
