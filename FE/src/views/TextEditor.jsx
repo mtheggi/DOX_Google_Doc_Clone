@@ -7,7 +7,8 @@ import ShareModal from "../Components/ShareModal";
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css'; // import the styles
 import { DisconnectWebSocket, ConnectToWebSocket, sendmessage } from '../services/WebSocket';
-import { convertDeltaToCrdt } from '../services/CRDTS';
+import { convertDeltaToCrdt, CRDTinstance } from '../services/CRDTS';
+
 import { useLocation } from 'react-router-dom';
 const toolbarOptions = [
     ['bold', 'italic'],        // toggled buttons
@@ -56,9 +57,9 @@ const TextEditor = () => {
 
     const [isOpenedShareMenu, setIsOpenedShareMenu] = useState(false);
     const [renameMode, setRenameMode] = useState(true);
-    // const [inputValue, setInputValue] = useState(inputdocmunet.title);
-    // const [lastValidName, setLastValidName] = useState(inputdocmunet.title);
-    // const [contentOfDocument, setContentOfDocument] = useState(inputdocmunet.content);
+    const [inputValue, setInputValue] = useState(inputdocmunet.title);
+    const [lastValidName, setLastValidName] = useState(inputdocmunet.title);
+    const [contentOfDocument, setContentOfDocument] = useState(inputdocmunet.content);
     const inputRef = useRef();
     const sharedMenuRef = useRef();
     const quillRef = useRef();
@@ -147,16 +148,14 @@ const TextEditor = () => {
                                 value={""}
                                 ref={quillRef}
                                 onChange={(content, delta, source, editor) => {
-                                    if (source === 'silent') return;
 
-                                    console.log("content", content);
-                                    console.log("delta", delta);
-                                    console.log("source ", source);
-                                    console.log("editor", editor);
-                                    sendmessage(convertDeltaToCrdt(delta));
-                                    console.log("TEST TEST TEST");
-                                    console.log(delta);
-                                    // console.log(delta.ops[0].insert); // Logs the HTML content in the editor
+                                    const op = convertDeltaToCrdt(delta);
+                                    if (op.operation === 'insert') {
+                                        CRDTinstance.localInsert(op.character, op.index);
+                                    } else {
+                                        CRDTinstance.localDelete(op.index);
+                                    }
+
                                 }} />
                         </div>
                     </div>

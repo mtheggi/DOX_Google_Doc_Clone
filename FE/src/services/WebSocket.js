@@ -2,7 +2,7 @@ import Stomp from 'stompjs';
 import SockJS from 'sockjs-client';
 import { v1 as uuidv1 } from 'uuid';
 import Delta from 'quill-delta';
-import { siteId } from './CRDTS';
+import { siteId, CRDTinstance } from './CRDTS';
 
 const userId = siteId;
 const socket = new SockJS('http://localhost:8080/ws/');
@@ -27,26 +27,17 @@ export const ConnectToWebSocket = async (quillRef) => {
 
             const quill = quillRef.current.getEditor();
             const op = JSON.parse(data.body);
-            console.log("message Received from server:")
-            console.log(op);
 
-            if (op.userId !== userId) {
-                let testOps = [];
-                if (op.operation == 'insert') {
-                    if (op.index != 0) {
-                        testOps.push({ retain: op.index });
-                    }
-                    testOps.push({ insert: op.character[0] });
-                } else if (op.operation == 'delete') {
-                    if (op.index != 0) {
-                        testOps.push({ retain: op.index });
-                    }
-                    testOps.push({ delete: 1 });
+            if (op.siteId !== siteId) {
+                let deltas;
+                if (op.operation === 'delete') {
+                    deltas = CRDTinstance.remoteDelete(op.fractionIndex);
 
+                } else {
+                    deltas = CRDTinstance.remoteInsert(op.character, op.fractionIndex);
                 }
-                console.log("operation to be applied to the quill editor:");
-                console.log(testOps);
-                quill.updateContents({ ops: testOps }, 'silent');
+
+                quill.updateContents(deltas, 'silent');
             }
         });
     };

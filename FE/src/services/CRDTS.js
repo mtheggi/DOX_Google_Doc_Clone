@@ -1,7 +1,7 @@
 
 import { v1 as uuidv1 } from 'uuid';
 export const siteId = uuidv1();
-import { Char } from './Char';
+import Char from './Char';
 import { sendmessage } from './WebSocket';
 //convert String to crts obecjt
 //Structure of crts object

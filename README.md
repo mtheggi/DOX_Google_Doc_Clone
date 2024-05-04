@@ -19,9 +19,9 @@ https://docs.google.com/document/d/13crG1VhGFKycchIWPu1T3OujaelBUYup1vUjEs1jipQ/
 
 
 ## ToDo  : 
-1- rename ; 
-2- get document/owned --->return the username of the owner with it 
-3- get document/shared
+1- document/All return {document , username of the owne r}
+2- document/{documentId} return {document Model}; 
+
 
 
 ## cASES 
