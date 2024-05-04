@@ -11,6 +11,8 @@ import com.dox_google_doc_clone.dox_google_doc_clone.Services.UserPermissionsSer
 import com.dox_google_doc_clone.dox_google_doc_clone.Services.UserService;
 import com.dox_google_doc_clone.dox_google_doc_clone.config.JwtService;
 import com.fasterxml.jackson.databind.JsonNode;
+
+import org.bson.Document;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -108,6 +110,30 @@ public class DocumentController {
 
         List<SharedDocument> list = documentService.getSharedDocuments(userId, page_num);
         return new ResponseEntity<>(list, HttpStatus.OK);
+    }
+
+    @PutMapping("/document/rename/{documentId}")
+    public ResponseEntity<DocumentModel> renameDocument(@PathVariable String documentId, @RequestBody  JsonNode jsonNode,  @RequestHeader("Authorization") String token) {
+      
+        String email = jwtService.extractEmail(token.substring(7));
+        String userId;
+        if (userService.getUserByEmail(email).isPresent()) {
+            userId = userService.getUserByEmail(email).get().getId();
+        } else {
+            return new ResponseEntity<>( HttpStatus.BAD_REQUEST);
+        }
+        UserPermissions userPermissions = userPermissionsService.getUserPermissionByDocumentIdAndUserId(documentId, userId); 
+        
+
+        if (userPermissions != null  && (userPermissions.isEdit() || userPermissions.isOwner()) ){
+            DocumentModel documentModel = documentService.renameDocument(documentId, jsonNode.get("title").asText());
+            if (documentModel == null) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }else {
+                return new ResponseEntity<>(documentModel, HttpStatus.OK);
+            }
+        }
+        return new ResponseEntity<>( HttpStatus.BAD_REQUEST);
     }
 
 }

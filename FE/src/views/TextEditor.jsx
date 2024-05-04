@@ -7,7 +7,7 @@ import ShareModal from "../Components/ShareModal";
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css'; // import the styles
 import { DisconnectWebSocket, ConnectToWebSocket, sendmessage } from '../services/WebSocket';
-import { convertDeltaToCrdt } from '../services/CRTS';
+import { convertDeltaToCrdt } from '../services/CRDTS';
 import { useLocation } from 'react-router-dom';
 const toolbarOptions = [
     ['bold', 'italic'],        // toggled buttons

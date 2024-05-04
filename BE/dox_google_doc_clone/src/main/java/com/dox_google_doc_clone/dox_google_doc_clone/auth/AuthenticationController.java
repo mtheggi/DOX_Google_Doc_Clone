@@ -22,6 +22,9 @@ public class AuthenticationController {
     @PostMapping("/user/signup")
     public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request) {
         System.out.println(request);
+        if(repository.findByUserName(request.getUsername()) != null){
+            return ResponseEntity.badRequest().body(new AuthenticationResponse("Username already exists"));
+        }
         if (repository.findByEmail(request.getEmail()).isPresent()) {
             return ResponseEntity.badRequest().body(new AuthenticationResponse("Email already exists"));
         }

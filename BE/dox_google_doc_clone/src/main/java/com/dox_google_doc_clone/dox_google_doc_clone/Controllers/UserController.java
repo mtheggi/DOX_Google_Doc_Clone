@@ -41,9 +41,9 @@ public class UserController {
     }
 
     @GetMapping("/user/exists/{param}")
-    public String getMethodName(@PathVariable String param) {
+    public ResponseEntity<String> getMethodName(@PathVariable String param) {
         System.err.println(param);
-        return userService.getUserByName(param) != null ? "User exists" : "User does not exist";
+        return userService.getUserByName(param) != null ?  new ResponseEntity<>("User Exists", HttpStatus.OK) : new ResponseEntity<>("user doesnot exists", HttpStatus.BAD_REQUEST);
     }
 
 }
