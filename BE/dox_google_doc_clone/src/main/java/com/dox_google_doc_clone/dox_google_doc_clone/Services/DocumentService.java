@@ -145,4 +145,13 @@ public class DocumentService {
     public DocumentModel saveDocument(DocumentModel document) {
         return DocumentRepository.save(document);
     }
+    public DocumentModel renameDocument(String documentId, String newName ){
+        DocumentModel document = DocumentRepository.findById(documentId).orElse(null);
+        if(document == null){
+            return null;
+        }
+        document.setTitle(newName);
+        return DocumentRepository.save(document);
+
+    }
 }

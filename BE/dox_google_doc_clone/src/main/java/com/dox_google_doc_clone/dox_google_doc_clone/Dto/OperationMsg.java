@@ -14,16 +14,18 @@ public class OperationMsg {
     private String operation;
     private String documentId;
     private String character;
-    private String userId;
-    private int index; // index of the character in the document
+    private String siteId;
+    private int counter; // index of the character in the document
+    private float fractionIndex; // index of the character in the document
     @Override
     public String toString() {
         return "OperationMsg{" +
                 "operation='" + operation + '\'' +
                 ", documentId='" + documentId + '\'' +
                 ", character='" + character + '\'' +
-                ", userId='" + userId + '\'' +
-                ", index=" + index +
+                ", siteId='" + siteId + '\'' +
+                ", counter=" + counter +
+                ", fractionIndex=" + fractionIndex +
                 '}';
     }
 

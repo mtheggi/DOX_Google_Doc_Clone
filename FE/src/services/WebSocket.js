@@ -2,8 +2,9 @@ import Stomp from 'stompjs';
 import SockJS from 'sockjs-client';
 import { v1 as uuidv1 } from 'uuid';
 import Delta from 'quill-delta';
+import { siteId } from './CRDTS';
 
-const userId = uuidv1();
+const userId = siteId;
 const socket = new SockJS('http://localhost:8080/ws/');
 const client = Stomp.over(socket);
 
@@ -55,9 +56,7 @@ export const ConnectToWebSocket = async (quillRef) => {
 
 
 export const sendmessage = async (operation) => {
-    const operationWithUserId = { ...operation, userId };
-    console.log("userID", userId);
-    await client.send("/app/broadcast", {}, JSON.stringify(operationWithUserId));
+    await client.send("/app/broadcast", {}, JSON.stringify(operation));
 }
 
 export const DisconnectWebSocket = () => {
