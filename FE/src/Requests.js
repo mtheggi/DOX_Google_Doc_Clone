@@ -119,6 +119,7 @@ export const getRequestWithToken = async (url) => {
                 'Authorization': `Bearer ${token}`
             }
         });
+        console.log(response);
         return response;
 
     } catch (error) {

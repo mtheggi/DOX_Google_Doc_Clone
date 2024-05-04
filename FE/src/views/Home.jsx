@@ -9,7 +9,7 @@ import File from "../Components/File";
 
 
 const Home = () => {
-    const baseUrl = "http://localhost:8080"
+    const baseUrl = "http://localhost:8080";
     const [sortValue, setSortValue] = useState("All");
     const [sortDropDownOpen, setSortDropDownOpen] = useState(false);
     const [isNewDocAdded, setIsNewDocAdded] = useState(false);
@@ -21,6 +21,7 @@ const Home = () => {
     const [isOpenedShareMenu, setIsOpenedShareMenu] = useState(null);
     const [optionsDropDownOpen, setOptionsDropDownOpen] = useState(null);
 
+    const navigate = useNavigate();
     const sortMenuRef = useRef();
     const renameMenuRef = useRef();
 
@@ -31,11 +32,11 @@ const Home = () => {
             if (sortMenuRef.current && !sortMenuRef.current.contains(e.target)) {
                 setSortDropDownOpen(false);
             }
-        
+
             if (renameMenuRef.current && !renameMenuRef.current.contains(e.target)) {
                 setIsNewDocAdded(false);
             }
-      
+
         };
         document.addEventListener('click', closeDropdown);
 
@@ -49,11 +50,11 @@ const Home = () => {
         let isSortChanged = (prevSelectedSort.current !== sortValue);
         console.log(isSortChanged);
         let pageNum = isSortChanged ? 1 : page;
-
         const getOwnedFiles = async () => {
             setLoading(true);
             try {
                 const response = await getRequestWithToken(`${baseUrl}/document/owned/${pageNum}`);
+                console.log(response);
                 if (response.status == 200 || response.status == 201) {
                     if (isSortChanged) {
                         setDocuments(response.data);
@@ -71,7 +72,6 @@ const Home = () => {
                 setLoading(false);
             }
         }
-
         const getSharedFiles = async () => {
             setLoading(true);
             try {
@@ -93,7 +93,7 @@ const Home = () => {
                 setLoading(false);
             }
         }
-        
+
         if (sortValue === "Owned") {
             getOwnedFiles();
         }
@@ -101,18 +101,14 @@ const Home = () => {
             getSharedFiles();
         }
         prevSelectedSort.current = sortValue;
-        
-
     }, [page, sortValue]);
-
-
     const handleScroll = (e) => {
         const bottom = e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight;
-        if (bottom && hasMore) { 
-            setPage(prevPage => prevPage + 1); 
+        if (bottom && hasMore) {
+            setPage(prevPage => prevPage + 1);
         }
     }
-    
+
 
     return (
         <>

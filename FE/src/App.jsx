@@ -1,5 +1,3 @@
-window.global = window;
-
 import './index.css'
 import LogIn from './views/Login'
 import SignUp from './views/Signup'
@@ -10,8 +8,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Quill from './Components/CustomizedQuill'
 import Stomp from 'stompjs';
 import SockJS from 'sockjs-client';
-
-
+import { DisconnectWebSocket, ConnectToWebSocket, sendmessage } from './services/WebSocket';
 function App() {
   const [isNotFound, setIsNotFound] = useState(false);
   // useEffect(() => {
@@ -37,6 +34,7 @@ function App() {
   return (
     <Router>
       <div className="App h-screen flex flex-col bg-gray-200 overflow-hidden">
+        {/* <button onClick={() => sendmessage({ operation: "INSERT", documentId: "5", character: "A" })}>  test </button> */}
         <Routes>
           <Route path="/" element={<LogIn />} />
           <Route path="/signup" element={<SignUp />} />

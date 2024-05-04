@@ -16,13 +16,13 @@ public class WebSocketEventListener {
     @EventListener
     public void handleWebSocketConnectListener(SessionConnectedEvent event) {
         log.info("Received a new web socket connection");
-        System.out.println("Received a new web socket connection");
+        System.err.println("Received a new web socket connection");
 
     }
     @EventListener
     public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
         log.info("Web socket connection disconnected");
-        System.out.println("Web socket connection disconnected");
+        System.err.println("Web socket connection disconnected");
     }
 
 }

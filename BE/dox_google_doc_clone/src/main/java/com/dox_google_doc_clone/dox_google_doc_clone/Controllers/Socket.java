@@ -11,7 +11,7 @@ public class Socket {
     @MessageMapping("/broadcast")
     @SendTo("/topic/public")
     public OperationMsg broadcast( @Payload  OperationMsg operationMsg) {
-        System.err.println("Operation: " + operationMsg.getOperation() + " DocumentId: " + operationMsg.getDocumentId() + " Character: " + operationMsg.getCharacter());
+        System.err.println(operationMsg.toString());
         return operationMsg;
     }
 
