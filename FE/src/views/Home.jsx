@@ -1,29 +1,49 @@
 import { DocumentTextIcon, EllipsisVerticalIcon } from "@heroicons/react/24/outline";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import React from 'react';
-import { getRequestWithToken, postRequest } from "../Requests";
+import { getRequestWithToken } from "../Requests";
 import Navbar from "../Components/Navbar";
 import RenameModal from "../Components/RenameModal";
 import File from "../Components/File";
 
 
-const Home = () => {
+const Home = ({ setIsLoggedIn }) => {
     const baseUrl = "http://localhost:8080";
-    const [sortValue, setSortValue] = useState("All");
+    const [sortValue, setSortValue] = useState(() => {
+        return localStorage.getItem('sortValue') || "All";
+    });
+    useEffect(() => {
+        localStorage.setItem('sortValue', sortValue);
+    }, [sortValue]);
+
     const [sortDropDownOpen, setSortDropDownOpen] = useState(false);
     const [isNewDocAdded, setIsNewDocAdded] = useState(false);
+    const [documents, setDocuments] = useState([]);
     const prevSelectedSort = useRef(sortValue);
     const [page, setPage] = useState(1);
-    const [Documents, setDocuments] = useState([]);
     const [loading, setLoading] = useState(true);
     const [hasMore, setHasMore] = useState(true);
-    const [isOpenedShareMenu, setIsOpenedShareMenu] = useState(null);
-    const [optionsDropDownOpen, setOptionsDropDownOpen] = useState(null);
+
+  
+    const [sortChanged, setSortChanged] = useState(0);
 
     const navigate = useNavigate();
     const sortMenuRef = useRef();
     const renameMenuRef = useRef();
+
+    const observer = useRef();
+    const lastPostRef = useCallback(node => {
+        if (loading) return;
+        if (observer.current) observer.current.disconnect();
+        observer.current = new IntersectionObserver(entries => {
+            if (entries[0].isIntersecting && hasMore) {
+
+                setPage(prevPage => prevPage + 1);
+            }
+        });
+        if (node) observer.current.observe(node);
+    }, [loading, hasMore]);
 
 
 
@@ -46,73 +66,84 @@ const Home = () => {
     }, []);
 
 
+
     useEffect(() => {
-        let isSortChanged = (prevSelectedSort.current !== sortValue);
-        console.log(isSortChanged);
-        let pageNum = isSortChanged ? 1 : page;
-        const getOwnedFiles = async () => {
-            setLoading(true);
+        if (prevSelectedSort.current !== sortValue) {
+            setDocuments([]);
+            setPage(1);
+            setSortChanged(prev => (prev + 1));
+        }
+    }, [sortValue]);
+
+
+
+
+    useEffect(() => {
+
+        const getDocuments = async () => {
             try {
-                const response = await getRequestWithToken(`${baseUrl}/document/owned/${pageNum}`);
-                console.log(response);
-                if (response.status == 200 || response.status == 201) {
-                    if (isSortChanged) {
-                        setDocuments(response.data);
+                setHasMore(true);
+                setLoading(true);
+
+                if (sortValue == "All") {
+                    const response1 = await getRequestWithToken(`${baseUrl}/document/owned/${page}`);
+                    const response2 = await getRequestWithToken(`${baseUrl}/document/shared/${page}`);
+                    const status1 = response1.status;
+                    const data1 = response1.data;
+                    const status2 = response2.status;
+                    const data2 = response2.data;
+
+                    if (status1 === 200 || status1 === 201 && status2 === 200 || status2 === 201) {
+                        const data = [...data1, ...data2];
+                        data.sort((a, b) => {
+                            return new Date(b.createdAt) - new Date(a.createdAt);
+                        });
+                        setDocuments(prev => [...prev, ...data]);
+                        setHasMore(data1.length >= 9 || data2.length > 9);
+
                     } else {
-                        setDocuments(prevDocuments => [...prevDocuments, ...response.data]);
+
+                        throw new Error('Error fetching comments');
+
                     }
-                    if (response.data.length === 0) {
-                        setHasMore(false);
+                }
+                else {
+                    const response = await getRequestWithToken(`${baseUrl}/document/${sortValue.toLowerCase()}/${page}`);
+                    const status = response.status;
+                    const data = response.data;
+
+                    if (status === 200 || status === 201) {
+                        setDocuments(prev => [...prev, ...data]);
+                        setHasMore(data.length >= 9);
+
+                    } else {
+
+                        throw new Error('Error fetching comments');
+
                     }
                 }
             } catch (error) {
-                console.log(error);
 
             } finally {
                 setLoading(false);
             }
         }
-        const getSharedFiles = async () => {
-            setLoading(true);
-            try {
-                const response = await getRequestWithToken(`${baseUrl}/document/shared/${pageNum}`);
-                if (response.status == 200 || response.status == 201) {
-                    if (isSortChanged) {
-                        setDocuments(response.data);
-                    } else {
-                        setDocuments(prevDocuments => [...prevDocuments, ...response.data]);
-                    }
-                    if (response.data.length === 0) {
-                        setHasMore(false);
-                    }
-                }
-            } catch (error) {
-                console.log(error);
-
-            } finally {
-                setLoading(false);
-            }
-        }
-
-        if (sortValue === "Owned") {
-            getOwnedFiles();
-        }
-        else if (sortValue === "Shared") {
-            getSharedFiles();
-        }
+        getDocuments();
         prevSelectedSort.current = sortValue;
-    }, [page, sortValue]);
-    const handleScroll = (e) => {
-        const bottom = e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight;
-        if (bottom && hasMore) {
-            setPage(prevPage => prevPage + 1);
-        }
-    }
+    }, [page, sortChanged]);
+
+
+
+
+
+
+
+
 
 
     return (
         <>
-            <Navbar />
+            <Navbar setIsLoggedIn={setIsLoggedIn} />
             <div className="w-full h-full min-w-[342px] flex mt-[52px]  flex-col">
                 <div className="w-full px-4 bg-[#F1F3F4] h-[272px]">
                     <div className="h-full min-h-[252px] mt-4 w-full msm:w-[470px] md:w-[660px] lg:w-[860px] xl:w-[1050px] mx-auto">
@@ -128,7 +159,7 @@ const Home = () => {
                 <div className="w-full h-full flex justify-center bg-white sm:px-2 flex-col items-center">
                     <div className="flex  h-13 mt-2 flex-row items-center w-full msm:w-[494px] md:w-[685px] space-y-3 lg:w-[885px] xl:w-[1075px] -ml-7">
                         <div className="flex-row flex min-w-[160px] w-6/12">
-                            <h1 className="text-[14px] ml-7 mt-2 sm:ml-6 font-medium">Documents</h1>
+                            <h1 className="text-[14px] ml-7 mt-2 sm:ml-6 font-medium">documents</h1>
                         </div>
 
                         <div className='flex flex-row  w-4/12 items-center relative'>
@@ -160,22 +191,32 @@ const Home = () => {
                             <h1 className="text-[14px] -ml-1.5 font-medium">Created</h1>
                         </div>
                     </div>
-                    <div id="documents_arranged" onScroll={handleScroll} className={`flex  flex-col mt-2 mb-auto overflow-y-auto h-[400px] w-full msm:w-[494px] md:w-[685px] space-y-3 lg:w-[885px] xl:w-[1075px] mx-auto hide-scrollbar`}>
-                        {Documents.map((document, index) => (
-                            <File 
-                            key={index}
-                            document={document}
-                            isOpenedShareMenu={isOpenedShareMenu}
-                            setIsOpenedShareMenu={setIsOpenedShareMenu}
-                            optionsDropDownOpen={optionsDropDownOpen}
-                            setOptionsDropDownOpen={setOptionsDropDownOpen}
-                            id={document.id}
-                            name={document.title}
-                            content={document.content}
-                            owner={sortValue=="Owned"?"Me":`${document.owner}`}
-                            createdAt={document.createdAt}
-                            />
-                        ))}
+                    <div id="documents_arranged" className={`flex  flex-col mt-2 mb-auto overflow-y-auto h-[400px] w-full msm:w-[494px] md:w-[685px] space-y-3 lg:w-[885px] xl:w-[1075px] mx-auto hide-scrollbar`}>
+                        {documents.map((document, index) => {
+                            if (documents.length === index + 1) {
+                                return <File
+                                    key={index}
+                                    document={document}
+                                    id={document.id}
+                                    name={document.title}
+                                    content={document.content}
+                                    owner={sortValue == "Owned" ? "Me" : `${document.owner}`}
+                                    createdAt={document.createdAt}
+                                    lastPostRef={lastPostRef}
+                                />
+                            }
+                            else {
+                                return <File
+                                    key={index}
+                                    document={document}
+                                    id={document.id}
+                                    name={document.title}
+                                    content={document.content}
+                                    owner={sortValue == "Owned" ? "Me" : `${document.owner}`}
+                                    createdAt={document.createdAt}
+                                />
+                            }
+                        })}
                     </div>
                 </div>
 

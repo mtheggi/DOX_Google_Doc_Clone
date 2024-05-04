@@ -1,15 +1,29 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
 import FloatingInput from "./authentication/FloatingInput";
-import { postRequest } from "../Requests";
+import { postRequest, putRequestWithToken } from "../Requests";
 import TagInput from "./TagInput";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 
 
 const ShareModal = ({ setIsOpenedShareMenu, name, id, owner }) => {
 
+    let baseUrl = "http://localhost:8080";
+
     const [permissionValue, setPermissionValue] = useState("View");
     const [permissionDropDown, setPermissionDropDown] = useState(false);
     const permissionMenuRef = useRef();
+    const [userDoesntExist, setUserDoesntExist] = useState(null);
+    const [tags, setTags] = useState([]);
+
+    const shareWithOthers = async () => {
+        const response = await putRequestWithToken(`${baseUrl}/document/share`, { documentId: id, usernames: tags, viewOnly: permissionValue ==='View'? true : false, edit: permissionValue === 'Edit' ? true : false});
+        if (response.status === 200 || response.status === 201) {
+            setIsOpenedShareMenu(false);
+            console.log(response.data);
+        } else {
+            setUserDoesntExist(response.data.message);
+        }
+    }
 
     return (
         <div className="h-full min-w-[340px] w-full flex justify-center items-center">
@@ -21,16 +35,16 @@ const ShareModal = ({ setIsOpenedShareMenu, name, id, owner }) => {
                         <h1 className="text-2xl h-7 text-black font-medium mb-2 text-neutral">
                             Share '{name}'
                         </h1>
-                        <div onClick={()=>setIsOpenedShareMenu(false)} className="flex flex-row w-8 h-8 justify-center items-center cursor-pointer rounded-full hover:bg-gray-200">
+                        <div onClick={() => setIsOpenedShareMenu(false)} className="flex flex-row w-8 h-8 justify-center items-center cursor-pointer rounded-full hover:bg-gray-200">
                             <XMarkIcon className="w-7 h-7" />
                         </div>
 
                     </div>
 
                     <div className="flex  mt-2 flex-row justify-between">
-                        <TagInput />
+                        <TagInput setUserDoesntExist={setUserDoesntExist} setTags={setTags} tags={tags} />
                     </div>
-
+                    {setUserDoesntExist && <div className=" ml-1 h-6 text-[14px] mt-4 font-medium w-85"> <p className="text-red-400">{userDoesntExist}</p> </div>}
                     <div className="flex mb-3 flex-col mt-auto">
                         <div className="flex flex-row w-full items-center">
                             <div ref={permissionMenuRef} onClick={(e) => { e.stopPropagation(); setPermissionDropDown(prev => !prev) }} id="create_post_vote_dropdown_button" className={`text-black text-[14px] mr-auto relative rounded-lg px-1.5 cursor-pointer no-select w-fit h-10 focus:outline-none text-center no-select font-medium hover:bg-blue-100 ${permissionDropDown ? "bg-blue-100" : ""} items-center flex flex-row" type="button`}>{permissionValue}
@@ -51,10 +65,11 @@ const ShareModal = ({ setIsOpenedShareMenu, name, id, owner }) => {
                                     </ul>
                                 </div>
                             </div>
-                            <button onClick={() => setIsOpenedShareMenu(false)} className="w-16 bg-blue-600 flex flex-row justify-center border-0 text-white hover:bg-blue-500 text-medium text-[13px] items-center rounded-full h-9">Done</button>
+                            <button onClick={() => { shareWithOthers();}} className="w-16 bg-blue-600 flex flex-row justify-center border-0 text-white hover:bg-blue-500 text-medium text-[13px] items-center rounded-full h-9">Done</button>
 
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
