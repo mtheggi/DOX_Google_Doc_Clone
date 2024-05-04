@@ -57,9 +57,8 @@ const TextEditor = () => {
 
     const [isOpenedShareMenu, setIsOpenedShareMenu] = useState(false);
     const [renameMode, setRenameMode] = useState(true);
-    const [inputValue, setInputValue] = useState(inputdocmunet.title);
-    const [lastValidName, setLastValidName] = useState(inputdocmunet.title);
-    const [contentOfDocument, setContentOfDocument] = useState(inputdocmunet.content);
+    const [inputValue, setInputValue] = useState("test");
+    const [lastValidName, setLastValidName] = useState("test");
     const inputRef = useRef();
     const sharedMenuRef = useRef();
     const quillRef = useRef();
@@ -99,14 +98,15 @@ const TextEditor = () => {
                         <img className="gb_Mc gb_Nd h-full w-full" src="https://www.gstatic.com/images/branding/product/1x/docs_2020q4_48dp.png" srcSet="https://www.gstatic.com/images/branding/product/1x/docs_2020q4_48dp.png 1x, https://www.gstatic.com/images/branding/product/2x/docs_2020q4_48dp.png 2x " alt="" aria-hidden="true" role="presentation" ></img>
                     </div >
                     <div className="md:w-6/12 sm:5/12  w-3/12" onDoubleClick={() => setRenameMode(false)}>
-                        {renameMode ? (<h1 className="text-black overflow-text w-full text-[18px] font-base">test</h1>)
+                        {renameMode ? (<h1 className="text-black overflow-text w-full text-[18px] font-base">{inputValue}</h1>)
                             : (<input maxLength={50} onBlur={(e) => {
                                 setRenameMode(true);
-
                                 if (e.target.value.trim() === "") {
                                     setInputValue(lastValidName); // If new name is empty, set back to last valid name
+
                                 } else {
                                     setLastValidName(e.target.value); // If new name is not empty, update last valid name
+
                                 }
                             }} onChange={(e) => { setInputValue(e.target.value); }} ref={inputRef} className=" border-0 text-[18px] focus:ring-0 focus:outline-none w-full font-base bg-transparent focus:border-0" value={inputValue}
 
