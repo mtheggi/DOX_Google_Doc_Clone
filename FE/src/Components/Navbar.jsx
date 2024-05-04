@@ -1,11 +1,25 @@
 import { useNavigate } from "react-router-dom";
-import {useState, useRef, useEffect} from "react";
+import { useState, useRef, useEffect } from "react";
+import { getRequestWithToken } from "../Requests";
 
-const Navbar = () => {
+const Navbar = ({setIsLoggedIn}) => {
+    const baseUrl = "http://localhost:8080";
     const navigate = useNavigate();
     const [isLogoutMenuOpened, setIsLogoutMenuOpened] = useState(false);
     const sortMenuRef = useRef();
 
+    const Logout = async () => {
+        const response = await getRequestWithToken(`${baseUrl}/user/logout`);
+        if (response.status != 200 && response.status != 201) {
+          
+        }
+        else {
+            navigate("/");
+            setIsLoggedIn(false);
+        }
+
+
+    }
 
     useEffect(() => {
         let closeDropdown = (e) => {
@@ -34,14 +48,14 @@ const Navbar = () => {
 
             <div className=" ml-auto h-fit relative flex flex-col ">
                 <div className="   rounded-lg w-fit px-2 h-10 hover:no-underline  items-center justify-center  inline-flex">
-                    <div onClick={(e)=>{e.stopPropagation(); setIsLogoutMenuOpened(prev=>!prev)}} className="w-10 cursor-pointer h-10 rounded-full hover:bg-gray-200  flex flex-row items-center justify-center">
+                    <div onClick={(e) => { e.stopPropagation(); setIsLogoutMenuOpened(prev => !prev) }} className="w-10 cursor-pointer h-10 rounded-full hover:bg-gray-200  flex flex-row items-center justify-center">
                         <div className="w-8 h-8 rounded-full bg-[#0097A7] flex flex-row items-center justify-center">
                             <h1 className="text-white text-semibold">M</h1>
                         </div>
                     </div>
                 </div>
 
-          { isLogoutMenuOpened && <div ref={sortMenuRef} className="h-fit py-6 w-[350px] items-center -right-1 top-11 rounded-[36px] absolute flex flex-col z-40  bg-blue-50">
+                {isLogoutMenuOpened && <div ref={sortMenuRef} className="h-fit py-6 w-[300px] border-[1px] border-blue-200 items-center -right-1 top-11 rounded-[36px] absolute flex flex-col z-40  bg-gray-200">
 
                     <h1 className="text-[13px] mt-1">malek13122002@gmail.com</h1>
                     <div className=" mt-6  rounded-lg w-fit px-2 h-10 hover:no-underline  items-center justify-center  inline-flex">
@@ -52,7 +66,9 @@ const Navbar = () => {
                         </div>
                     </div>
                     <h1 className="text-[20px] mt-3">Hi Malek, </h1>
-                    <div className="bg-white pl-5 items-center flex flex-row w-70 hover:bg-gray-200 cursor-pointer h-11 mt-7 rounded-[45px]">
+                    <div onClick={
+                        Logout
+                    } className="bg-white pl-5 items-center flex flex-row w-32 hover:bg-gray-100 cursor-pointer h-11 mt-7 rounded-[45px]">
                         <svg height="24" viewBox="0 0 24 24" width="24" focusable="false" class=" NMm5M"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"></path><path d="M0 0h24v24H0z" fill="none"></path></svg>
                         <h1 className="text-[16px] mb-[3px] ml-2 mt-1">Logout</h1>
                     </div>

@@ -8,7 +8,6 @@ const RenameModal = ({ setIsOpenedShareMenu }) => {
     const navigate = useNavigate();
     const [docName, setDocName] = useState("");
     const [errorMsg, setErrorMsg] = useState(null);
-    // const baseUrl = ""
     const baseUrl = "http://localhost:8080"
     const createDocument = async () => {
 
@@ -16,10 +15,12 @@ const RenameModal = ({ setIsOpenedShareMenu }) => {
             const response = await postRequestWithToken(`${baseUrl}/document/create`, { title: docName, content: "" });
             if (response.status != 200 && response.status != 201) {
                 setErrorMsg(response.data.message);
+              
             }
             else {
                 navigate("/texteditor")
                 setIsOpenedShareMenu(false);
+               
             }
         }
     }

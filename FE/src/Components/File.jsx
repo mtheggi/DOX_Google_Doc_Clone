@@ -4,12 +4,14 @@ import ShareModal from "../Components/ShareModal";
 import EventEmitter from 'events';
 
 
-const File = ({ name, id, owner, isOpenedShareMenu, setIsOpenedShareMenu, optionsDropDownOpen, setOptionsDropDownOpen, createdAt }) => {
+const File = ({ name, id, owner, createdAt, lastPostRef }) => {
 
     const [renameMode, setRenameMode] = useState(false);
     const [inputValue, setInputValue] = useState(name);
     const [lastValidName, setLastValidName] = useState(name);
     const inputRef = useRef();   
+    const [optionsDropDownOpen, setOptionsDropDownOpen] = useState(null);
+    const [isOpenedShareMenu, setIsOpenedShareMenu] = useState(null);
 
     const optionsMenuRef = useRef();
     const sharedMenuRef = useRef();
@@ -50,7 +52,7 @@ const File = ({ name, id, owner, isOpenedShareMenu, setIsOpenedShareMenu, option
     }, [renameMode]);
 
     return (
-        <div className="flex no-select flex-row w-full h-fit">
+        <div ref={lastPostRef} className="flex no-select flex-row w-full h-fit">
             <div className={`w-full ${optionsDropDownOpen ? 'bg-blue-100' : ''} flex flex-row items-center  h-10 sm:rounded-3xl hover:bg-blue-100 cursor-pointer px-2`}>
                 <div className="flex w-6/12 min-w-[140px] flex-row">
                     <img className="gb_Mc gb_Nd h-full min-w-7 w-7 fill-blue-600 text-gray-200" src="https://www.gstatic.com/images/branding/product/1x/docs_2020q4_48dp.png" srcSet="https://www.gstatic.com/images/branding/product/1x/docs_2020q4_48dp.png 1x, https://www.gstatic.com/images/branding/product/2x/docs_2020q4_48dp.png 2x " alt="" aria-hidden="true" role="presentation" ></img>
@@ -73,9 +75,9 @@ const File = ({ name, id, owner, isOpenedShareMenu, setIsOpenedShareMenu, option
                     <h1 className="text-[12.5px] mt-1.5 no-select font-medium">{formatDate(createdAt)}</h1>
                 </div>
                 <div className="">
-                    <div onClick={(e) => { e.stopPropagation(); setOptionsDropDownOpen(prev => !prev) }} className={`w-8 h-8  sm:mr-0 rounded-full mt-1 hover:bg-gray-300 relative flex flex-row justify-center items-center ${optionsDropDownOpen ? 'bg-gray-300' : ''}`}>
+                    <div ref={optionsMenuRef} onClick={(e) => { setOptionsDropDownOpen(prev => !prev) }} className={`w-8 h-8  sm:mr-0 rounded-full mt-1 hover:bg-gray-300 relative flex flex-row justify-center items-center ${optionsDropDownOpen ? 'bg-gray-300' : ''}`}>
                         <EllipsisVerticalIcon className="w-6 h-7" />
-                        <div ref={optionsMenuRef} id="options" className={`z-10 absolute mt-34 right-[-2px]  ${optionsDropDownOpen ? '' : 'hidden'} bg-gray-200 rounded-lg shadow w-34  `}>
+                        <div id="options" className={`z-10 absolute mt-34 right-[-2px]  ${optionsDropDownOpen ? '' : 'hidden'} bg-gray-200 rounded-lg shadow w-34  `}>
                             <ul onClick={(e) => e.stopPropagation()} className="text-xs border-[0.5px] rounded-lg border-gray-400" aria-labelledby="dropdownInformationButton">
                                 <li onClick={() => { setOptionsDropDownOpen(false); setIsOpenedShareMenu(true); }} id="vote_1_day" className={`cursor-pointer border-b-[0.5px] border-gray-400`}>
                                     <p className={`block rounded-t-lg px-4 py-2  text-black   hover:bg-blue-400`}>Share</p>

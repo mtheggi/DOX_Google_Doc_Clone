@@ -4,7 +4,7 @@ import { postRequest } from "../Requests";
 import { useNavigate } from "react-router-dom";
 
 
-const SignUp = () => {
+const SignUp = ({setIsLoggedIn}) => {
 
   const baseUrl="http://localhost:8080"
   const [username, setUsername] = useState('');
@@ -44,6 +44,7 @@ const SignUp = () => {
       }
       else {
         localStorage.setItem('token', response.data.token);
+        setIsLoggedIn(true)
         navigate("/home");
       }
     }
