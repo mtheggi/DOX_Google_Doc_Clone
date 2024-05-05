@@ -71,6 +71,7 @@ export class CRDTs {
 
             const char = new Char(this.siteId, value, this.counter, index)
             this.sequence.push(char);
+            console.log("HERE we need to stop", char);
             // TODO:get access to documentId
             const operation = { operation: 'insert', documentId: "1", character: value, siteId: this.siteId, counter: this.counter, fractionIndex: index };
             sendmessage(operation);
@@ -79,9 +80,7 @@ export class CRDTs {
 
         let afterPosition = this.sequence[index].fractionIndex;
         let beforePosition = this.sequence[index - 1].fractionIndex;
-        console.log("Sequence ", this.sequence);
-        console.log("afterPisition , ", afterPosition);
-        console.log("beforePosition , ", beforePosition);
+
 
         const fractionIndex = (afterPosition + beforePosition) / 2;
         const char = new Char(this.siteId, value, this.counter, fractionIndex);
@@ -93,8 +92,9 @@ export class CRDTs {
     localDelete(index) {
         this.counter++;
         const char = this.sequence[index];
-        this.sequence.splice(index, 1);
         const operation = { operation: 'delete', documentId: "1", character: char.value, siteId: char.siteId, counter: char.counter, fractionIndex: char.fractionIndex }
+        this.sequence.splice(index, 1);
+
         sendmessage(operation);
     }
     getFirstIndex(fractionIndex) {

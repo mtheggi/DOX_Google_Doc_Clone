@@ -149,15 +149,24 @@ const TextEditor = () => {
                                 ref={quillRef}
                                 onChange={(content, delta, source, editor) => {
 
-                                    console.log("quill delta", delta);
-                                    const op = convertDeltaToCrdt(delta);
-                                    console.log("operation correct ?  : ", op);
-                                    if (op.operation === 'insert') {
-                                        CRDTinstance.localInsert(op.character, op.index);
-                                    } else {
-                                        CRDTinstance.localDelete(op.index);
+                                    // console.log("quill delta", delta);
+                                    // const op = convertDeltaToCrdt(delta);
+                                    // console.log("operation correct ?  : ", op);
+                                    // if (op.operation === 'insert') {
+                                    //     CRDTinstance.localInsert(op.character, op.index);
+                                    // } else {
+                                    //     CRDTinstance.localDelete(op.index);
+                                    // }
+                                    if (source === 'user') {
+                                        console.log("quill delta", delta);
+                                        const op = convertDeltaToCrdt(delta);
+                                        console.log("operation correct ?  : ", op);
+                                        if (op.operation === 'insert') {
+                                            CRDTinstance.localInsert(op.character, op.index);
+                                        } else {
+                                            CRDTinstance.localDelete(op.index);
+                                        }
                                     }
-
                                 }} />
                         </div>
                     </div>
