@@ -65,7 +65,10 @@ export class CRDTs {
             private float fractionIndex;
         */
         this.counter++;
+
+        console.log("localInsert , ", value, " , ", index);
         if (this.sequence.length === 0 || index >= this.sequence.length) {
+
             const char = new Char(this.siteId, value, this.counter, index)
             this.sequence.push(char);
             // TODO:get access to documentId
@@ -76,6 +79,10 @@ export class CRDTs {
 
         let afterPosition = this.sequence[index].fractionIndex;
         let beforePosition = this.sequence[index - 1].fractionIndex;
+        console.log("Sequence ", this.sequence);
+        console.log("afterPisition , ", afterPosition);
+        console.log("beforePosition , ", beforePosition);
+
         const fractionIndex = (afterPosition + beforePosition) / 2;
         const char = new Char(this.siteId, value, this.counter, fractionIndex);
         this.sequence.splice(index, 0, char);

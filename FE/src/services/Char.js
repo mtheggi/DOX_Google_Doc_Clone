@@ -2,13 +2,14 @@ export default class Char {
     siteId;
     value;
     counter;
-    fractionIndx;
+    fractionIndex;
 
-    constructor(siteId, value, counter, fractionIndx) {
+    constructor(siteId, value, counter, fractionIndex) {
+        console.log("Char Constructor fraction: , ", fractionIndex)
         this.siteId = siteId;
         this.value = value;
         this.counter = counter;
-        this.fractionIndx = fractionIndx;
+        this.fractionIndex = fractionIndex;
 
     }
 

@@ -3,6 +3,7 @@ import SockJS from 'sockjs-client';
 import { v1 as uuidv1 } from 'uuid';
 import Delta from 'quill-delta';
 import { siteId, CRDTinstance } from './CRDTS';
+import Char from './Char';
 
 const userId = siteId;
 const socket = new SockJS('http://localhost:8080/ws/');
@@ -31,12 +32,15 @@ export const ConnectToWebSocket = async (quillRef) => {
             if (op.siteId !== siteId) {
                 let deltas;
                 if (op.operation === 'delete') {
-                    deltas = CRDTinstance.remoteDelete(op.fractionIndex);
+                    const char = new Char(op.siteId, op.character, op.counter, op.fractionIndex);
+
+                    deltas = CRDTinstance.remoteDelete(char);
 
                 } else {
-                    deltas = CRDTinstance.remoteInsert(op.character, op.fractionIndex);
+                    const char = new Char(op.siteId, op.character, op.counter, op.fractionIndex);
+                    deltas = CRDTinstance.remoteInsert(char);
                 }
-
+                console.log("deltas : ", deltas);
                 quill.updateContents(deltas, 'silent');
             }
         });

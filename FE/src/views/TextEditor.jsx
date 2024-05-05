@@ -145,11 +145,13 @@ const TextEditor = () => {
                     <div className="w-full h-full border-[0.5px] border-t-[0px] p-4 flex flex-row border-gray-300">
                         <div className="w-[790px] mx-auto h-fit">
                             <ReactQuill className="w-full bg-white border-[0.5px] border-gray-300 focus:border-[0.5px] focus:border-gray-300 text-black p-7  h-[1000px] mb-2 resize-none focus:outline-none focus:ring-0" modules={{ toolbar: toolbarOptions }}
-                                value={""}
+                                value={"f"}
                                 ref={quillRef}
                                 onChange={(content, delta, source, editor) => {
 
+                                    console.log("quill delta", delta);
                                     const op = convertDeltaToCrdt(delta);
+                                    console.log("operation correct ?  : ", op);
                                     if (op.operation === 'insert') {
                                         CRDTinstance.localInsert(op.character, op.index);
                                     } else {
