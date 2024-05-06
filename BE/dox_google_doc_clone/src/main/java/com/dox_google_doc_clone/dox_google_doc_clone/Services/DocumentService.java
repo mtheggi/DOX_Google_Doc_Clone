@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import com.dox_google_doc_clone.dox_google_doc_clone.Repositories.DocumentRepository;
 
 import com.dox_google_doc_clone.dox_google_doc_clone.Models.DocumentModel;
+import com.dox_google_doc_clone.dox_google_doc_clone.Dto.DocumentAndOwnerName;
 import com.dox_google_doc_clone.dox_google_doc_clone.Dto.SharedDocument;
 
 @Service
@@ -28,10 +29,6 @@ public class DocumentService {
         this.DocumentRepository = DocumentRepository;
         this.userService = userService;
         this.userPermissionService = userPermissionService;
-    }
-
-    public List<DocumentModel> getAllDocument() {
-        return DocumentRepository.findAll();
     }
 
     public boolean shareDocument(JsonNode jsonNode) {
@@ -78,6 +75,42 @@ public class DocumentService {
 
         return true;
 
+    }
+
+    public List<DocumentAndOwnerName> getAllDocuments(String userId, int page_num) {
+        int pageSize = 9;
+        List<UserPermissions> userPermissions = userPermissionService.getUserPermissionsByUserId(userId);
+        List<DocumentAndOwnerName> allDocuments = new ArrayList<>();
+        for (UserPermissions userPermission : userPermissions) {
+            User user = userService.getUserById(userPermission.getUserId());
+            DocumentModel document = DocumentRepository.findById(userPermission.getDocumentId()).orElse(null);
+            if (document != null && user != null) {
+                DocumentAndOwnerName temp = new DocumentAndOwnerName(document, user.getRealUserName());
+                allDocuments.add(temp);
+            }
+
+        }
+        // Sort the documents by createdAt in descending order
+        allDocuments.sort(Comparator.comparing(doc -> doc.getDoc().getCreatedAt()));
+        // [0 .. 5 .. 9 ]
+        int start = (page_num - 1) * pageSize;
+        int end;
+        if (start >= allDocuments.size()) {
+            return new ArrayList<>();
+        } else {
+            end = start + pageSize - 1;
+            if (end >= allDocuments.size()) {
+                end = allDocuments.size() - 1;
+            }
+
+        }
+        return allDocuments.subList(start, end + 1);
+
+    }
+
+    public DocumentModel getDocumentModel(String docID) {
+        DocumentModel document = DocumentRepository.findById(docID).orElse(null);
+        return document;
     }
 
     public List<DocumentModel> getOwnedDocuments(String userId, int page_num) {
@@ -145,9 +178,10 @@ public class DocumentService {
     public DocumentModel saveDocument(DocumentModel document) {
         return DocumentRepository.save(document);
     }
-    public DocumentModel renameDocument(String documentId, String newName ){
+
+    public DocumentModel renameDocument(String documentId, String newName) {
         DocumentModel document = DocumentRepository.findById(documentId).orElse(null);
-        if(document == null){
+        if (document == null) {
             return null;
         }
         document.setTitle(newName);
