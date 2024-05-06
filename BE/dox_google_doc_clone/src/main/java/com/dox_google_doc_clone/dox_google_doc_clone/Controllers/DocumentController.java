@@ -109,18 +109,18 @@ public class DocumentController {
     }
 
     @GetMapping("/document/shared/{page_num}")
-    public ResponseEntity<List<SharedDocument>> getSharedDocuments(@PathVariable int page_num,
+    public ResponseEntity<List<DocumentAndOwnerName>> getSharedDocuments(@PathVariable int page_num,
             @RequestHeader("Authorization") String token) {
         String email = jwtService.extractEmail(token.substring(7));
         String userId;
         if (userService.getUserByEmail(email).isPresent()) {
             userId = userService.getUserByEmail(email).get().getId();
         } else {
-            List<SharedDocument> emptyList = new ArrayList<>();
+            List<DocumentAndOwnerName> emptyList = null;
             return new ResponseEntity<>(emptyList, HttpStatus.BAD_REQUEST);
         }
 
-        List<SharedDocument> list = documentService.getSharedDocuments(userId, page_num);
+        List<DocumentAndOwnerName> list = documentService.getSharedDocuments(userId, page_num);
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 

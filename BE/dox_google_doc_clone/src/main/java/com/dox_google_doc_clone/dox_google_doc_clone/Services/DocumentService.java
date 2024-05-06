@@ -143,22 +143,22 @@ public class DocumentService {
 
     }
 
-    public List<SharedDocument> getSharedDocuments(String userId, int page_num) {
+    public List<DocumentAndOwnerName> getSharedDocuments(String userId, int page_num) {
         int pageSize = 9;
         List<UserPermissions> userPermissions = userPermissionService.getUserPermissionsByUserId(userId);
-        List<SharedDocument> sharedDocuments = new ArrayList<>();
+        List<DocumentAndOwnerName> sharedDocuments = new ArrayList<>();
 
         for (UserPermissions userPermission : userPermissions) {
             if (!(userPermission.isOwner())) {
                 DocumentModel document = DocumentRepository.findById(userPermission.getDocumentId()).orElse(null);
+                User user = userService.getUserById(userPermission.getUserId());
                 if (document != null) {
-                    SharedDocument shared = new SharedDocument(document.getId(), document.getTitle(),
-                            document.getContent(), userPermission.isEdit(), document.getCreatedAt());
-                    sharedDocuments.add(shared);
+                    DocumentAndOwnerName temp = new DocumentAndOwnerName(document, user.getRealUserName());
+                    sharedDocuments.add(temp);
                 }
             }
         }
-        sharedDocuments.sort(Comparator.comparing(SharedDocument::getCreatedAt).reversed());
+        sharedDocuments.sort(Comparator.comparing(doc -> doc.getDoc().getCreatedAt()));
         // [0 .. 5 .. 9 ]
         int start = (page_num - 1) * pageSize;
         int end;
