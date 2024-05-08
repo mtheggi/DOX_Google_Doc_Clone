@@ -50,6 +50,7 @@ function App() {
 
           {isLoggedIn && <Route path="/home" element={<Home setIsLoggedIn={setIsLoggedIn}  />} />}
           {isLoggedIn && <Route path="/texteditor" element={<TextEditor />} />}
+          {isLoggedIn && <Route path="/texteditor/:id" element={<TextEditor />} />}
 
           <Route path="/*" element={<NotFound />} />
 

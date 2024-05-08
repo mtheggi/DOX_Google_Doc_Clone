@@ -6,6 +6,7 @@ import { getRequestWithToken } from "../Requests";
 import Navbar from "../Components/Navbar";
 import RenameModal from "../Components/RenameModal";
 import File from "../Components/File";
+import Loading from "../Components/Loading";
 
 
 const Home = ({ setIsLoggedIn }) => {
@@ -19,13 +20,15 @@ const Home = ({ setIsLoggedIn }) => {
 
     const [sortDropDownOpen, setSortDropDownOpen] = useState(false);
     const [isNewDocAdded, setIsNewDocAdded] = useState(false);
-    const [documents, setDocuments] = useState([]);
+    const [shared, setShared] = useState([]);
+    const [owned, setOwned] = useState([]);
+    const [all, setAll] = useState([]);
     const prevSelectedSort = useRef(sortValue);
     const [page, setPage] = useState(1);
     const [loading, setLoading] = useState(true);
     const [hasMore, setHasMore] = useState(true);
 
-  
+
     const [sortChanged, setSortChanged] = useState(0);
 
     const navigate = useNavigate();
@@ -69,7 +72,9 @@ const Home = ({ setIsLoggedIn }) => {
 
     useEffect(() => {
         if (prevSelectedSort.current !== sortValue) {
-            setDocuments([]);
+            setAll([]);
+            setOwned([]);
+            setShared([]);
             setPage(1);
             setSortChanged(prev => (prev + 1));
         }
@@ -85,43 +90,35 @@ const Home = ({ setIsLoggedIn }) => {
                 setHasMore(true);
                 setLoading(true);
 
-                if (sortValue == "All") {
-                    const response1 = await getRequestWithToken(`${baseUrl}/document/owned/${page}`);
-                    const response2 = await getRequestWithToken(`${baseUrl}/document/shared/${page}`);
-                    const status1 = response1.status;
-                    const data1 = response1.data;
-                    const status2 = response2.status;
-                    const data2 = response2.data;
+                const response = await getRequestWithToken(`${baseUrl}/document/${sortValue.toLowerCase()}/${page}`);
+                const status = response.status;
+                const data = response.data;
 
-                    if (status1 === 200 || status1 === 201 && status2 === 200 || status2 === 201) {
-                        const data = [...data1, ...data2];
-                        data.sort((a, b) => {
-                            return new Date(b.createdAt) - new Date(a.createdAt);
-                        });
-                        setDocuments(prev => [...prev, ...data]);
-                        setHasMore(data1.length >= 9 || data2.length > 9);
+                if (status === 200 || status === 201) {
 
-                    } else {
-
-                        throw new Error('Error fetching comments');
-
+                    if (sortValue === "All") {
+                        setAll(prev => [...prev, ...data]);
                     }
-                }
-                else {
-                    const response = await getRequestWithToken(`${baseUrl}/document/${sortValue.toLowerCase()}/${page}`);
-                    const status = response.status;
-                    const data = response.data;
-
-                    if (status === 200 || status === 201) {
-                        setDocuments(prev => [...prev, ...data]);
-                        setHasMore(data.length >= 9);
-
-                    } else {
-
-                        throw new Error('Error fetching comments');
-
+                    else if (sortValue === "Owned") {
+                        setOwned(prev => [...prev, ...data]);
                     }
+                    else {
+                        setShared(prev => [...prev, ...data]);
+                    }
+
+                    setHasMore(data.length > 0);
+
+                } else {
+
+                    if (status == 403) {
+                        navigate('/not-found');
+                        setIsLoggedIn(false);
+                    }
+
+                    throw new Error('Error fetching comments');
+
                 }
+
             } catch (error) {
 
             } finally {
@@ -192,31 +189,73 @@ const Home = ({ setIsLoggedIn }) => {
                         </div>
                     </div>
                     <div id="documents_arranged" className={`flex  flex-col mt-2 mb-auto overflow-y-auto h-[400px] w-full msm:w-[494px] md:w-[685px] space-y-3 lg:w-[885px] xl:w-[1075px] mx-auto hide-scrollbar`}>
-                        {documents.map((document, index) => {
-                            if (documents.length === index + 1) {
-                                return <File
-                                    key={index}
-                                    document={document}
-                                    id={document.id}
+                      
+                        {sortValue === "All" && all.map((document, index) => {
+                            if (index + 1 == all.length) {
+                                return <File key={document.doc.id}
+                                    name={document.doc.title}
+                                    id={document.doc.id}
+                                    owner={document.ownerName}
+                                    createdAt={document.doc.createdAt}
+                                    lastPostRef={lastPostRef}
+                                />
+                            }
+                            else {
+                                return <File key={document.doc.id}
+                                    name={document.doc.title}
+                                    id={document.doc.id}
+                                    owner={document.ownerName}
+                                    createdAt={document.doc.createdAt}
+                                />
+                            }
+                        })}
+
+                        {sortValue === "Shared" && shared.map((document, index) => {
+                            if (index + 1 == shared.length) {
+                                return <File key={document.doc.id}
+                                    name={document.doc.title}
+                                    id={document.doc.id}
+                                    owner={document.ownerName}
+                                    createdAt={document.doc.createdAt}
+                                    lastPostRef={lastPostRef}
+                                />
+                            }
+                            else {
+                                return <File key={document.doc.id}
+                                    name={document.doc.title}
+                                    id={document.doc.id}
+                                    owner={document.ownerName}
+                                    createdAt={document.doc.createdAt}
+                                />
+                            }
+                        })}
+
+
+
+
+                        {sortValue === "Owned" && owned.map((document, index) => {
+                            if (index + 1 == owned.length) {
+                                return <File key={document.id}
                                     name={document.title}
-                                    content={document.content}
-                                    owner={sortValue == "Owned" ? "Me" : `${document.owner}`}
+                                    id={document.id}
+                                    owner={"Me"}
                                     createdAt={document.createdAt}
                                     lastPostRef={lastPostRef}
                                 />
                             }
                             else {
-                                return <File
-                                    key={index}
-                                    document={document}
-                                    id={document.id}
+                                return <File key={document.id}
                                     name={document.title}
-                                    content={document.content}
-                                    owner={sortValue == "Owned" ? "Me" : `${document.owner}`}
+                                    id={document.id}
+                                    owner={"Me"}
                                     createdAt={document.createdAt}
                                 />
                             }
                         })}
+
+
+                        {loading && <Loading/>}
+
                     </div>
                 </div>
 

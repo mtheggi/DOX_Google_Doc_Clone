@@ -2,6 +2,8 @@ import { DocumentTextIcon, EllipsisVerticalIcon } from "@heroicons/react/24/outl
 import { useState, useRef, useEffect } from "react";
 import ShareModal from "../Components/ShareModal";
 import EventEmitter from 'events';
+import { putRequestWithToken } from "../Requests";
+import { useNavigate } from "react-router-dom";
 
 
 const File = ({ name, id, owner, createdAt, lastPostRef }) => {
@@ -15,6 +17,8 @@ const File = ({ name, id, owner, createdAt, lastPostRef }) => {
 
     const optionsMenuRef = useRef();
     const sharedMenuRef = useRef();
+    const navigate = useNavigate();
+    const baseUrl="http://localhost:8080";
 
     const formatDate = (isoDate) => {
         const date = new Date(isoDate);
@@ -22,6 +26,15 @@ const File = ({ name, id, owner, createdAt, lastPostRef }) => {
         const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are 0-indexed in JS
         const year = date.getFullYear();
         return `${day}-${month}-${year}`;
+    }
+
+    const renameFile = async (newName) => {
+        const response = putRequestWithToken(`${baseUrl}/document/rename/${id}`, { title: newName });
+        if (response.status === 200) {
+            console.log("File renamed");
+        } else {
+            console.log("Error renaming file");
+        }
     }
 
 
@@ -52,7 +65,7 @@ const File = ({ name, id, owner, createdAt, lastPostRef }) => {
     }, [renameMode]);
 
     return (
-        <div ref={lastPostRef} className="flex no-select flex-row w-full h-fit">
+        <div onClick={()=>navigate(`/texteditor/${id}`)} ref={lastPostRef} className="flex no-select flex-row w-full h-fit">
             <div className={`w-full ${optionsDropDownOpen ? 'bg-blue-100' : ''} flex flex-row items-center  h-10 sm:rounded-3xl hover:bg-blue-100 cursor-pointer px-2`}>
                 <div className="flex w-6/12 min-w-[140px] flex-row">
                     <img className="gb_Mc gb_Nd h-full min-w-7 w-7 fill-blue-600 text-gray-200" src="https://www.gstatic.com/images/branding/product/1x/docs_2020q4_48dp.png" srcSet="https://www.gstatic.com/images/branding/product/1x/docs_2020q4_48dp.png 1x, https://www.gstatic.com/images/branding/product/2x/docs_2020q4_48dp.png 2x " alt="" aria-hidden="true" role="presentation" ></img>
@@ -63,6 +76,7 @@ const File = ({ name, id, owner, createdAt, lastPostRef }) => {
                                 setInputValue(lastValidName); // If new name is empty, set back to last valid name
                             } else {
                                 setLastValidName(e.target.value); // If new name is not empty, update last valid name
+                                renameFile(e.target.value);
                             }
                         }} onChange={(e) => setInputValue(e.target.value)} ref={inputRef} className=" border-0 mt-1 ml-3 text-[13.5px] focus:ring-0 focus:outline-none font-medium w-55% lg:w-60% xl:w-70% bg-transparent focus:border-0" value={inputValue}
 
