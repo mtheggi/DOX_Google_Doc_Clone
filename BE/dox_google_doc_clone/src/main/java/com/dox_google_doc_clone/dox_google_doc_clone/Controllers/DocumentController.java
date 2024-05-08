@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.dox_google_doc_clone.dox_google_doc_clone.Dto.DocumentAndOwnerName;
 import com.dox_google_doc_clone.dox_google_doc_clone.Dto.SharedDocument;
 import com.dox_google_doc_clone.dox_google_doc_clone.Models.User;
 import com.dox_google_doc_clone.dox_google_doc_clone.Models.UserPermissions;
@@ -36,11 +37,6 @@ public class DocumentController {
         this.userPermissionsService = userPermissionsService;
         this.jwtService = jwtService;
         this.userService = userService;
-    }
-
-    @GetMapping("/user/documents")
-    public List<DocumentModel> getMethodName() {
-        return documentService.getAllDocument();
     }
 
     @PostMapping("/document/create")
@@ -96,44 +92,78 @@ public class DocumentController {
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
-    @GetMapping("/document/shared/{page_num}")
-    public ResponseEntity<List<SharedDocument>> getSharedDocuments(@PathVariable int page_num,
+    @GetMapping("/document/{doc_id}")
+    public ResponseEntity<DocumentModel> getDocumentByID(@PathVariable String doc_id,
             @RequestHeader("Authorization") String token) {
         String email = jwtService.extractEmail(token.substring(7));
         String userId;
         if (userService.getUserByEmail(email).isPresent()) {
             userId = userService.getUserByEmail(email).get().getId();
         } else {
-            List<SharedDocument> emptyList = new ArrayList<>();
+            DocumentModel emptyList = null;
             return new ResponseEntity<>(emptyList, HttpStatus.BAD_REQUEST);
         }
 
-        List<SharedDocument> list = documentService.getSharedDocuments(userId, page_num);
-        return new ResponseEntity<>(list, HttpStatus.OK);
+        DocumentModel temp = documentService.getDocumentModel(doc_id);
+        return new ResponseEntity<>(temp, HttpStatus.OK);
     }
 
-    @PutMapping("/document/rename/{documentId}")
-    public ResponseEntity<DocumentModel> renameDocument(@PathVariable String documentId, @RequestBody  JsonNode jsonNode,  @RequestHeader("Authorization") String token) {
-      
+    @GetMapping("/document/shared/{page_num}")
+    public ResponseEntity<List<DocumentAndOwnerName>> getSharedDocuments(@PathVariable int page_num,
+            @RequestHeader("Authorization") String token) {
         String email = jwtService.extractEmail(token.substring(7));
         String userId;
         if (userService.getUserByEmail(email).isPresent()) {
             userId = userService.getUserByEmail(email).get().getId();
         } else {
-            return new ResponseEntity<>( HttpStatus.BAD_REQUEST);
+            List<DocumentAndOwnerName> emptyList = null;
+            return new ResponseEntity<>(emptyList, HttpStatus.BAD_REQUEST);
         }
-        UserPermissions userPermissions = userPermissionsService.getUserPermissionByDocumentIdAndUserId(documentId, userId); 
-        
 
-        if (userPermissions != null  && (userPermissions.isEdit() || userPermissions.isOwner()) ){
+        List<DocumentAndOwnerName> list = documentService.getSharedDocuments(userId, page_num);
+        return new ResponseEntity<>(list, HttpStatus.OK);
+    }
+
+    @GetMapping("/document/all/{page_num}")
+    public ResponseEntity<List<DocumentAndOwnerName>> getSAllDocuments(@PathVariable int page_num,
+            @RequestHeader("Authorization") String token) {
+        String email = jwtService.extractEmail(token.substring(7));
+        String userId;
+
+        if (userService.getUserByEmail(email).isPresent()) {
+            userId = userService.getUserByEmail(email).get().getId();
+        } else {
+            List<DocumentAndOwnerName> emptyList = new ArrayList<>();
+            return new ResponseEntity<>(emptyList, HttpStatus.BAD_REQUEST);
+        }
+
+        List<DocumentAndOwnerName> list = documentService.getAllDocuments(userId, page_num);
+        return new ResponseEntity<>(list, HttpStatus.OK);
+    }
+
+    @PutMapping("/document/rename/{documentId}")
+    public ResponseEntity<DocumentModel> renameDocument(@PathVariable String documentId, @RequestBody JsonNode jsonNode,
+            @RequestHeader("Authorization") String token) {
+
+        String email = jwtService.extractEmail(token.substring(7));
+        String userId;
+        if (userService.getUserByEmail(email).isPresent()) {
+            userId = userService.getUserByEmail(email).get().getId();
+        } else {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        UserPermissions userPermissions = userPermissionsService.getUserPermissionByDocumentIdAndUserId(documentId,
+                userId);
+
+        if (userPermissions != null && (userPermissions.isEdit() || userPermissions.isOwner())) {
             DocumentModel documentModel = documentService.renameDocument(documentId, jsonNode.get("title").asText());
             if (documentModel == null) {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            }else {
+            } else {
                 return new ResponseEntity<>(documentModel, HttpStatus.OK);
             }
         }
-        return new ResponseEntity<>( HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
 }
