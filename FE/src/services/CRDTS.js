@@ -3,6 +3,8 @@ import { v1 as uuidv1 } from 'uuid';
 export const siteId = uuidv1();
 import Char from './Char';
 import { sendmessage } from './WebSocket';
+import { generateKeyBetween } from 'fractional-indexing';
+
 //convert String to crts obecjt
 //Structure of crts object
 
@@ -55,6 +57,45 @@ export class CRDTs {
         return CRDTs.CRDTinstance;
     }
 
+    constructTheSequence(content) {
+        let index = 0;
+        let isItalic = false;
+        let isBold = false;
+        let prevKey = generateKeyBetween(null, null);
+        // <strong>
+        // <em>
+        for (let i = 0; i < content.length; i++) {
+            if (content.substring(i, i + 8) === '<strong>') {
+                isBold = true;
+                i += 7;
+                continue;
+            }
+            if (content.substring(i, i + 9) === '</strong>') {
+                isBold = false;
+                i += 8;
+                continue;
+            }
+            if (content.substring(i, i + 4) === '<em>') {
+                isItalic = true;
+                i += 3;
+                continue;
+            }
+            if (content.substring(i, i + 5) === '</em>') {
+                isItalic = false;
+                i += 4;
+                continue;
+            }
+            const char = new Char(this.siteId, content[i], this.counter, prevKey, isItalic, isBold);
+            this.sequence.push(char);
+            index++;
+            this.counter++;
+            prevKey = generateKeyBetween(prevKey, null);
+        }
+
+
+        console.log("Sequence Constructed : , ", this.sequence);
+
+    }
     localInsert(value, index) {
         /*
             private String operation;
@@ -66,25 +107,29 @@ export class CRDTs {
         */
         this.counter++;
 
-        console.log("localInsert , ", value, " , ", index);
         if (this.sequence.length === 0 || index >= this.sequence.length) {
 
-            const char = new Char(this.siteId, value, this.counter, index)
+            let newKey;
+            if (this.sequence.length === 0) {
+                newKey = generateKeyBetween(null, null);
+            } else {
+                newKey = generateKeyBetween(this.sequence[this.sequence.length - 1].fractionIndex, null);
+            }
+
+            const char = new Char(this.siteId, value, this.counter, newKey)
             this.sequence.push(char);
-            console.log("HERE we need to stop", char);
-            // TODO:get access to documentId
-            const operation = { operation: 'insert', documentId: "1", character: value, siteId: this.siteId, counter: this.counter, fractionIndex: index };
+            const operation = { operation: 'insert', documentId: "1", character: value, siteId: this.siteId, counter: this.counter, fractionIndex: newKey };
             sendmessage(operation);
             return;
         }
 
         let afterPosition = this.sequence[index].fractionIndex;
-        let beforePosition = this.sequence[index - 1].fractionIndex;
-
-
-        const fractionIndex = (afterPosition + beforePosition) / 2;
+        let beforePosition = index === 0 ? null : this.sequence[index - 1].fractionIndex;
+        const fractionIndex = generateKeyBetween(beforePosition, afterPosition);
         const char = new Char(this.siteId, value, this.counter, fractionIndex);
+        console.log("localInsert in Index , ", index)
         this.sequence.splice(index, 0, char);
+
         const operation = { operation: 'insert', documentId: "1", character: value, siteId: this.siteId, counter: this.counter, fractionIndex: fractionIndex };
         sendmessage(operation);
 
@@ -122,30 +167,26 @@ export class CRDTs {
         if (index === -1 && this.sequence.length > 0) {
 
             index = this.sequence.push(char);
-
-            // deltas that will be sent quill 
-            // 
-            return { ops: [{ retain: fractionIndex }, { insert: char.value }] }
+            return { ops: [{ retain: this.sequence.length - 1 }, { insert: char.value }] }
         }
 
         if (index === -1) {
 
             index = this.sequence.push(char);
 
-            // deltas that will be sent quill 
-            // 
             return { ops: [{ insert: char.value }] }
         }
 
         this.sequence.splice(index, 0, char);
         if (index) {
+            console.log("remoteInsert in Index , ", index)
             return { ops: [{ retain: index }, { insert: char.value }] }
         } else {
             return { ops: [{ insert: char.value }] }
         }
 
     }
-    getIndex(fractionIndex) {
+    getDeleteIndex(fractionIndex) {
         let startIndx = 0;
         let endIndx = this.sequence.length - 1;
         let midIndx;
@@ -167,7 +208,7 @@ export class CRDTs {
     }
     remoteDelete(char) {
         const { fractionIndex } = char;
-        const index = this.getIndex(fractionIndex);
+        const index = this.getDeleteIndex(fractionIndex);
         if (index != -1) {
             this.sequence.splice(index, 1);
             if (index === 0) {
