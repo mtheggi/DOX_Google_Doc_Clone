@@ -119,13 +119,22 @@ export class CRDTs {
 
         const { fractionIndex } = char
         let index = this.getFirstIndex(fractionIndex)
+        if (index === -1 && this.sequence.length > 0) {
+
+            index = this.sequence.push(char);
+
+            // deltas that will be sent quill 
+            // 
+            return { ops: [{ retain: fractionIndex }, { insert: char.value }] }
+        }
+
         if (index === -1) {
 
             index = this.sequence.push(char);
 
             // deltas that will be sent quill 
             // 
-            return { ops: [{ retain: index }, { insert: char.value }] }
+            return { ops: [{ insert: char.value }] }
         }
 
         this.sequence.splice(index, 0, char);
