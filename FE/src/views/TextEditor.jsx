@@ -1,15 +1,19 @@
 import { ArrowPathIcon, DocumentIcon, EyeIcon, LockClosedIcon, PencilIcon, UserCircleIcon } from "@heroicons/react/24/outline";
 import { DocumentTextIcon, EllipsisVerticalIcon } from "@heroicons/react/24/outline";
 import { useState, useRef, useEffect } from "react";
-import { postRequest } from "../Requests";
+import { getRequestWithToken, postRequest, putRequestWithToken } from "../Requests";
 import { useNavigate } from "react-router-dom";
 import ShareModal from "../Components/ShareModal";
+import { useParams } from "react-router-dom";
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css'; // import the styles
 import { DisconnectWebSocket, ConnectToWebSocket, sendmessage } from '../services/WebSocket';
 import { convertDeltaToCrdt, CRDTinstance } from '../services/CRDTS';
+import { set } from "mongoose";
 
-import { useLocation } from 'react-router-dom';
+
+
+
 const toolbarOptions = [
     ['bold', 'italic'],        // toggled buttons
 ];
@@ -55,14 +59,38 @@ const CustomToolbar = () => {
 
 const TextEditor = () => {
 
+    let {id} =useParams();
+
     const [isOpenedShareMenu, setIsOpenedShareMenu] = useState(false);
     const [renameMode, setRenameMode] = useState(true);
-    const [inputValue, setInputValue] = useState("test");
-    const [lastValidName, setLastValidName] = useState("test");
+    const [inputValue, setInputValue] = useState("");
+    const [pageContent, setPageContent] = useState("");
+    const [lastValidName, setLastValidName] = useState("");
     const inputRef = useRef();
     const sharedMenuRef = useRef();
     const quillRef = useRef();
     const navigate = useNavigate();
+    const baseUrl = "http://localhost:8080";
+
+
+
+    useEffect(() => {
+
+        const getDoc = async () => {
+            const response = await getRequestWithToken(`${baseUrl}/document/${id}`);
+            if (response.status === 200 || response===201) {
+                setInputValue(response.data.title);
+                setLastValidName(response.data.title);
+                setPageContent(response.data.content);
+            } else {
+
+            }
+        }
+
+        getDoc();
+    
+    }, [id]);
+    
 
     useEffect(() => {
 
@@ -87,6 +115,16 @@ const TextEditor = () => {
     }, [renameMode]);
 
 
+    const renameFile = async (newName) => {
+        const response = putRequestWithToken(`${baseUrl}/document/rename/${id}`, { title: inputValue });
+        if (response.status === 200) {
+            console.log("File renamed");
+        } else {
+            console.log("Error renaming file");
+        }
+
+    }
+
 
     return (
 
@@ -106,6 +144,7 @@ const TextEditor = () => {
 
                                 } else {
                                     setLastValidName(e.target.value); // If new name is not empty, update last valid name
+                                    renameFile(e.target.value);
 
                                 }
                             }} onChange={(e) => { setInputValue(e.target.value); }} ref={inputRef} className=" border-0 text-[18px] focus:ring-0 focus:outline-none w-full font-base bg-transparent focus:border-0" value={inputValue}
@@ -145,7 +184,7 @@ const TextEditor = () => {
                     <div className="w-full h-full border-[0.5px] border-t-[0px] p-4 flex flex-row border-gray-300">
                         <div className="w-[790px] mx-auto h-fit">
                             <ReactQuill className="w-full bg-white border-[0.5px] border-gray-300 focus:border-[0.5px] focus:border-gray-300 text-black p-7  h-[1000px] mb-2 resize-none focus:outline-none focus:ring-0" modules={{ toolbar: toolbarOptions }}
-                                value={"f"}
+                                value={pageContent}
                                 ref={quillRef}
                                 onChange={(content, delta, source, editor) => {
 
