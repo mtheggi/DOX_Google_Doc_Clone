@@ -9,7 +9,6 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css'; // import the styles
 import { DisconnectWebSocket, ConnectToWebSocket, sendmessage } from '../services/WebSocket';
 import { convertDeltaToCrdt, CRDTinstance } from '../services/CRDTS';
-import { set } from "mongoose";
 
 
 
@@ -59,7 +58,7 @@ const CustomToolbar = () => {
 
 const TextEditor = () => {
 
-    let {id} =useParams();
+    let { id } = useParams();
 
     const [isOpenedShareMenu, setIsOpenedShareMenu] = useState(false);
     const [renameMode, setRenameMode] = useState(true);
@@ -78,19 +77,20 @@ const TextEditor = () => {
 
         const getDoc = async () => {
             const response = await getRequestWithToken(`${baseUrl}/document/${id}`);
-            if (response.status === 200 || response===201) {
+            if (response.status === 200 || response === 201) {
                 setInputValue(response.data.title);
                 setLastValidName(response.data.title);
                 setPageContent(response.data.content);
+                CRDTinstance.constructTheSequence(response.data.content)
             } else {
 
             }
         }
 
         getDoc();
-    
+
     }, [id]);
-    
+
 
     useEffect(() => {
 
@@ -116,7 +116,8 @@ const TextEditor = () => {
 
 
     const renameFile = async (newName) => {
-        const response = putRequestWithToken(`${baseUrl}/document/rename/${id}`, { title: inputValue });
+        const response = await putRequestWithToken(`${baseUrl}/document/rename/${id}`, { title: inputValue });
+
         if (response.status === 200) {
             console.log("File renamed");
         } else {
@@ -196,6 +197,8 @@ const TextEditor = () => {
                                     // } else {
                                     //     CRDTinstance.localDelete(op.index);
                                     // }
+                                    console.log("content , ", content);
+
                                     if (source === 'user') {
                                         console.log("quill delta", delta);
                                         const op = convertDeltaToCrdt(delta);

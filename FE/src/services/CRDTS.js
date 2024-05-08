@@ -11,7 +11,7 @@ import { generateKeyBetween } from 'fractional-indexing';
 //insert and detele
 export function convertDeltaToCrdt(delta) {
     const crdtOperations = [];
-
+    // ops:[]
     // let index = 0;
     let insertIndx = 0;
     for (const op of delta.ops) {
@@ -28,6 +28,7 @@ export function convertDeltaToCrdt(delta) {
             crdtOperations.push({ type: 'delete', index: insertIndx });
         }
     }
+
     console.log("LAst Element of the crdtOperations")
     console.log(crdtOperations);
     const lastElement = crdtOperations[crdtOperations.length - 1];
@@ -62,8 +63,7 @@ export class CRDTs {
         let isItalic = false;
         let isBold = false;
         let prevKey = generateKeyBetween(null, null);
-        // <strong>
-        // <em>
+
         for (let i = 0; i < content.length; i++) {
             if (content.substring(i, i + 8) === '<strong>') {
                 isBold = true;
@@ -85,6 +85,28 @@ export class CRDTs {
                 i += 4;
                 continue;
             }
+            if (content.substring(i, i + 3) === '<p>') {
+                i += 2;
+                continue;
+            }
+            if (content.substring(i, i + 4) === '</p>') {
+                i += 3;
+                const char = new Char(this.siteId, '\n', this.counter, prevKey, isItalic, isBold);
+                this.sequence.push(char);
+                index++;
+                this.counter++;
+                prevKey = generateKeyBetween(prevKey, null);
+                continue;
+            }
+            if (content.substring(i, i + 4) === '<br>') {
+                i += 3;
+                const char = new Char(this.siteId, '\n', this.counter, prevKey, isItalic, isBold);
+                this.sequence.push(char);
+                index++;
+                this.counter++;
+                prevKey = generateKeyBetween(prevKey, null);
+                continue;
+            }
             const char = new Char(this.siteId, content[i], this.counter, prevKey, isItalic, isBold);
             this.sequence.push(char);
             index++;
@@ -96,6 +118,7 @@ export class CRDTs {
         console.log("Sequence Constructed : , ", this.sequence);
 
     }
+
     localInsert(value, index) {
         /*
             private String operation;
@@ -134,6 +157,7 @@ export class CRDTs {
         sendmessage(operation);
 
     }
+
     localDelete(index) {
         this.counter++;
         const char = this.sequence[index];
@@ -142,6 +166,7 @@ export class CRDTs {
 
         sendmessage(operation);
     }
+
     getFirstIndex(fractionIndex) {
         // get first index in the sequence where thre fractionalIndex is greater that the index ; 
         let startIndx = 0;
