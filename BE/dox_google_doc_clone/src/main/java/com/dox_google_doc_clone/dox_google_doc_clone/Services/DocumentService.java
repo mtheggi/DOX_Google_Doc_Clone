@@ -77,21 +77,18 @@ public class DocumentService {
 
     }
 
-    public List<DocumentAndOwnerName> getAllDocuments(String userId, int page_num) {
+    public List<DocumentModel> getAllDocuments(String userId, int page_num) {
         int pageSize = 9;
         List<UserPermissions> userPermissions = userPermissionService.getUserPermissionsByUserId(userId);
-        List<DocumentAndOwnerName> allDocuments = new ArrayList<>();
+        List<DocumentModel> allDocuments = new ArrayList<>();
         for (UserPermissions userPermission : userPermissions) {
-            User user = userService.getUserById(userPermission.getUserId());
             DocumentModel document = DocumentRepository.findById(userPermission.getDocumentId()).orElse(null);
-            if (document != null && user != null) {
-                DocumentAndOwnerName temp = new DocumentAndOwnerName(document, user.getRealUserName());
-                allDocuments.add(temp);
-            }
-
+            if (document != null) {
+                allDocuments.add(document);
+            }    
         }
         // Sort the documents by createdAt in descending order
-        allDocuments.sort(Comparator.comparing(doc -> doc.getDoc().getCreatedAt()));
+        allDocuments.sort(Comparator.comparing(DocumentModel::getCreatedAt).reversed());     
         // [0 .. 5 .. 9 ]
         int start = (page_num - 1) * pageSize;
         int end;
@@ -143,22 +140,22 @@ public class DocumentService {
 
     }
 
-    public List<DocumentAndOwnerName> getSharedDocuments(String userId, int page_num) {
+    public List<SharedDocument> getSharedDocuments(String userId, int page_num) {
         int pageSize = 9;
         List<UserPermissions> userPermissions = userPermissionService.getUserPermissionsByUserId(userId);
-        List<DocumentAndOwnerName> sharedDocuments = new ArrayList<>();
+        List<SharedDocument> sharedDocuments = new ArrayList<>();
 
         for (UserPermissions userPermission : userPermissions) {
             if (!(userPermission.isOwner())) {
                 DocumentModel document = DocumentRepository.findById(userPermission.getDocumentId()).orElse(null);
-                User user = userService.getUserById(userPermission.getUserId());
                 if (document != null) {
-                    DocumentAndOwnerName temp = new DocumentAndOwnerName(document, user.getRealUserName());
-                    sharedDocuments.add(temp);
+                    SharedDocument shared = new SharedDocument(document.getId(), document.getTitle(),
+                            document.getContent(), userPermission.isEdit(), document.getCreatedAt() , document.getOwnername());
+                    sharedDocuments.add(shared);
                 }
             }
         }
-        sharedDocuments.sort(Comparator.comparing(doc -> doc.getDoc().getCreatedAt()));
+        sharedDocuments.sort(Comparator.comparing(SharedDocument::getCreatedAt).reversed());
         // [0 .. 5 .. 9 ]
         int start = (page_num - 1) * pageSize;
         int end;

@@ -16,6 +16,8 @@ public class DocumentModel {
 
     private String content;
 
+    private String Ownername; 
+
     @CreatedDate
     private LocalDateTime createdAt;
 
@@ -27,10 +29,11 @@ public class DocumentModel {
         this.createdAt = createdAt;
     }
 
-    public DocumentModel(String title, String content, LocalDateTime createdAt) {
+    public DocumentModel(String title, String content, LocalDateTime createdAt, String Ownername) {
         this.title = title;
         this.content = content;
         this.createdAt = createdAt;
+        this.Ownername = Ownername;
     }
 
     public String getId() {
@@ -39,6 +42,13 @@ public class DocumentModel {
 
     public void setId(String id) {
         this.id = id;
+    }
+    public String getOwnername() {
+        return Ownername;
+    }
+
+    public void setOwnername(String Ownername) {
+        this.Ownername = Ownername;
     }
 
     public String getTitle() {

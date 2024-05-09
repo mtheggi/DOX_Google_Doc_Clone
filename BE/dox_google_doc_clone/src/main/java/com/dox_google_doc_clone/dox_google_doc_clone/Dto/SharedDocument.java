@@ -17,4 +17,5 @@ public class SharedDocument {
     private String content;
     private boolean Edit; // 1 fot edit , 0 for view only
     private LocalDateTime createdAt;
+    private String Ownername;
 }
