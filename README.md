@@ -19,12 +19,12 @@ https://docs.google.com/document/d/13crG1VhGFKycchIWPu1T3OujaelBUYup1vUjEs1jipQ/
 
 
 ## ToDo  : 
-1- on document creation , add the ownername to the document model. 
-2- Sorting the of the document is reversed. 
-3- update converting deltas to , and vice versa. 
-4- backend CRDT + converting sequence to html 
-5- /user --> name , email ; 
-6- onSave  
+* on document creation , add the ownername to the document model. 
+* Sorting the of the document is reversed. 
+* update converting deltas to , and vice versa. 
+* backend CRDT + converting sequence to html 
+* /user --> name , email ; 
+* onSave  
 
 
 
