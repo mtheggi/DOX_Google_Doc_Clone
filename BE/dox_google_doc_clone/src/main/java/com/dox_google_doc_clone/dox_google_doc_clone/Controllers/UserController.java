@@ -11,9 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 import java.util.List;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -40,10 +37,18 @@ public class UserController {
         }
     }
 
-    @GetMapping("/user/exists/{param}")
-    public ResponseEntity<String> getMethodName(@PathVariable String param) {
-        System.err.println(param);
-        return userService.getUserByName(param) != null ?  new ResponseEntity<>("User Exists", HttpStatus.OK) : new ResponseEntity<>("user doesnot exists", HttpStatus.BAD_REQUEST);
+    @GetMapping("/user/info")
+    public ResponseEntity<User> getUserInfo(@RequestHeader("Authorization") String token) {
+
+        String email = jwtService.extractEmail(token.substring(7));
+        
+        User user = userService.getUserByEmail(email).orElse(null);
+        if(user == null){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        
+        // Add the return statement here
+        return new ResponseEntity<>(new User(user.getId() , user.getUserName() , "" , user.getEmail()), HttpStatus.OK);
     }
 
 }
