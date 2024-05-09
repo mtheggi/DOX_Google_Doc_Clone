@@ -197,16 +197,25 @@ const TextEditor = () => {
                                     // } else {
                                     //     CRDTinstance.localDelete(op.index);
                                     // }
+
                                     console.log("content , ", content);
 
                                     if (source === 'user') {
                                         console.log("quill delta", delta);
+                                        const isconvertBold = delta.ops.some(op => (op.attributes?.hasOwnProperty('bold') && !op.hasOwnProperty('insert')));
+                                        const isconvertItalic = delta.ops.some(op => (op.attributes?.hasOwnProperty('italic') && !op.hasOwnProperty('insert')));
+
+                                        if (isconvertBold || isconvertItalic) {
+                                            CRDTinstance.localChangeStyle(delta, id);
+                                            return;
+                                        }
+
                                         const op = convertDeltaToCrdt(delta);
                                         console.log("operation correct ?  : ", op);
                                         if (op.operation === 'insert') {
-                                            CRDTinstance.localInsert(op.character, op.index);
+                                            CRDTinstance.localInsert(op.character, op.index, op.attributes, id);
                                         } else {
-                                            CRDTinstance.localDelete(op.index);
+                                            CRDTinstance.localDelete(op.index, id);
                                         }
                                     }
                                 }} />

@@ -28,17 +28,28 @@ export const ConnectToWebSocket = async (quillRef) => {
 
             const quill = quillRef.current.getEditor();
             const op = JSON.parse(data.body);
+            console.log("data ; ", data.body);
+
+            console.log("recieved operation: ", op);
 
             if (op.siteId !== siteId) {
                 let deltas;
-                if (op.operation === 'delete') {
-                    const char = new Char(op.siteId, op.character, op.counter, op.fractionIndex);
+
+                if (op.operation === 'style') {
+                    deltas = CRDTinstance.remoteChangeStyle(op);
+                    console.log("remote style : , ", deltas);
+
+                } else if (op.operation === 'delete') {
+                    const char = new Char(op.siteId, op.character, op.counter, op.fractionIndex, op.bold, op.italic);
 
                     deltas = CRDTinstance.remoteDelete(char);
 
                 } else {
-                    const char = new Char(op.siteId, op.character, op.counter, op.fractionIndex);
+                    const char = new Char(op.siteId, op.character, op.counter, op.fractionIndex, op.bold, op.italic);
+
                     deltas = CRDTinstance.remoteInsert(char);
+                    console.log("remoteInsert deltas: ", deltas);
+
                 }
                 console.log("deltas : ", deltas);
                 quill.updateContents(deltas, 'silent');

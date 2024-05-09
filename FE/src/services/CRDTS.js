@@ -20,20 +20,22 @@ export function convertDeltaToCrdt(delta) {
             insertIndx = op.retain;
         }
         if (op.insert) {
-            crdtOperations.push({ type: 'insert', index: insertIndx, char: op.insert });
+            if (op.attributes) {
+                // For insert operations, add a CRDT insert operation for each character
+                crdtOperations.push({ type: 'insert', index: insertIndx, char: op.insert, attributes: op.attributes });
+            } else {
+                crdtOperations.push({ type: 'insert', index: insertIndx, char: op.insert });
+            }
         }
-
         if (op.delete) {
             // For delete operations, add a CRDT delete operation for each deleted character
             crdtOperations.push({ type: 'delete', index: insertIndx });
         }
     }
 
-    console.log("LAst Element of the crdtOperations")
-    console.log(crdtOperations);
     const lastElement = crdtOperations[crdtOperations.length - 1];
-    console.log(lastElement)
-    return { operation: lastElement?.type, documentId: "12", character: lastElement?.char, index: lastElement?.index };
+    console.log("lastElement : ", lastElement);
+    return { operation: lastElement?.type, documentId: "12", character: lastElement?.char, index: lastElement?.index, attributes: lastElement?.attributes };
 }
 
 
@@ -119,7 +121,7 @@ export class CRDTs {
 
     }
 
-    localInsert(value, index) {
+    localInsert(value, index, attributes, documentId) {
         /*
             private String operation;
             private String documentId;
@@ -130,6 +132,17 @@ export class CRDTs {
         */
         this.counter++;
 
+        var isItalic = false;
+        var isBold = false;
+        if (typeof attributes !== 'undefined') {
+            if (attributes.italic) {
+                isItalic = attributes.italic;
+            }
+            if (attributes.bold) {
+                isBold = attributes.bold;
+            }
+        }
+
         if (this.sequence.length === 0 || index >= this.sequence.length) {
 
             let newKey;
@@ -139,9 +152,10 @@ export class CRDTs {
                 newKey = generateKeyBetween(this.sequence[this.sequence.length - 1].fractionIndex, null);
             }
 
-            const char = new Char(this.siteId, value, this.counter, newKey)
+            const char = new Char(this.siteId, value, this.counter, newKey, isBold, isItalic)
             this.sequence.push(char);
-            const operation = { operation: 'insert', documentId: "1", character: value, siteId: this.siteId, counter: this.counter, fractionIndex: newKey };
+            const operation = { operation: 'insert', documentId: "1", character: value, siteId: this.siteId, counter: this.counter, fractionIndex: newKey, bold: isBold, italic: isItalic };
+            console.log("localInsert operation : ", operation);
             sendmessage(operation);
             return;
         }
@@ -149,19 +163,58 @@ export class CRDTs {
         let afterPosition = this.sequence[index].fractionIndex;
         let beforePosition = index === 0 ? null : this.sequence[index - 1].fractionIndex;
         const fractionIndex = generateKeyBetween(beforePosition, afterPosition);
-        const char = new Char(this.siteId, value, this.counter, fractionIndex);
+        const char = new Char(this.siteId, value, this.counter, fractionIndex, isBold, isItalic);
         console.log("localInsert in Index , ", index)
         this.sequence.splice(index, 0, char);
+        "1"
+        const operation = { operation: 'insert', documentId: documentId, character: value, siteId: this.siteId, counter: this.counter, fractionIndex: fractionIndex, bold: isBold, italic: isItalic };
 
-        const operation = { operation: 'insert', documentId: "1", character: value, siteId: this.siteId, counter: this.counter, fractionIndex: fractionIndex };
+        console.log("localInsert operation : ", operation);
         sendmessage(operation);
 
     }
 
-    localDelete(index) {
+    localChangeStyle(delta, documentId) {
+        let index = delta.ops[0].retain;
+        const isconvertBold = delta.ops.some(op => (op.attributes?.hasOwnProperty('bold') && !op.hasOwnProperty('insert')));
+        const isconvertItalic = delta.ops.some(op => (op.attributes?.hasOwnProperty('italic') && !op.hasOwnProperty('insert')));
+        if (isconvertBold) {
+            this.sequence[index].bold = delta.ops[1].attributes.bold ? true : false;
+            const operation = { operation: 'style', documentId: documentId, character: this.sequence[index].value, siteId: this.siteId, counter: this.sequence[index].counter, fractionIndex: this.sequence[index].fractionIndex, bold: this.sequence[index].bold, italic: null };
+            sendmessage(operation);
+            return;
+        }
+        if (isconvertItalic) {
+            this.sequence[index].italic = delta.ops[1].attributes.italic ? true : false;
+            const operation = { operation: 'style', documentId: documentId, character: this.sequence[index].value, siteId: this.siteId, counter: this.sequence[index].counter, fractionIndex: this.sequence[index].fractionIndex, bold: null, italic: this.sequence[index].italic };
+
+            sendmessage(operation);
+            return;
+
+        }
+    }
+
+    remoteChangeStyle(operation) {
+        const { fractionIndex } = operation;
+        const index = this.getDeleteIndex(fractionIndex);
+        console.log("remote recived Style Change ,", operation);
+
+        if (index != -1) {
+            if (operation.bold !== null) {
+                this.sequence[index].bold = operation.bold;
+                return { ops: [{ retain: index }, { retain: 1, attributes: { bold: operation.bold ? true : null } }] }
+            } else {
+                this.sequence[index].italic = operation.italic;
+                return { ops: [{ retain: index }, { retain: 1, attributes: { italic: operation.italic ? true : null } }] }
+
+            }
+        }
+    }
+
+    localDelete(index, documentId) {
         this.counter++;
         const char = this.sequence[index];
-        const operation = { operation: 'delete', documentId: "1", character: char.value, siteId: char.siteId, counter: char.counter, fractionIndex: char.fractionIndex }
+        const operation = { operation: 'delete', documentId: documentId, character: char.value, siteId: char.siteId, counter: char.counter, fractionIndex: char.fractionIndex }
         this.sequence.splice(index, 1);
 
         sendmessage(operation);
@@ -187,27 +240,30 @@ export class CRDTs {
     remoteInsert(char) {
         //TODO : shoudl I increment the coutner in remoteInsert ????? 
 
+        const attributes = { bold: char.bold, italic: char.italic }
+        console.log("remoteInsert char :", char);
+
         const { fractionIndex } = char
         let index = this.getFirstIndex(fractionIndex)
         if (index === -1 && this.sequence.length > 0) {
 
             index = this.sequence.push(char);
-            return { ops: [{ retain: this.sequence.length - 1 }, { insert: char.value }] }
+            return { ops: [{ retain: this.sequence.length - 1 }, { insert: char.value, attributes: attributes }] }
         }
 
         if (index === -1) {
 
             index = this.sequence.push(char);
 
-            return { ops: [{ insert: char.value }] }
+            return { ops: [{ insert: char.value, attributes: attributes }] }
         }
 
         this.sequence.splice(index, 0, char);
         if (index) {
             console.log("remoteInsert in Index , ", index)
-            return { ops: [{ retain: index }, { insert: char.value }] }
+            return { ops: [{ retain: index }, { insert: char.value, attributes: attributes }] }
         } else {
-            return { ops: [{ insert: char.value }] }
+            return { ops: [{ insert: char.value, attributes: attributes }] }
         }
 
     }
