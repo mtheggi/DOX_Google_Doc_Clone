@@ -60,6 +60,12 @@ export class CRDTs {
         return CRDTs.CRDTinstance;
     }
 
+
+    clearSequence () {
+        this.sequence=[];
+    }
+
+
     constructTheSequence(content) {
         let index = 0;
         let isItalic = false;

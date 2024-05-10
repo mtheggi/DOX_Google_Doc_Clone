@@ -90,7 +90,7 @@ public class CRDTS {
         }
     }
 
-    public String convertSeqIntoText() {
+    public synchronized String convertSeqIntoText() {
         StringBuilder content = new StringBuilder();
         boolean bold = false;
         boolean italic = false;
@@ -113,14 +113,14 @@ public class CRDTS {
             }
 
             if (item.value.equals("\n")) {
-                if (bold) {
-                    content.append("</strong>");
-                    bold = false;
-                }
-                if (italic) {
-                    content.append("</em>");
-                    italic = false;
-                }
+//                if (bold) {
+//                    content.append("</strong>");
+//                    bold = false;
+//                }
+//                if (italic) {
+//                    content.append("</em>");
+//                    italic = false;
+//                }
                 content.append("<br>");
             } else {
                 content.append(item.value);

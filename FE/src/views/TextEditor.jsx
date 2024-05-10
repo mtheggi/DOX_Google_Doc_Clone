@@ -72,6 +72,12 @@ const TextEditor = () => {
     const baseUrl = "http://localhost:8080";
 
 
+    const save = async () => {
+        const response = await getRequestWithToken(`${baseUrl}/document/save/${id}`);
+        if (response.status == 200 || response.status == 201) {
+            window.location.reload();
+        }
+    }
 
     useEffect(() => {
 
@@ -91,6 +97,12 @@ const TextEditor = () => {
 
     }, [id]);
 
+
+    useEffect(() => {
+        return () => {
+            CRDTinstance.clearSequence();
+        }
+    }, [])
 
     useEffect(() => {
 
@@ -154,10 +166,13 @@ const TextEditor = () => {
                         }
                     </div>
 
-                    <div onClick={() => {
-                        getRequestWithToken(`/document/save/${id}`);
 
-                    }} className="ml-auto mr-4 flex flex-row justify-center items-center w-9 h-9 cursor-pointer rounded-full hover:bg-gray-200">
+                    <div onClick={save} className="mr-4 ml-auto flex flex-row justify-center items-center w-13 h-[32px] px-1 cursor-pointer rounded-3xl bg-blue-600 hover:bg-blue-500">
+                        <h1 className="text-[12px] text-white font-semibold">Save</h1>
+                    </div>
+
+
+                    <div className="mr-4 flex flex-row justify-center items-center w-9 h-9 cursor-pointer rounded-full hover:bg-gray-200">
                         <ArrowPathIcon className="w-6 h-6" />
                     </div>
 
