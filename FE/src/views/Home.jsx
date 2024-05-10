@@ -189,43 +189,43 @@ const Home = ({ setIsLoggedIn }) => {
                         </div>
                     </div>
                     <div id="documents_arranged" className={`flex  flex-col mt-2 mb-auto overflow-y-auto h-[400px] w-full msm:w-[494px] md:w-[685px] space-y-3 lg:w-[885px] xl:w-[1075px] mx-auto hide-scrollbar`}>
-                      
+
                         {sortValue === "All" && all.map((document, index) => {
                             if (index + 1 == all.length) {
-                                return <File key={document.doc.id}
-                                    name={document.doc.title}
-                                    id={document.doc.id}
-                                    owner={document.ownerName}
-                                    createdAt={document.doc.createdAt}
+                                return <File key={document.id}
+                                    name={document.title}
+                                    id={document.id}
+                                    owner={document.ownername}
+                                    createdAt={document.createdAt}
                                     lastPostRef={lastPostRef}
                                 />
                             }
                             else {
-                                return <File key={document.doc.id}
-                                    name={document.doc.title}
-                                    id={document.doc.id}
-                                    owner={document.ownerName}
-                                    createdAt={document.doc.createdAt}
+                                return <File key={document.id}
+                                    name={document.title}
+                                    id={document.id}
+                                    owner={document.ownername}
+                                    createdAt={document.createdAt}
                                 />
                             }
                         })}
 
                         {sortValue === "Shared" && shared.map((document, index) => {
                             if (index + 1 == shared.length) {
-                                return <File key={document.doc.id}
-                                    name={document.doc.title}
-                                    id={document.doc.id}
-                                    owner={document.ownerName}
-                                    createdAt={document.doc.createdAt}
+                                return <File key={document.id}
+                                    name={document.title}
+                                    id={document.id}
+                                    owner={document.ownername}
+                                    createdAt={document.createdAt}
                                     lastPostRef={lastPostRef}
                                 />
                             }
                             else {
-                                return <File key={document.doc.id}
-                                    name={document.doc.title}
-                                    id={document.doc.id}
-                                    owner={document.ownerName}
-                                    createdAt={document.doc.createdAt}
+                                return <File key={document.id}
+                                    name={document.title}
+                                    id={document.id}
+                                    owner={document.ownername}
+                                    createdAt={document.createdAt}
                                 />
                             }
                         })}
@@ -254,7 +254,7 @@ const Home = ({ setIsLoggedIn }) => {
                         })}
 
 
-                        {loading && <Loading/>}
+                        {loading && <Loading />}
 
                     </div>
                 </div>

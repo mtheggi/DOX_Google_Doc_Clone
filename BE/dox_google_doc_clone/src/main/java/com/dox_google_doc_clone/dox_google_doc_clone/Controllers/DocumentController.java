@@ -40,7 +40,7 @@ public class DocumentController {
     }
 
     @PostMapping("/document/create")
-    public ResponseEntity<String> saveDocument(@RequestBody JsonNode jsonNode,
+    public ResponseEntity<?> saveDocument(@RequestBody JsonNode jsonNode,
             @RequestHeader("Authorization") String token) {
         String email = jwtService.extractEmail(token.substring(7));
         String userId;
@@ -61,7 +61,7 @@ public class DocumentController {
         UserPermissions userPermissions = new UserPermissions(userId, documentModel.getId(), true, true, true);
         userPermissionsService.saveUserPermissions(userPermissions);
 
-        return new ResponseEntity<>("document created successfully", HttpStatus.OK);
+        return new ResponseEntity<>(documentModel, HttpStatus.OK);
     }
 
     @PutMapping("/document/share")

@@ -15,12 +15,12 @@ const RenameModal = ({ setIsOpenedShareMenu }) => {
             const response = await postRequestWithToken(`${baseUrl}/document/create`, { title: docName, content: "" });
             if (response.status != 200 && response.status != 201) {
                 setErrorMsg(response.data.message);
-              
+
             }
             else {
-                navigate("/texteditor")
+                navigate(`/texteditor/${response.data.id}`);
                 setIsOpenedShareMenu(false);
-               
+
             }
         }
     }
