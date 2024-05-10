@@ -154,7 +154,7 @@ export class CRDTs {
 
             const char = new Char(this.siteId, value, this.counter, newKey, isBold, isItalic)
             this.sequence.push(char);
-            const operation = { operation: 'insert', documentId: "1", character: value, siteId: this.siteId, counter: this.counter, fractionIndex: newKey, bold: isBold, italic: isItalic };
+            const operation = { operation: 'insert', documentId: documentId, character: value, siteId: this.siteId, counter: this.counter, fractionIndex: newKey, bold: isBold, italic: isItalic };
             console.log("localInsert operation : ", operation);
             sendmessage(operation);
             return;
@@ -282,10 +282,7 @@ export class CRDTs {
                 endIndx = midIndx - 1;
             }
         }
-
         return -1; // the fractionIndex is not in the sequence
-
-
     }
     remoteDelete(char) {
         const { fractionIndex } = char;

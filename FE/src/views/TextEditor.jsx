@@ -154,7 +154,10 @@ const TextEditor = () => {
                         }
                     </div>
 
-                    <div className="ml-auto mr-4 flex flex-row justify-center items-center w-9 h-9 cursor-pointer rounded-full hover:bg-gray-200">
+                    <div onClick={() => {
+                        getRequestWithToken(`/document/save/${id}`);
+
+                    }} className="ml-auto mr-4 flex flex-row justify-center items-center w-9 h-9 cursor-pointer rounded-full hover:bg-gray-200">
                         <ArrowPathIcon className="w-6 h-6" />
                     </div>
 

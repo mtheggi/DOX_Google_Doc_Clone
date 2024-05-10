@@ -11,6 +11,7 @@ import com.dox_google_doc_clone.dox_google_doc_clone.Models.UserPermissions;
 import com.dox_google_doc_clone.dox_google_doc_clone.Services.UserPermissionsService;
 import com.dox_google_doc_clone.dox_google_doc_clone.Services.UserService;
 import com.dox_google_doc_clone.dox_google_doc_clone.config.JwtService;
+import com.dox_google_doc_clone.dox_google_doc_clone.crdts.ManagerOfCRDTS;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import org.bson.Document;
@@ -30,6 +31,7 @@ public class DocumentController {
     private UserPermissionsService userPermissionsService;
     private JwtService jwtService;
     private UserService userService;
+    private ManagerOfCRDTS managerOfCRDTS = ManagerOfCRDTS.getInstance();
 
     public DocumentController(DocumentService documentService, UserPermissionsService userPermissionsService,
             JwtService jwtService, UserService userService) {
@@ -44,7 +46,7 @@ public class DocumentController {
             @RequestHeader("Authorization") String token) {
         String email = jwtService.extractEmail(token.substring(7));
         String userId;
-        User user = null; 
+        User user = null;
         if (userService.getUserByEmail(email).isPresent()) {
             userId = userService.getUserByEmail(email).get().getId();
             user = userService.getUserByEmail(email).get();
@@ -57,7 +59,7 @@ public class DocumentController {
             return new ResponseEntity<>("userId , title , content are required", HttpStatus.BAD_REQUEST);
         }
         DocumentModel documentModel = documentService
-                .saveDocument(new DocumentModel(title, content, LocalDateTime.now() , user.getRealUserName()));
+                .saveDocument(new DocumentModel(title, content, LocalDateTime.now(), user.getRealUserName()));
         UserPermissions userPermissions = new UserPermissions(userId, documentModel.getId(), true, true, true);
         userPermissionsService.saveUserPermissions(userPermissions);
 
@@ -107,7 +109,26 @@ public class DocumentController {
         }
 
         DocumentModel temp = documentService.getDocumentModel(doc_id);
+        managerOfCRDTS.addCRDTS(doc_id, temp.getContent());
+
         return new ResponseEntity<>(temp, HttpStatus.OK);
+    }
+
+    @GetMapping("/document/save/{doc_id}")
+    public ResponseEntity saveDocumentByID(@PathVariable String doc_id,
+            @RequestHeader("Authorization") String token) {
+        String email = jwtService.extractEmail(token.substring(7));
+        String userId;
+        if (userService.getUserByEmail(email).isPresent()) {
+            userId = userService.getUserByEmail(email).get().getId();
+        } else {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        String content = managerOfCRDTS.SavedInDB(doc_id);
+        documentService.saveDocument(doc_id, content);
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/document/shared/{page_num}")

@@ -16,12 +16,14 @@ import com.dox_google_doc_clone.dox_google_doc_clone.Repositories.DocumentReposi
 import com.dox_google_doc_clone.dox_google_doc_clone.Models.DocumentModel;
 import com.dox_google_doc_clone.dox_google_doc_clone.Dto.DocumentAndOwnerName;
 import com.dox_google_doc_clone.dox_google_doc_clone.Dto.SharedDocument;
+import com.dox_google_doc_clone.dox_google_doc_clone.crdts.ManagerOfCRDTS;
 
 @Service
 public class DocumentService {
     private final DocumentRepository DocumentRepository;
     private final UserService userService;
     private final UserPermissionsService userPermissionService;
+    private ManagerOfCRDTS managerOfCRDTS = ManagerOfCRDTS.getInstance();
 
     @Autowired
     public DocumentService(DocumentRepository DocumentRepository, UserService userService,
@@ -85,10 +87,10 @@ public class DocumentService {
             DocumentModel document = DocumentRepository.findById(userPermission.getDocumentId()).orElse(null);
             if (document != null) {
                 allDocuments.add(document);
-            }    
+            }
         }
         // Sort the documents by createdAt in descending order
-        allDocuments.sort(Comparator.comparing(DocumentModel::getCreatedAt).reversed());     
+        allDocuments.sort(Comparator.comparing(DocumentModel::getCreatedAt).reversed());
         // [0 .. 5 .. 9 ]
         int start = (page_num - 1) * pageSize;
         int end;
@@ -107,7 +109,17 @@ public class DocumentService {
 
     public DocumentModel getDocumentModel(String docID) {
         DocumentModel document = DocumentRepository.findById(docID).orElse(null);
+
         return document;
+    }
+
+    public void saveDocument(String docID, String content) {
+        DocumentModel document = DocumentRepository.findById(docID).orElse(null);
+        if (document == null) {
+            return;
+        }
+        document.setContent(content);
+        DocumentRepository.save(document);
     }
 
     public List<DocumentModel> getOwnedDocuments(String userId, int page_num) {
@@ -150,7 +162,8 @@ public class DocumentService {
                 DocumentModel document = DocumentRepository.findById(userPermission.getDocumentId()).orElse(null);
                 if (document != null) {
                     SharedDocument shared = new SharedDocument(document.getId(), document.getTitle(),
-                            document.getContent(), userPermission.isEdit(), document.getCreatedAt() , document.getOwnername());
+                            document.getContent(), userPermission.isEdit(), document.getCreatedAt(),
+                            document.getOwnername());
                     sharedDocuments.add(shared);
                 }
             }
