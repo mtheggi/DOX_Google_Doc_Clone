@@ -25,6 +25,10 @@ https://docs.google.com/document/d/13crG1VhGFKycchIWPu1T3OujaelBUYup1vUjEs1jipQ/
 * backend CRDT + converting sequence to html 
 * <mark>[done]</mark> /user --> name , email ; 
 * onSave  
+* Deploy optional
+* Back Version control
+* front version control
+* mouse corsair 
 
 
 

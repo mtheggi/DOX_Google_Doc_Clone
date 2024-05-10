@@ -87,7 +87,9 @@ const TextEditor = () => {
                 setInputValue(response.data.title);
                 setLastValidName(response.data.title);
                 setPageContent(response.data.content);
+                CRDTinstance.setDocumentId(id);
                 CRDTinstance.constructTheSequence(response.data.content)
+
             } else {
 
             }

@@ -41,13 +41,19 @@ export function convertDeltaToCrdt(delta) {
 
 export class CRDTs {
     siteId;
+    documentId;
     counter;
     sequence = [];
 
     constructor() {
         this.siteId = siteId;
         this.counter = 0;
+        this.documentId = null;
         this.sequence = [];
+    }
+
+    setDocumentId(docid) {
+        this.documentId = docid;
     }
 
     static CRDTinstance = null;
@@ -61,8 +67,8 @@ export class CRDTs {
     }
 
 
-    clearSequence () {
-        this.sequence=[];
+    clearSequence() {
+        this.sequence = [];
     }
 
 

@@ -1,6 +1,7 @@
 package com.dox_google_doc_clone.dox_google_doc_clone.crdts;
 
 import java.util.ArrayList;
+
 import java.util.List;
 
 public class CRDTS {
@@ -23,37 +24,63 @@ public class CRDTS {
             // Handle exception
             System.out.println("An error occurred: " + e.getMessage());
         }
-
-        for (int i = 0; i < content.length(); i++) {
-            if (i + 8 < content.length() && content.substring(i, i + 8).equals("<strong>")) {
-                bold = true;
-                i += 7;
-                continue;
-            }
-            if (i + 9 < content.length() && content.substring(i, i + 9).equals("</strong>")) {
-                bold = false;
-                i += 8;
-                continue;
-            }
-            if (i + 4 < content.length() && content.substring(i, i + 4).equals("<em>")) {
-                italic = true;
-                i += 3;
-                continue;
-            }
-            if (i + 5 < content.length() && content.substring(i, i + 5).equals("</em>")) {
-                italic = false;
-                i += 4;
-                continue;
-            }
-            if (i + 3 < content.length() && content.substring(i, i + 3).equals("<p>")) {
-                i += 2;
-                continue;
-            }
-            if (i + 4 < content.length() && content.substring(i, i + 4).equals("</p>")) {
-                i += 3;
-                CharItem item = new CharItem("\n", prevKey, bold, italic);
+        synchronized (sequence) {
+            for (int i = 0; i < content.length(); i++) {
+                if (i + 8 < content.length() && content.substring(i, i + 8).equals("<strong>")) {
+                    bold = true;
+                    i += 7;
+                    continue;
+                }
+                if (i + 9 < content.length() && content.substring(i, i + 9).equals("</strong>")) {
+                    bold = false;
+                    i += 8;
+                    continue;
+                }
+                if (i + 4 < content.length() && content.substring(i, i + 4).equals("<em>")) {
+                    italic = true;
+                    i += 3;
+                    continue;
+                }
+                if (i + 5 < content.length() && content.substring(i, i + 5).equals("</em>")) {
+                    italic = false;
+                    i += 4;
+                    continue;
+                }
+                if (i + 3 < content.length() && content.substring(i, i + 3).equals("<p>")) {
+                    i += 2;
+                    continue;
+                }
+                if (i + 4 < content.length() && content.substring(i, i + 4).equals("</p>")) {
+                    i += 3;
+                    CharItem item = new CharItem("\n", prevKey, bold, italic);
+                    this.sequence.add(item);
+                    System.err.println("Item value: " + item.value);
+                    try {
+                        prevKey = FractionalIndexing.generateKeyBetween(prevKey, null,
+                                "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz");
+                    } catch (Exception e) {
+                        // Handle exception
+                        System.out.println("An error occurred: " + e.getMessage());
+                    }
+                    continue;
+                }
+                if (i + 4 < content.length() && content.substring(i, i + 4).equals("<br>")) {
+                    i += 3;
+                    CharItem item = new CharItem("\n", prevKey, bold, italic);
+                    this.sequence.add(item);
+                    System.err.println("Item value: " + item.value);
+                    try {
+                        prevKey = FractionalIndexing.generateKeyBetween(prevKey, null,
+                                "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz");
+                    } catch (Exception e) {
+                        // Handle exception
+                        System.out.println("An error occurred: " + e.getMessage());
+                    }
+                    continue;
+                }
+                CharItem item = new CharItem(String.valueOf(content.charAt(i)), prevKey, bold, italic);
                 this.sequence.add(item);
-
+                System.err.println("Item value: " + item.value);
                 try {
                     prevKey = FractionalIndexing.generateKeyBetween(prevKey, null,
                             "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz");
@@ -61,36 +88,11 @@ public class CRDTS {
                     // Handle exception
                     System.out.println("An error occurred: " + e.getMessage());
                 }
-                continue;
-            }
-            if (i + 4 < content.length() && content.substring(i, i + 4).equals("<br>")) {
-                i += 3;
-                CharItem item = new CharItem("\n", prevKey, bold, italic);
-                this.sequence.add(item);
-
-                try {
-                    prevKey = FractionalIndexing.generateKeyBetween(prevKey, null,
-                            "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz");
-                } catch (Exception e) {
-                    // Handle exception
-                    System.out.println("An error occurred: " + e.getMessage());
-                }
-                continue;
-            }
-            CharItem item = new CharItem(String.valueOf(content.charAt(i)), prevKey, bold, italic);
-            this.sequence.add(item);
-
-            try {
-                prevKey = FractionalIndexing.generateKeyBetween(prevKey, null,
-                        "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz");
-            } catch (Exception e) {
-                // Handle exception
-                System.out.println("An error occurred: " + e.getMessage());
             }
         }
     }
 
-    public synchronized String convertSeqIntoText() {
+    public String convertSeqIntoText() {
         StringBuilder content = new StringBuilder();
         boolean bold = false;
         boolean italic = false;
@@ -113,25 +115,25 @@ public class CRDTS {
             }
 
             if (item.value.equals("\n")) {
-//                if (bold) {
-//                    content.append("</strong>");
-//                    bold = false;
-//                }
-//                if (italic) {
-//                    content.append("</em>");
-//                    italic = false;
-//                }
+                if (bold) {
+                    content.append("</strong>");
+                    bold = false;
+                }
+                if (italic) {
+                    content.append("</em>");
+                    italic = false;
+                }
                 content.append("<br>");
             } else {
+
                 content.append(item.value);
             }
-        }
-
-        if (bold) {
-            content.append("</strong>");
-        }
-        if (italic) {
-            content.append("</em>");
+            // if (bold) {
+            // content.append("</strong>");
+            // }
+            // if (italic) {
+            // content.append("</em>");
+            // }
         }
 
         return content.toString();
@@ -156,13 +158,14 @@ public class CRDTS {
     }
 
     public void insertInCrdts(CharItem item) {
-        System.out.println("Insert in CRDTS2 ");
+
         int indx = getFirstIndex(item.fractionIndex);
 
         if (indx == -1) {
             this.sequence.add(item);
             return;
         }
+        System.out.println("Item value: " + item.value);
         this.sequence.add(indx, item);
     }
 
@@ -188,7 +191,7 @@ public class CRDTS {
 
     public void deleteInCrdts(CharItem item) {
         int indx = getDeleteIndex(item.fractionIndex);
-        System.out.println("Delete in CRDTS2 " + indx);
+
         if (indx != -1) {
             this.sequence.remove(indx);
         }

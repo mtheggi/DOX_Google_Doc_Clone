@@ -19,18 +19,23 @@ public class ManagerOfCRDTS {
     }
 
     public void addCRDTS(String key, String content) {
+        if (this.map.containsKey(key)) {
+            return;
+        }
         CRDTS crdts = new CRDTS();
         crdts.ConvertTextIntoSeq(content);
         this.map.put(key, crdts);
-        System.err.println(key + " added successfully");
-        System.err.println("CRDTS added successfully");
+
     }
 
     public void insert(String key, CharItem temp) {
-        System.err.println(key + " Search For");
-        System.out.println("Insert in CRDTS");
+
         this.map.get(key).insertInCrdts(temp);
 
+    }
+
+    public boolean checkMap(String key) {
+        return this.map.containsKey(key);
     }
 
     public void delete(String key, CharItem temp) {
@@ -39,7 +44,7 @@ public class ManagerOfCRDTS {
 
     public String SavedInDB(String key) {
         String content = this.map.get(key).convertSeqIntoText();
-     
+
         return content;
     }
 }

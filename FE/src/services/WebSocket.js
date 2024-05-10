@@ -31,29 +31,31 @@ export const ConnectToWebSocket = async (quillRef) => {
             console.log("data ; ", data.body);
 
             console.log("recieved operation: ", op);
+            if (op.documentId === CRDTinstance.documentId) {
+                if (op.siteId !== siteId) {
+                    let deltas;
 
-            if (op.siteId !== siteId) {
-                let deltas;
+                    if (op.operation === 'style') {
+                        deltas = CRDTinstance.remoteChangeStyle(op);
+                        console.log("remote style : , ", deltas);
 
-                if (op.operation === 'style') {
-                    deltas = CRDTinstance.remoteChangeStyle(op);
-                    console.log("remote style : , ", deltas);
+                    } else if (op.operation === 'delete') {
+                        const char = new Char(op.siteId, op.character, op.counter, op.fractionIndex, op.bold, op.italic);
 
-                } else if (op.operation === 'delete') {
-                    const char = new Char(op.siteId, op.character, op.counter, op.fractionIndex, op.bold, op.italic);
+                        deltas = CRDTinstance.remoteDelete(char);
 
-                    deltas = CRDTinstance.remoteDelete(char);
+                    } else {
+                        const char = new Char(op.siteId, op.character, op.counter, op.fractionIndex, op.bold, op.italic);
 
-                } else {
-                    const char = new Char(op.siteId, op.character, op.counter, op.fractionIndex, op.bold, op.italic);
+                        deltas = CRDTinstance.remoteInsert(char);
+                        console.log("remoteInsert deltas: ", deltas);
 
-                    deltas = CRDTinstance.remoteInsert(char);
-                    console.log("remoteInsert deltas: ", deltas);
-
+                    }
+                    console.log("deltas : ", deltas);
+                    quill.updateContents(deltas, 'silent');
                 }
-                console.log("deltas : ", deltas);
-                quill.updateContents(deltas, 'silent');
             }
+
         });
     };
 

@@ -107,9 +107,13 @@ public class DocumentController {
             DocumentModel emptyList = null;
             return new ResponseEntity<>(emptyList, HttpStatus.BAD_REQUEST);
         }
-
         DocumentModel temp = documentService.getDocumentModel(doc_id);
-        managerOfCRDTS.addCRDTS(doc_id, temp.getContent());
+        ;
+        if (managerOfCRDTS.checkMap(doc_id)) {
+            temp.setContent(managerOfCRDTS.SavedInDB(doc_id));
+        } else {
+            managerOfCRDTS.addCRDTS(doc_id, temp.getContent());
+        }
 
         return new ResponseEntity<>(temp, HttpStatus.OK);
     }
@@ -119,6 +123,7 @@ public class DocumentController {
             @RequestHeader("Authorization") String token) {
         String email = jwtService.extractEmail(token.substring(7));
         String userId;
+
         if (userService.getUserByEmail(email).isPresent()) {
             userId = userService.getUserByEmail(email).get().getId();
         } else {
@@ -126,6 +131,7 @@ public class DocumentController {
         }
 
         String content = managerOfCRDTS.SavedInDB(doc_id);
+
         documentService.saveDocument(doc_id, content);
 
         return new ResponseEntity<>(HttpStatus.OK);
