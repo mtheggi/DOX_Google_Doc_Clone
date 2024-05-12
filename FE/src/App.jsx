@@ -10,6 +10,7 @@ import Stomp from 'stompjs';
 import SockJS from 'sockjs-client';
 import { DisconnectWebSocket, ConnectToWebSocket, sendmessage } from './services/WebSocket';
 import NotFound from './views/NotFound'
+import {baseUrl} from "./Constants"
 function App() {
 
   const [isLoggedIn, setIsLoggedIn] = useState(JSON.parse(localStorage.getItem('isLoggedIn')) || false);
@@ -20,7 +21,7 @@ function App() {
   }, [isLoggedIn]);
 
   // useEffect(() => {
-  //   const socket = new SockJS('http://25.62.207.82:8080/ws');
+  //   const socket = new SockJS({baseUrl}/ws);
   //   const client = Stomp.over(socket);
   //   console.log("HHHHHHHHHHHHHHHHHHHHHHHEREE");
   //   client.connect({}, () => {
