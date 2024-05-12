@@ -20,7 +20,7 @@ function App() {
   }, [isLoggedIn]);
 
   // useEffect(() => {
-  //   const socket = new SockJS('http://localhost:8080/ws');
+  //   const socket = new SockJS('http://25.62.207.82:8080/ws');
   //   const client = Stomp.over(socket);
   //   console.log("HHHHHHHHHHHHHHHHHHHHHHHEREE");
   //   client.connect({}, () => {

@@ -3,7 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import { getRequestWithToken } from "../Requests";
 
 const Navbar = ({setIsLoggedIn}) => {
-    const baseUrl = "http://localhost:8080";
+    const baseUrl = "http://25.62.207.82:8080";
     const navigate = useNavigate();
     const [isLogoutMenuOpened, setIsLogoutMenuOpened] = useState(false);
     const sortMenuRef = useRef();

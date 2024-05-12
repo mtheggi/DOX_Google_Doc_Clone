@@ -4,7 +4,7 @@ import { TrashIcon } from '@heroicons/react/24/outline';
 import { getRequestWithToken } from '../Requests';
 
 const TagInput = ({setUserDoesntExist, setTags, tags}) => {
-  let baseUrl = "http://localhost:8080";
+  let baseUrl = "http://25.62.207.82:8080";
   const [inputValue, setInputValue] = useState('');
   const [matchedTags, setMatchedTags] = useState([]);
 

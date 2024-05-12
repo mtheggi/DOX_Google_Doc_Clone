@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 const SignUp = ({setIsLoggedIn}) => {
 
-  const baseUrl="http://localhost:8080"
+  const baseUrl="http://25.62.207.82:8080"
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

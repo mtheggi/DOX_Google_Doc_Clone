@@ -10,7 +10,7 @@ import Loading from "../Components/Loading";
 
 
 const Home = ({ setIsLoggedIn }) => {
-    const baseUrl = "http://localhost:8080";
+    const baseUrl = "http://25.62.207.82:8080";
     const [sortValue, setSortValue] = useState(() => {
         return localStorage.getItem('sortValue') || "All";
     });

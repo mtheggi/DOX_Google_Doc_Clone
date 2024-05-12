@@ -7,7 +7,7 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 
 const ShareModal = ({ setIsOpenedShareMenu, name, id, owner }) => {
 
-    let baseUrl = "http://localhost:8080";
+    let baseUrl = "http://25.62.207.82:8080";
 
     const [permissionValue, setPermissionValue] = useState("View");
     const [permissionDropDown, setPermissionDropDown] = useState(false);
