@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.dox_google_doc_clone.dox_google_doc_clone.Dto.DocumentAndOwnerName;
+import com.dox_google_doc_clone.dox_google_doc_clone.Dto.DocumentWithPermissions;
 import com.dox_google_doc_clone.dox_google_doc_clone.Dto.SharedDocument;
 import com.dox_google_doc_clone.dox_google_doc_clone.Models.User;
 import com.dox_google_doc_clone.dox_google_doc_clone.Models.UserPermissions;
@@ -20,7 +21,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.dox_google_doc_clone.dox_google_doc_clone.Models.DocumentModel;
+import com.dox_google_doc_clone.dox_google_doc_clone.Models.DocumentVersionTable;
 import com.dox_google_doc_clone.dox_google_doc_clone.Services.DocumentService;
+import com.dox_google_doc_clone.dox_google_doc_clone.Services.DocumentVersionService;
 
 import javax.print.Doc;
 
@@ -28,17 +31,19 @@ import javax.print.Doc;
 @RestController
 public class DocumentController {
     private DocumentService documentService;
+    private DocumentVersionService documentVersionService;
     private UserPermissionsService userPermissionsService;
     private JwtService jwtService;
     private UserService userService;
     private ManagerOfCRDTS managerOfCRDTS = ManagerOfCRDTS.getInstance();
 
     public DocumentController(DocumentService documentService, UserPermissionsService userPermissionsService,
-            JwtService jwtService, UserService userService) {
+            JwtService jwtService, UserService userService, DocumentVersionService documentVersionService) {
         this.documentService = documentService;
         this.userPermissionsService = userPermissionsService;
         this.jwtService = jwtService;
         this.userService = userService;
+        this.documentVersionService = documentVersionService;
     }
 
     @PostMapping("/document/create")
@@ -60,9 +65,15 @@ public class DocumentController {
         }
         DocumentModel documentModel = documentService
                 .saveDocument(new DocumentModel(title, content, LocalDateTime.now(), user.getRealUserName()));
+        // LocalDateTime createdAt, String id, List<String> documentVersions,
+        // String documentId
+        List<String> documentVersions = new ArrayList<>();
+        documentVersions.add(documentModel.getContent());
+        DocumentVersionTable documentVersionTable = new DocumentVersionTable(LocalDateTime.now(), documentVersions,
+                documentModel.getId());
+        documentVersionService.saveDocumentVersion(documentVersionTable);
         UserPermissions userPermissions = new UserPermissions(userId, documentModel.getId(), true, true, true);
         userPermissionsService.saveUserPermissions(userPermissions);
-
         return new ResponseEntity<>(documentModel, HttpStatus.OK);
     }
 
@@ -97,25 +108,28 @@ public class DocumentController {
     }
 
     @GetMapping("/document/{doc_id}")
-    public ResponseEntity<DocumentModel> getDocumentByID(@PathVariable String doc_id,
+    public ResponseEntity<DocumentWithPermissions> getDocumentByID(@PathVariable String doc_id,
             @RequestHeader("Authorization") String token) {
         String email = jwtService.extractEmail(token.substring(7));
         String userId;
+
         if (userService.getUserByEmail(email).isPresent()) {
             userId = userService.getUserByEmail(email).get().getId();
         } else {
-            DocumentModel emptyList = null;
-            return new ResponseEntity<>(emptyList, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new DocumentWithPermissions(), HttpStatus.BAD_REQUEST);
         }
+
         DocumentModel temp = documentService.getDocumentModel(doc_id);
-        ;
         if (managerOfCRDTS.checkMap(doc_id)) {
             temp.setContent(managerOfCRDTS.SavedInDB(doc_id));
         } else {
             managerOfCRDTS.addCRDTS(doc_id, temp.getContent());
         }
-
-        return new ResponseEntity<>(temp, HttpStatus.OK);
+        UserPermissions userPermissions = userPermissionsService.getUserPermissionByDocumentIdAndUserId(doc_id, userId);
+        DocumentWithPermissions documentWithPermissions = new DocumentWithPermissions(temp.getId(), temp.getTitle(),
+                temp.getContent(), temp.getOwnername(), temp.getCreatedAt(), userPermissions.isOwner(),
+                userPermissions.isEdit(), userPermissions.isViewOnly());
+        return new ResponseEntity<>(documentWithPermissions, HttpStatus.OK);
     }
 
     @GetMapping("/document/save/{doc_id}")
