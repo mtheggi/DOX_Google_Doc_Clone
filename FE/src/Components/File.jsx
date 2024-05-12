@@ -111,9 +111,11 @@ const File = ({ name, id, owner, createdAt, lastPostRef }) => {
                 </div>
             </div>
             {isOpenedShareMenu && (
+
                 <div onClick={(e) => {
                     e.stopPropagation();
                 }} className="community-modal flex flex-row items-center justify-center">
+
                     <div className='overlay'></div>
                     <div ref={sharedMenuRef} className='z-20 flex flex-col w-100% msm:w-132 h-100'>
                         <ShareModal setIsOpenedShareMenu={setIsOpenedShareMenu} name={name} id={id} owner={owner} />
