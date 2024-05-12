@@ -1,5 +1,6 @@
 package com.dox_google_doc_clone.dox_google_doc_clone.Services;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ public class DocumentVersionService {
 
     public void saveDocumentVersion(DocumentVersionTable table) {
         documentVersionRepository.save(table);
+
     }
 
     public DocumentVersionTable getDocumentVersionByDocumentId(String documentId) {
@@ -25,6 +27,13 @@ public class DocumentVersionService {
 
     public void addDocumentVersion(String documentId, String version) {
         DocumentVersionTable table = documentVersionRepository.findByDocumentId(documentId);
+        if (table == null) {
+            List<String> versions = List.of(version);
+            table = new DocumentVersionTable(LocalDateTime.now(), versions, documentId);
+
+            documentVersionRepository.save(table);
+            return;
+        }
         List<String> versions = table.getDocumentVersions();
         versions.add(version);
         table.setDocumentVersions(versions);
