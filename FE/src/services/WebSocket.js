@@ -30,18 +30,19 @@ export const ConnectToWebSocket = async (quillRef) => {
             const op = JSON.parse(data.body);
             console.log("data ; ", data.body);
 
-            console.log("recieved operation: ", op);
+
             if (op.documentId === CRDTinstance.documentId) {
+                console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa333333333333333333333333333333");
                 if (op.siteId !== siteId) {
                     let deltas;
-
+                    console.log("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
                     if (op.operation === 'style') {
                         deltas = CRDTinstance.remoteChangeStyle(op);
                         console.log("remote style : , ", deltas);
 
                     } else if (op.operation === 'delete') {
                         const char = new Char(op.siteId, op.character, op.counter, op.fractionIndex, op.bold, op.italic);
-
+                        console.log("recieved operation: ", op);
                         deltas = CRDTinstance.remoteDelete(char);
 
                     } else {
@@ -51,7 +52,7 @@ export const ConnectToWebSocket = async (quillRef) => {
                         console.log("remoteInsert deltas: ", deltas);
 
                     }
-                    console.log("deltas : ", deltas);
+
                     quill.updateContents(deltas, 'silent');
                 }
             }
