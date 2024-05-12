@@ -24,6 +24,7 @@ public class DocumentService {
     private final UserService userService;
     private final UserPermissionsService userPermissionService;
     private ManagerOfCRDTS managerOfCRDTS = ManagerOfCRDTS.getInstance();
+    private DocumentVersionService documentVersionService;
 
     @Autowired
     public DocumentService(DocumentRepository DocumentRepository, UserService userService,
@@ -31,6 +32,7 @@ public class DocumentService {
         this.DocumentRepository = DocumentRepository;
         this.userService = userService;
         this.userPermissionService = userPermissionService;
+        this.documentVersionService = documentVersionService;
     }
 
     public boolean shareDocument(JsonNode jsonNode) {
@@ -119,6 +121,7 @@ public class DocumentService {
             return;
         }
         document.setContent(content);
+        documentVersionService.addDocumentVersion(docID, content);
         DocumentRepository.save(document);
     }
 
