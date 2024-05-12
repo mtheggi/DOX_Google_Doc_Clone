@@ -4,6 +4,7 @@ import ShareModal from "../Components/ShareModal";
 import EventEmitter from 'events';
 import { putRequestWithToken } from "../Requests";
 import { useNavigate } from "react-router-dom";
+import {baseUrl} from "../Constants"
 
 
 const File = ({ name, id, owner, createdAt, lastPostRef }) => {
@@ -18,7 +19,7 @@ const File = ({ name, id, owner, createdAt, lastPostRef }) => {
     const optionsMenuRef = useRef();
     const sharedMenuRef = useRef();
     const navigate = useNavigate();
-    const baseUrl="http://25.62.207.82:8080";
+    
 
 
     const formatDate = (isoDate) => {

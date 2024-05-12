@@ -2,9 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import './Taginput.css'; // Assuming you moved the CSS to a separate file
 import { TrashIcon } from '@heroicons/react/24/outline';
 import { getRequestWithToken } from '../Requests';
-
+import {baseUrl} from "../Constants"
 const TagInput = ({setUserDoesntExist, setTags, tags}) => {
-  let baseUrl = "http://25.62.207.82:8080";
+
   const [inputValue, setInputValue] = useState('');
   const [matchedTags, setMatchedTags] = useState([]);
 

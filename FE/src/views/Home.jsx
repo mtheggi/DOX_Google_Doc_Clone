@@ -7,10 +7,10 @@ import Navbar from "../Components/Navbar";
 import RenameModal from "../Components/RenameModal";
 import File from "../Components/File";
 import Loading from "../Components/Loading";
+import {baseUrl} from "../Constants"
 
 
 const Home = ({ setIsLoggedIn }) => {
-    const baseUrl = "http://25.62.207.82:8080";
     const [sortValue, setSortValue] = useState(() => {
         return localStorage.getItem('sortValue') || "All";
     });

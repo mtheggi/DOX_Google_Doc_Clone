@@ -4,9 +4,10 @@ import { v1 as uuidv1 } from 'uuid';
 import Delta from 'quill-delta';
 import { siteId, CRDTinstance } from './CRDTS';
 import Char from './Char';
+import {baseUrl} from "../Constants"
 
 const userId = siteId;
-const socket = new SockJS('http://25.62.207.82:8080/ws/');
+const socket = new SockJS(`${baseUrl}/ws`);
 const client = Stomp.over(socket);
 
 export const ConnectToWebSocket = async (quillRef) => {

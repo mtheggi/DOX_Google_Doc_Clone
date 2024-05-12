@@ -1,9 +1,10 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
 import { getRequestWithToken } from "../Requests";
+import {baseUrl} from "../Constants"
 
 const Navbar = ({setIsLoggedIn}) => {
-    const baseUrl = "http://25.62.207.82:8080";
+
     const navigate = useNavigate();
     const [isLogoutMenuOpened, setIsLogoutMenuOpened] = useState(false);
     const sortMenuRef = useRef();

@@ -2,12 +2,12 @@ import React, { useState, useEffect, useContext } from "react";
 import FloatingInput from "../Components/authentication/FloatingInput";
 import { postRequest } from "../Requests";
 import { useNavigate } from "react-router-dom";
-
+import {baseUrl} from "../Constants"
 
 const LogIn = ({setIsLoggedIn }) => {
   const navigate = useNavigate();
 
-  const baseUrl = "http://25.62.207.82:8080"
+
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

@@ -2,13 +2,14 @@ import React, { useState, useEffect, useRef } from "react";
 import { postRequest, postRequestWithToken } from "../Requests";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { useNavigate } from "react-router-dom";
+import {baseUrl} from "../Constants"
 
 
 const RenameModal = ({ setIsOpenedShareMenu }) => {
     const navigate = useNavigate();
     const [docName, setDocName] = useState("");
     const [errorMsg, setErrorMsg] = useState(null);
-    const baseUrl = "http://25.62.207.82:8080"
+
     const createDocument = async () => {
 
         if (!(docName.trim() == "")) {

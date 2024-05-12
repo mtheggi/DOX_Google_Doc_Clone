@@ -9,7 +9,7 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css'; // import the styles
 import { DisconnectWebSocket, ConnectToWebSocket, sendmessage } from '../services/WebSocket';
 import { convertDeltaToCrdt, CRDTinstance } from '../services/CRDTS';
-
+import {baseUrl} from "../Constants"
 
 
 
@@ -68,7 +68,7 @@ const TextEditor = () => {
     const sharedMenuRef = useRef();
     const quillRef = useRef();
     const navigate = useNavigate();
-    const baseUrl = "http://25.62.207.82:8080";
+
 
 
     const save = async () => {
@@ -106,8 +106,24 @@ const TextEditor = () => {
     }, [])
 
     useEffect(() => {
-
         ConnectToWebSocket(quillRef);
+        if (quillRef.current) {
+            const quillInstance = quillRef.current.getEditor();
+            quillInstance.on('selection-change', function (range, oldRange, source) {
+                if (range) {
+                    console.log("Cursor is at index", range.index);
+                }
+            });
+    
+            quillInstance.on('text-change', function(delta, oldDelta, source) {
+                if (source === 'user') {
+                    const range = quillInstance.getSelection();
+                    if (range) {
+                        console.log("Cursor is at index", range.index);
+                    }
+                }
+            });
+        }
         let closeDropdown = (e) => {
             if (sharedMenuRef.current && !sharedMenuRef.current.contains(e.target)) {
                 setIsOpenedShareMenu(false);
@@ -243,7 +259,7 @@ const TextEditor = () => {
                 </div>
             </div>
             {isOpenedShareMenu && (
-                <div onClick={(e)=>{e.stopPropagation()}} className="community-modal flex flex-row items-center justify-center">
+                <div onClick={(e) => { e.stopPropagation() }} className="community-modal flex flex-row items-center justify-center">
                     <div className='overlay'></div>
                     <div ref={sharedMenuRef} className='z-20 flex flex-col w-100% h-100%  msm:w-132 msm:h-160'>
                         <ShareModal setIsOpenedShareMenu={setIsOpenedShareMenu} />
