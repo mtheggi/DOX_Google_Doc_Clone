@@ -18,7 +18,8 @@ const File = ({ name, id, owner, createdAt, lastPostRef }) => {
     const optionsMenuRef = useRef();
     const sharedMenuRef = useRef();
     const navigate = useNavigate();
-    const baseUrl = "http://localhost:8080";
+    const baseUrl="http://25.62.207.82:8080";
+
 
     const formatDate = (isoDate) => {
         const date = new Date(isoDate);

@@ -68,7 +68,7 @@ const TextEditor = () => {
     const sharedMenuRef = useRef();
     const quillRef = useRef();
     const navigate = useNavigate();
-    const baseUrl = "http://localhost:8080";
+    const baseUrl = "http://25.62.207.82:8080";
 
 
     const save = async () => {

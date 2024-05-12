@@ -6,7 +6,7 @@ import { siteId, CRDTinstance } from './CRDTS';
 import Char from './Char';
 
 const userId = siteId;
-const socket = new SockJS('http://localhost:8080/ws/');
+const socket = new SockJS('http://25.62.207.82:8080/ws/');
 const client = Stomp.over(socket);
 
 export const ConnectToWebSocket = async (quillRef) => {
