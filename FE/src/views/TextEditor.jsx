@@ -68,6 +68,7 @@ const TextEditor = () => {
     const sharedMenuRef = useRef();
     const quillRef = useRef();
     const navigate = useNavigate();
+    const [editPermission, setEditPermission] = useState(false);
 
 
 
@@ -86,6 +87,7 @@ const TextEditor = () => {
                 setInputValue(response.data.title);
                 setLastValidName(response.data.title);
                 setPageContent(response.data.content);
+                setEditPermission(response.data.canEdit || response.data.owner);
                 CRDTinstance.setDocumentId(id);
                 CRDTinstance.constructTheSequence(response.data.content)
 
@@ -222,8 +224,8 @@ const TextEditor = () => {
                             <ReactQuill className="w-full bg-white border-[0.5px] border-gray-300 focus:border-[0.5px] focus:border-gray-300 text-black p-7  h-[1000px] mb-2 resize-none focus:outline-none focus:ring-0" modules={{ toolbar: toolbarOptions }}
                                 value={pageContent}
                                 ref={quillRef}
+                                readOnly={!editPermission}
                                 onChange={(content, delta, source, editor) => {
-
                                     // console.log("quill delta", delta);
                                     // const op = convertDeltaToCrdt(delta);
                                     // console.log("operation correct ?  : ", op);

@@ -106,7 +106,7 @@ const Home = ({ setIsLoggedIn }) => {
                         setShared(prev => [...prev, ...data]);
                     }
 
-                    setHasMore(data.length > 0);
+                    setHasMore(data.length >= 9);
 
                 } else {
 
