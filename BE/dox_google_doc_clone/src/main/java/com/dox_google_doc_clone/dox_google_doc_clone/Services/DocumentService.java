@@ -28,7 +28,7 @@ public class DocumentService {
 
     @Autowired
     public DocumentService(DocumentRepository DocumentRepository, UserService userService,
-            UserPermissionsService userPermissionService) {
+            UserPermissionsService userPermissionService, DocumentVersionService documentVersionService) {
         this.DocumentRepository = DocumentRepository;
         this.userService = userService;
         this.userPermissionService = userPermissionService;
