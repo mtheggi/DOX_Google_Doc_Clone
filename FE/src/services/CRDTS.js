@@ -5,6 +5,7 @@ import Char from './Char';
 import { sendmessage } from './WebSocket';
 import { generateKeyBetween } from 'fractional-indexing';
 
+
 //convert String to crts obecjt
 //Structure of crts object
 
@@ -226,7 +227,7 @@ export class CRDTs {
     localDelete(index, documentId) {
         this.counter++;
         const char = this.sequence[index];
-        const operation = { operation: 'delete', documentId: documentId, character: char.value, siteId: char.siteId, counter: char.counter, fractionIndex: char.fractionIndex }
+        const operation = { operation: 'delete', documentId: documentId, character: char.value, siteId: this.siteId, counter: char.counter, fractionIndex: char.fractionIndex }
         this.sequence.splice(index, 1);
 
         sendmessage(operation);
@@ -298,7 +299,9 @@ export class CRDTs {
     }
     remoteDelete(char) {
         const { fractionIndex } = char;
+        console.log("remoteDelete char :", char);
         const index = this.getDeleteIndex(fractionIndex);
+        console.log("At Index :", index);
         if (index != -1) {
             this.sequence.splice(index, 1);
             if (index === 0) {

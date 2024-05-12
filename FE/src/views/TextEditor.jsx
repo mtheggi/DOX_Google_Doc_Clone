@@ -19,7 +19,6 @@ const toolbarOptions = [
 
 
 const CustomToolbar = () => {
-    const baseUrl = ""
     const [permissions, setPermissions] = useState("Owner");
     return (
         <div id="toolbar" className="w-full h-9 px-2 flex flex-row items-center rounded-full bg-[#EDF2FB]">
@@ -244,7 +243,7 @@ const TextEditor = () => {
                 </div>
             </div>
             {isOpenedShareMenu && (
-                <div className="community-modal flex flex-row items-center justify-center">
+                <div onClick={(e)=>{e.stopPropagation()}} className="community-modal flex flex-row items-center justify-center">
                     <div className='overlay'></div>
                     <div ref={sharedMenuRef} className='z-20 flex flex-col w-100% h-100%  msm:w-132 msm:h-160'>
                         <ShareModal setIsOpenedShareMenu={setIsOpenedShareMenu} />
