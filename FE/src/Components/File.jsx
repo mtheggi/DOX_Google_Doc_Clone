@@ -89,7 +89,7 @@ const File = ({ name, id, owner, createdAt, lastPostRef }) => {
                     <h1 className="text-[12.5px] mt-1.5 no-select font-medium">{formatDate(createdAt)}</h1>
                 </div>
                 <div className="">
-                    <div ref={optionsMenuRef} onClick={(e) => { setOptionsDropDownOpen(prev => !prev) }} className={`w-8 h-8  sm:mr-0 rounded-full mt-1 hover:bg-gray-300 relative flex flex-row justify-center items-center ${optionsDropDownOpen ? 'bg-gray-300' : ''}`}>
+                    <div ref={optionsMenuRef} onClick={(e) => {e.stopPropagation(); setOptionsDropDownOpen(prev => !prev) }} className={`w-8 h-8  sm:mr-0 rounded-full mt-1 hover:bg-gray-300 relative flex flex-row justify-center items-center ${optionsDropDownOpen ? 'bg-gray-300' : ''}`}>
                         <EllipsisVerticalIcon className="w-6 h-7" />
                         <div id="options" className={`z-10 absolute mt-34 right-[-2px]  ${optionsDropDownOpen ? '' : 'hidden'} bg-gray-200 rounded-lg shadow w-34  `}>
                             <ul onClick={(e) => e.stopPropagation()} className="text-xs border-[0.5px] rounded-lg border-gray-400" aria-labelledby="dropdownInformationButton">
@@ -108,7 +108,7 @@ const File = ({ name, id, owner, createdAt, lastPostRef }) => {
                 </div>
             </div>
             {isOpenedShareMenu && (
-                <div className="community-modal flex flex-row items-center justify-center">
+                <div onClick={(e)=>{e.stopPropagation()}} className="community-modal flex flex-row items-center justify-center">
                     <div className='overlay'></div>
                     <div ref={sharedMenuRef} className='z-20 flex flex-col w-100% msm:w-132 h-100'>
                         <ShareModal setIsOpenedShareMenu={setIsOpenedShareMenu} name={name} id={id} owner={owner} />
