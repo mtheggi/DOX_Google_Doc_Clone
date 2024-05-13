@@ -9,7 +9,7 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css'; // import the styles
 import { DisconnectWebSocket, ConnectToWebSocket, sendmessage } from '../services/WebSocket';
 import { convertDeltaToCrdt, CRDTinstance } from '../services/CRDTS';
-import {baseUrl} from "../Constants"
+import { baseUrl } from "../Constants"
 
 
 
@@ -18,8 +18,11 @@ const toolbarOptions = [
 ];
 
 
-const CustomToolbar = () => {
-    const [permissions, setPermissions] = useState("Owner");
+const CustomToolbar = ({ permissionType }) => {
+    const [permissions, setPermissions] = useState(permissionType);
+    useEffect(() => {
+        setPermissions(permissionType);
+    }, [permissionType]);
     return (
         <div id="toolbar" className="w-full h-9 px-2 flex flex-row items-center rounded-full bg-[#EDF2FB]">
 
@@ -55,7 +58,7 @@ const CustomToolbar = () => {
 };
 
 
-const TextEditor = () => {
+const TextEditor = ({userInfo}) => {
 
     let { id } = useParams();
 
@@ -69,6 +72,7 @@ const TextEditor = () => {
     const quillRef = useRef();
     const navigate = useNavigate();
     const [editPermission, setEditPermission] = useState(false);
+    const [permissionType, setPermissionType] = useState("");
 
 
 
@@ -88,6 +92,7 @@ const TextEditor = () => {
                 setLastValidName(response.data.title);
                 setPageContent(response.data.content);
                 setEditPermission(response.data.canEdit || response.data.owner);
+                setPermissionType( response.data.owner ? "Owner" : response.data.canEdit ? "Editor" : "Viewer");
                 CRDTinstance.setDocumentId(id);
                 CRDTinstance.constructTheSequence(response.data.content)
 
@@ -116,8 +121,8 @@ const TextEditor = () => {
                     console.log("Cursor is at index", range.index);
                 }
             });
-    
-            quillInstance.on('text-change', function(delta, oldDelta, source) {
+
+            quillInstance.on('text-change', function (delta, oldDelta, source) {
                 if (source === 'user') {
                     const range = quillInstance.getSelection();
                     if (range) {
@@ -205,7 +210,7 @@ const TextEditor = () => {
                     <div className=" rounded-lg w-fit px-2 h-10 hover:no-underline  items-center justify-center  inline-flex">
                         <div className="w-10 cursor-pointer h-10 rounded-full hover:bg-gray-200  flex flex-row items-center justify-center">
                             <div className="w-8 h-8 rounded-full bg-[#0097A7] flex flex-row items-center justify-center">
-                                <h1 className="text-white text-semibold">M</h1>
+                                <h1 className="text-white text-semibold">{userInfo.userName[0]}</h1>
                             </div>
                         </div>
                     </div>
@@ -213,7 +218,7 @@ const TextEditor = () => {
             </div>
 
             <div className="w-full flex flex-col  h-16 border-gray-300 min-h-9 px-4">
-                <CustomToolbar />
+                <CustomToolbar permissionType={permissionType} />
                 <hr className="mt-auto" />
             </div>
 

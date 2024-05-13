@@ -3,7 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import { getRequestWithToken } from "../Requests";
 import {baseUrl} from "../Constants"
 
-const Navbar = ({setIsLoggedIn}) => {
+const Navbar = ({setIsLoggedIn, userInfo}) => {
 
     const navigate = useNavigate();
     const [isLogoutMenuOpened, setIsLogoutMenuOpened] = useState(false);
@@ -51,22 +51,22 @@ const Navbar = ({setIsLoggedIn}) => {
                 <div className="   rounded-lg w-fit px-2 h-10 hover:no-underline  items-center justify-center  inline-flex">
                     <div onClick={(e) => { e.stopPropagation(); setIsLogoutMenuOpened(prev => !prev) }} className="w-10 cursor-pointer h-10 rounded-full hover:bg-gray-200  flex flex-row items-center justify-center">
                         <div className="w-8 h-8 rounded-full bg-[#0097A7] flex flex-row items-center justify-center">
-                            <h1 className="text-white text-semibold">M</h1>
+                            <h1 className="text-white text-semibold">{userInfo.userName}</h1>
                         </div>
                     </div>
                 </div>
 
                 {isLogoutMenuOpened && <div ref={sortMenuRef} className="h-fit py-6 w-[300px] border-[1px] border-blue-200 items-center -right-1 top-11 rounded-[36px] absolute flex flex-col z-40  bg-gray-200">
 
-                    <h1 className="text-[13px] mt-1">malek13122002@gmail.com</h1>
+                    <h1 className="text-[13px] mt-1">{userInfo.email}</h1>
                     <div className=" mt-6  rounded-lg w-fit px-2 h-10 hover:no-underline  items-center justify-center  inline-flex">
                         <div className="w-14 h-14 rounded-full hover:bg-gray-200  flex flex-row items-center justify-center">
                             <div className="w-14 h-14 rounded-full bg-[#0097A7] flex flex-row items-center justify-center">
-                                <h1 className="text-white text-[28px] text-semibold">M</h1>
+                                <h1 className="text-white text-[28px] text-semibold">{userInfo.username[0]}</h1>
                             </div>
                         </div>
                     </div>
-                    <h1 className="text-[20px] mt-3">Hi Malek, </h1>
+                    <h1 className="text-[20px] mt-3">Hi {userInfo.userName}, </h1>
                     <div onClick={
                         Logout
                     } className="bg-white pl-5 items-center flex flex-row w-32 hover:bg-gray-100 cursor-pointer h-11 mt-7 rounded-[45px]">

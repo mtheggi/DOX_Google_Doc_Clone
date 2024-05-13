@@ -10,7 +10,7 @@ import Loading from "../Components/Loading";
 import {baseUrl} from "../Constants"
 
 
-const Home = ({ setIsLoggedIn }) => {
+const Home = ({ setIsLoggedIn,  userInfo }) => {
     const [sortValue, setSortValue] = useState(() => {
         return localStorage.getItem('sortValue') || "All";
     });
@@ -140,7 +140,7 @@ const Home = ({ setIsLoggedIn }) => {
 
     return (
         <>
-            <Navbar setIsLoggedIn={setIsLoggedIn} />
+            <Navbar setIsLoggedIn={setIsLoggedIn} userInfo={userInfo} />
             <div className="w-full h-full min-w-[342px] flex mt-[52px]  flex-col">
                 <div className="w-full px-4 bg-[#F1F3F4] h-[272px]">
                     <div className="h-full min-h-[252px] mt-4 w-full msm:w-[470px] md:w-[660px] lg:w-[860px] xl:w-[1050px] mx-auto">
