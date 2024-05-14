@@ -27,6 +27,11 @@ const Home = ({ setIsLoggedIn,  userInfo }) => {
     const [page, setPage] = useState(1);
     const [loading, setLoading] = useState(true);
     const [hasMore, setHasMore] = useState(true);
+    const [userInfoState, setUserInfoState]=useState(userInfo);
+
+    useEffect(()=>{
+        setUserInfoState(userInfo);
+    }, [userInfo])
 
 
     const [sortChanged, setSortChanged] = useState(0);
@@ -140,7 +145,7 @@ const Home = ({ setIsLoggedIn,  userInfo }) => {
 
     return (
         <>
-            <Navbar setIsLoggedIn={setIsLoggedIn} userInfo={userInfo} />
+            <Navbar setIsLoggedIn={setIsLoggedIn} userInfo={userInfoState} />
             <div className="w-full h-full min-w-[342px] flex mt-[52px]  flex-col">
                 <div className="w-full px-4 bg-[#F1F3F4] h-[272px]">
                     <div className="h-full min-h-[252px] mt-4 w-full msm:w-[470px] md:w-[660px] lg:w-[860px] xl:w-[1050px] mx-auto">

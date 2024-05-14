@@ -192,13 +192,22 @@ export class CRDTs {
         const isconvertBold = delta.ops.some(op => (op.attributes?.hasOwnProperty('bold') && !op.hasOwnProperty('insert')));
         const isconvertItalic = delta.ops.some(op => (op.attributes?.hasOwnProperty('italic') && !op.hasOwnProperty('insert')));
         if (isconvertBold) {
-            this.sequence[index].bold = delta.ops[1].attributes.bold ? true : false;
+            if (delta.ops.length === 2)
+                this.sequence[index].bold = delta.ops[1].attributes.bold ? true : false;
+            else
+                this.sequence[index].bold = delta.ops[0].attributes.bold ? true : false;
+
             const operation = { operation: 'style', documentId: documentId, character: this.sequence[index].value, siteId: this.siteId, counter: this.sequence[index].counter, fractionIndex: this.sequence[index].fractionIndex, bold: this.sequence[index].bold, italic: null };
             sendmessage(operation);
             return;
         }
         if (isconvertItalic) {
-            this.sequence[index].italic = delta.ops[1].attributes.italic ? true : false;
+
+            if (delta.ops.length === 2)
+                this.sequence[index].italic = delta.ops[1].attributes.italic ? true : false;
+            else
+                this.sequence[index].italic = delta.ops[0].attributes.italic ? true : false;
+
             const operation = { operation: 'style', documentId: documentId, character: this.sequence[index].value, siteId: this.siteId, counter: this.sequence[index].counter, fractionIndex: this.sequence[index].fractionIndex, bold: null, italic: this.sequence[index].italic };
 
             sendmessage(operation);

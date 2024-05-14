@@ -12,6 +12,7 @@ import { DisconnectWebSocket, ConnectToWebSocket, sendmessage } from './services
 import NotFound from './views/NotFound'
 import { baseUrl } from "./Constants"
 import { getRequestWithToken } from './Requests'
+
 function App() {
 
   const [isLoggedIn, setIsLoggedIn] = useState(JSON.parse(localStorage.getItem('isLoggedIn')) || false);
@@ -19,7 +20,6 @@ function App() {
 
   useEffect(() => {
     localStorage.setItem('isLoggedIn', JSON.stringify(isLoggedIn));
-    console.log("isLoggedIn", isLoggedIn);
   }, [isLoggedIn]);
 
 
@@ -28,7 +28,6 @@ function App() {
       const response = await getRequestWithToken(`${baseUrl}/user/info`);
       if (response.status === 201 || response.status === 200) {
         setUserInfo(response.data);
-        console.log("userInfo", response.data);
       }
     }
       getUserData();

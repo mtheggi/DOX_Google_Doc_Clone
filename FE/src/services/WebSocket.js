@@ -5,6 +5,10 @@ import Delta from 'quill-delta';
 import { siteId, CRDTinstance } from './CRDTS';
 import Char from './Char';
 import { baseUrl } from "../Constants"
+import ReactQuill, { Quill } from 'react-quill';
+import QuillCursors from "quill-cursors";
+
+Quill.register('modules/cursors', QuillCursors);
 
 const userId = siteId;
 const socket = new SockJS(`${baseUrl}/ws`);
@@ -29,18 +33,14 @@ export const ConnectToWebSocket = async (quillRef, userInfo) => {
 
             const quill = quillRef.current.getEditor();
             const op = JSON.parse(data.body);
-            console.log("data ; ", data.body);
+            // console.log("data ; ", data.body);
 
-            // if (op.CursorIndex && op.user !== userInfo.userName) {
-            //     console.log("Cursooooooooooooooooooooooooooor")
-            //     quill.setSelection(op.CursorIndex, 0);
-            // }
-            // else
+
             if (op.documentId === CRDTinstance.documentId) {
-                console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa333333333333333333333333333333");
+                // console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa333333333333333333333333333333");
                 if (op.siteId !== siteId) {
                     let deltas;
-                    console.log("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
+                    // console.log("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
                     if (op.operation === 'style') {
                         deltas = CRDTinstance.remoteChangeStyle(op);
                         console.log("remote style : , ", deltas);
@@ -50,16 +50,26 @@ export const ConnectToWebSocket = async (quillRef, userInfo) => {
                         console.log("recieved operation: ", op);
                         deltas = CRDTinstance.remoteDelete(char);
 
-                    } else {
+                    } else if (op.operation === 'insert') {
                         const char = new Char(op.siteId, op.character, op.counter, op.fractionIndex, op.bold, op.italic);
 
                         deltas = CRDTinstance.remoteInsert(char);
                         console.log("remoteInsert deltas: ", deltas);
 
                     }
+                    else {
+                        const cursors = quill.getModule('cursors');
+                        // if (!myMap[op.userName]) {
+                        //     myMap[op.userName] = color[colorCounter % 3];
+                        //     colorCounter++;
+                        // }
+                        cursors.createCursor(`cursor-${op.userName}`, `${op.userName}`, 'red');
+                        cursors.moveCursor(`cursor-${op.userName}`, { index: op.cursorIndex, length: 0 });
+                    }
 
                     quill.updateContents(deltas, 'silent');
                 }
+
             }
 
         });
