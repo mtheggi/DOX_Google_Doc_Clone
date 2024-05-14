@@ -16,8 +16,8 @@ import org.springframework.stereotype.Controller;
 @Controller
 public class Socket {
 
-    private static ManagerOfCRDTS managerOfCRDTS = ManagerOfCRDTS.getInstance();
-    private static LiveUsers liveUsers = LiveUsers.getInstance();
+    private ManagerOfCRDTS managerOfCRDTS = ManagerOfCRDTS.getInstance();
+    private LiveUsers liveUsers = LiveUsers.getInstance();
 
     @MessageMapping("/broadcast")
     @SendTo("/topic/public")

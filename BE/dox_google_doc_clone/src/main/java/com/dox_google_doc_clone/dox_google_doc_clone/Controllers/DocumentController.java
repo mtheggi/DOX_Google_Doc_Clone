@@ -38,7 +38,7 @@ public class DocumentController {
     private JwtService jwtService;
     private UserService userService;
     private ManagerOfCRDTS managerOfCRDTS = ManagerOfCRDTS.getInstance();
-    private static LiveUsers liveUsers = LiveUsers.getInstance();
+    private LiveUsers liveUsers = LiveUsers.getInstance();
 
     public DocumentController(DocumentService documentService, UserPermissionsService userPermissionsService,
             JwtService jwtService, UserService userService, DocumentVersionService documentVersionService) {
