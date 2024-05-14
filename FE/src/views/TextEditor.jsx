@@ -95,10 +95,7 @@ const TextEditor = ({ userInfo }) => {
                 setPermissionType(response.data.owner ? "Owner" : response.data.canEdit ? "Editor" : "Viewer");
                 CRDTinstance.setDocumentId(id);
                 CRDTinstance.constructTheSequence(response.data.content)
-
-            } else {
-
-            }
+            } 
         }
 
         getDoc();

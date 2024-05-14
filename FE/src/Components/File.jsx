@@ -2,7 +2,7 @@ import { DocumentTextIcon, EllipsisVerticalIcon } from "@heroicons/react/24/outl
 import { useState, useRef, useEffect } from "react";
 import ShareModal from "../Components/ShareModal";
 import EventEmitter from 'events';
-import { getRequestWithToken, putRequestWithToken } from "../Requests";
+import { deleteRequestWithToken, getRequestWithToken, putRequestWithToken } from "../Requests";
 import { useNavigate } from "react-router-dom";
 import { baseUrl } from "../Constants"
 
@@ -56,6 +56,16 @@ const File = ({ name, id, owner, createdAt, lastPostRef }) => {
             console.log("File renamed");
         } else {
             console.log("Error renaming file");
+        }
+    }
+
+    const removeDoc = async () => {
+        if(!editPermission)
+            return;
+
+        const response = await deleteRequestWithToken(`${baseUrl}/document/delete/${id}`);
+        if (response.status === 200 || response.status === 201) {
+            window.location.reload();
         }
     }
 
@@ -127,8 +137,8 @@ const File = ({ name, id, owner, createdAt, lastPostRef }) => {
                                 {editPermission && <li onClick={() => { setRenameMode(true); setOptionsDropDownOpen(false) }} id="vote_2_day" className={`cursor-pointer border-b-[0.5px] border-gray-400`}>
                                     <p className={`block px-4 py-2  text-black hover:bg-blue-400`}>Rename</p>
                                 </li>}
-                                {isOwner && <li id="vote_3_day" className={`cursor-pointer rounded-b-lg border-b-[0.5px] border-gray-400`}>
-                                    <p className={`block px-4 py-2 rounded-b-lg  text-black hover:bg-blue-400`}>Delete</p>
+                                {editPermission && <li onClick={removeDoc} id="vote_3_day" className={`cursor-pointer rounded-b-lg border-b-[0.5px] border-gray-400`}>
+                                    <p className={`block px-4 py-2 rounded-b-lg  text-black hover:bg-blue-400`}>Remove</p>
                                 </li>}
                             </ul>
                         </div>
