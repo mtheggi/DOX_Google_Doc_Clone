@@ -43,6 +43,8 @@ public class Socket {
             managerOfCRDTS.update(operationMsg.getDocumentId(), oldItem, tempChar);
         } else if (operationMsg.getOperation().equals("disconnect")) {
             liveUsers.removeValue(operationMsg.getDocumentId(), operationMsg.getUserName());
+        } else if (operationMsg.getOperation().equals("cursor")) {
+            liveUsers.addValue(operationMsg.getDocumentId(), operationMsg.getUserName());
         }
 
         return operationMsg;
