@@ -51,7 +51,7 @@ const Navbar = ({setIsLoggedIn, userInfo}) => {
                 <div className="   rounded-lg w-fit px-2 h-10 hover:no-underline  items-center justify-center  inline-flex">
                     <div onClick={(e) => { e.stopPropagation(); setIsLogoutMenuOpened(prev => !prev) }} className="w-10 cursor-pointer h-10 rounded-full hover:bg-gray-200  flex flex-row items-center justify-center">
                         <div className="w-8 h-8 rounded-full bg-[#0097A7] flex flex-row items-center justify-center">
-                            <h1 className="text-white text-semibold">{userInfo.userName}</h1>
+                            <h1 className="text-white text-semibold">{userInfo && userInfo.userName[0].toUpperCase()}</h1>
                         </div>
                     </div>
                 </div>
@@ -62,11 +62,11 @@ const Navbar = ({setIsLoggedIn, userInfo}) => {
                     <div className=" mt-6  rounded-lg w-fit px-2 h-10 hover:no-underline  items-center justify-center  inline-flex">
                         <div className="w-14 h-14 rounded-full hover:bg-gray-200  flex flex-row items-center justify-center">
                             <div className="w-14 h-14 rounded-full bg-[#0097A7] flex flex-row items-center justify-center">
-                                <h1 className="text-white text-[28px] text-semibold">{userInfo.username[0]}</h1>
+                                <h1 className="text-white text-[28px] text-semibold">{userInfo && userInfo.userName[0].toUpperCase()}</h1>
                             </div>
                         </div>
                     </div>
-                    <h1 className="text-[20px] mt-3">Hi {userInfo.userName}, </h1>
+                    <h1 className="text-[20px] mt-3">Hi {userInfo && userInfo.userName}, </h1>
                     <div onClick={
                         Logout
                     } className="bg-white pl-5 items-center flex flex-row w-32 hover:bg-gray-100 cursor-pointer h-11 mt-7 rounded-[45px]">

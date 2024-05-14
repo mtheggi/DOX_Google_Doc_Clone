@@ -4,13 +4,13 @@ import { v1 as uuidv1 } from 'uuid';
 import Delta from 'quill-delta';
 import { siteId, CRDTinstance } from './CRDTS';
 import Char from './Char';
-import {baseUrl} from "../Constants"
+import { baseUrl } from "../Constants"
 
 const userId = siteId;
 const socket = new SockJS(`${baseUrl}/ws`);
 const client = Stomp.over(socket);
 
-export const ConnectToWebSocket = async (quillRef) => {
+export const ConnectToWebSocket = async (quillRef, userInfo) => {
     console.log("Connecting to WebSocket...");
     console.log("Client: ", client)
 
@@ -31,7 +31,11 @@ export const ConnectToWebSocket = async (quillRef) => {
             const op = JSON.parse(data.body);
             console.log("data ; ", data.body);
 
-
+            // if (op.CursorIndex && op.user !== userInfo.userName) {
+            //     console.log("Cursooooooooooooooooooooooooooor")
+            //     quill.setSelection(op.CursorIndex, 0);
+            // }
+            // else
             if (op.documentId === CRDTinstance.documentId) {
                 console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa333333333333333333333333333333");
                 if (op.siteId !== siteId) {
