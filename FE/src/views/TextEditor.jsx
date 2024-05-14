@@ -76,6 +76,11 @@ const TextEditor = ({ userInfo }) => {
     const [isOpenVersionHistory, setIsOpenVersionHistory] = useState(false);
     const [history, setHistory] = useState([]);
     const [noHistory, setNoHistory] = useState(false);
+    const [alertState, setAlertState] = useState({
+        show: false,
+        message: "",
+        condition: "",
+    });
 
 
     const save = async () => {
@@ -99,6 +104,15 @@ const TextEditor = ({ userInfo }) => {
             setNoHistory(true);
         }
     }
+
+    const showAlertForTime = (condition, message) => {
+        setAlertState({ show: true, message: message, condition: condition });
+
+        setTimeout(() => {
+            setAlertState({ show: false, message: "", condition: "" });
+        }, 3000);
+    };
+
 
     useEffect(() => {
 
@@ -200,8 +214,26 @@ const TextEditor = ({ userInfo }) => {
 
     }
 
+    const getVersionData = async (index) => {
+        const response = await getRequestWithToken(`${baseUrl}/documentversion/get/${id}/${index}`);
+        if (response.status === 200 || response.status === 201) {
+            window.location.reload();
+        }
+        else if (response.status == 400) {
+            showAlertForTime("error", "Can't change version while other users are opening the document");
+
+        }
+    }
+
     return (
         <div className="w-full relative overflow-hidden min-w-[350px] h-fit flex flex-col bg-[#F9FBFD]">
+            {alertState.show && (
+                <AlertDemo
+                    conditon={alertState.condition}
+                    message={alertState.message}
+                    showAlert={alertState.show}
+                />
+            )}
             <div className="w-full h-14 px-2 py-2">
                 <div className="w-full h-full flex items-center flex-row ">
 
@@ -322,10 +354,10 @@ const TextEditor = ({ userInfo }) => {
 
                 <div className="flex mt-1 flex-col h-full w-full space-y-1 py-1 ">
                     {!noHistory && history.map((item, index) => (
-                        <div key={index} className="w-full flex flex-col justify-center px-6 cursor-pointer py-4 hover:bg-[#DDE3EA]">
+                        <div onClick={() => getVersionData(item.index)} key={index} className="w-full flex flex-col justify-center px-6 cursor-pointer py-4 hover:bg-[#DDE3EA]">
                             <h1 className="text-[18px] font-semibold">{moment(item.createdAt).format('D MMMM YYYY, h:mm A')}</h1>
-                            {item.version.length > 52 && <h1 className="text-[14px] mt-2 ">preview: {item.version.substring(0, 53)}...</h1>}
-                            {item.version.length <= 52 && <h1 className="text-[14px] mt-2 ">preview: {item.version.substring(0, 53)}</h1>}
+                            {item.version.length > 49 && <h1 className="text-[14px] mt-2 ">preview: {item.version.substring(0, 50)}...</h1>}
+                            {item.version.length <= 49 && <h1 className="text-[14px] mt-2 ">preview: {item.version.substring(0, 50)}</h1>}
                         </div>
                     ))}
                     {
