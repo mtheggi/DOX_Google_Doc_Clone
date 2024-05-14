@@ -29,6 +29,7 @@ public class UserService {
 
         return userRepository.save(user);
     }
+
     public User getUserByName(String UserName) {
         return userRepository.findByUserName(UserName);
     }
@@ -36,6 +37,7 @@ public class UserService {
     public Optional<User> getUserByEmail(String email) {
         return userRepository.findByEmail(email);
     }
+
     public void deleteUserById(String id) {
         userRepository.deleteById(id);
     }

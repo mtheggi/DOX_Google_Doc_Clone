@@ -16,7 +16,7 @@ public class DocumentModel {
 
     private String content;
 
-    private String Ownername; 
+    private String Ownername;
 
     @CreatedDate
     private LocalDateTime createdAt;
@@ -43,6 +43,7 @@ public class DocumentModel {
     public void setId(String id) {
         this.id = id;
     }
+
     public String getOwnername() {
         return Ownername;
     }

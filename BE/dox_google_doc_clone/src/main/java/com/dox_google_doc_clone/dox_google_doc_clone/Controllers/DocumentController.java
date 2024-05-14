@@ -91,7 +91,7 @@ public class DocumentController {
         }
     }
 
-    @DeleteMapping("/document/owned/{page_num}")
+    @GetMapping("/document/owned/{page_num}")
     public ResponseEntity<List<DocumentModel>> getOwnedDocuments(@PathVariable int page_num,
             @RequestHeader("Authorization") String token) {
         String email = jwtService.extractEmail(token.substring(7));
@@ -151,7 +151,7 @@ public class DocumentController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/document/delete/{doc_id}")
+    @DeleteMapping("/document/delete/{doc_id}")
     public ResponseEntity deleteDocumentByID(@PathVariable String doc_id,
             @RequestHeader("Authorization") String token) {
         String email = jwtService.extractEmail(token.substring(7));

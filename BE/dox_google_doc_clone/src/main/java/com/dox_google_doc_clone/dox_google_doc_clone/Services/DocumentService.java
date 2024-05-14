@@ -193,7 +193,7 @@ public class DocumentService {
     }
 
     public void deleteByOwnerByDocID(String documentid) {
-        DocumentRepository.deleteByDocumentId(documentid);
+        DocumentRepository.deleteByid(documentid);
     }
 
     public DocumentModel renameDocument(String documentId, String newName) {
