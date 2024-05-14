@@ -20,11 +20,19 @@ public class LiveUsers {
         return instance;
     }
 
+    // public void addValue(String key, String value) {
+    // if (!this.map.containsKey(key)) {
+    // this.map.put(key, new ArrayList<>());
+    // }
+    // this.map.get(key).add(value);
+    // }
     public void addValue(String key, String value) {
         if (!this.map.containsKey(key)) {
             this.map.put(key, new ArrayList<>());
         }
-        this.map.get(key).add(value);
+        if (!this.map.get(key).contains(value)) {
+            this.map.get(key).add(value);
+        }
     }
 
     public List<String> getValues(String key) {
