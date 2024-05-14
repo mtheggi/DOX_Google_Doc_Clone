@@ -125,7 +125,11 @@ public class DocumentController {
         }
 
         DocumentModel temp = documentService.getDocumentModel(doc_id);
+        System.err.println(temp);
         if (managerOfCRDTS.checkMap(doc_id)) {
+            System.err.println("HERE2");
+            System.err.println(managerOfCRDTS.SavedInDB(doc_id));
+            System.err.println("HERE3");
             temp.setContent(managerOfCRDTS.SavedInDB(doc_id));
         } else {
             managerOfCRDTS.addCRDTS(doc_id, temp.getContent());

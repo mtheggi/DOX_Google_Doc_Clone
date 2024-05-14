@@ -73,25 +73,36 @@ public class DocumentVersionController {
             @PathVariable int version,
             @RequestHeader("Authorization") String token) {
         String email = jwtService.extractEmail(token.substring(7));
+
         String userId;
+
         UserPermissions userPermissions;
+
         if (userService.getUserByEmail(email).isPresent()) {
             userId = userService.getUserByEmail(email).get().getId();
+
             userPermissions = userPermissionsService.getUserPermissionByDocumentIdAndUserId(documentId, userId);
+
         } else {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
         DocumentVersionTable documentVersionTable = documentVersionService.getDocumentVersionByDocumentId(documentId);
+
         List<VersionAndDate> temp = documentVersionTable.getDocumentVersions();
         if (userPermissions.isOwner() || userPermissions.isEdit()) {
-            managerOfCRDTS.addCRDTS(documentId, temp.get(version).getVersion());
+
+            managerOfCRDTS.updateCRDTS(documentId, temp.get(version).getVersion());
+
         }
         DocumentModel documentModel = documentService.getDocumentModel(documentId);
+
         documentModel.setContent(temp.get(version).getVersion());
+
         DocumentWithPermissions documentWithPermissions = new DocumentWithPermissions(
                 documentModel.getId(), documentModel.getTitle(), documentModel.getContent(),
                 documentModel.getOwnername(), documentModel.getCreatedAt(), userPermissions.isOwner(),
                 userPermissions.isEdit(), userPermissions.isViewOnly());
+
         return new ResponseEntity<DocumentWithPermissions>(documentWithPermissions, HttpStatus.OK);
     }
 

@@ -20,10 +20,24 @@ public class ManagerOfCRDTS {
 
     public void addCRDTS(String key, String content) {
         if (this.map.containsKey(key)) {
+
             return;
         }
+
         CRDTS crdts = new CRDTS();
+
         crdts.ConvertTextIntoSeq(content);
+
+        this.map.put(key, crdts);
+
+    }
+
+    public void updateCRDTS(String key, String content) {
+
+        CRDTS crdts = new CRDTS();
+
+        crdts.ConvertTextIntoSeq(content);
+
         this.map.put(key, crdts);
 
     }
@@ -51,6 +65,7 @@ public class ManagerOfCRDTS {
     }
 
     public String SavedInDB(String key) {
+
         String content = this.map.get(key).convertSeqIntoText();
 
         return content;
