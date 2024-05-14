@@ -10,7 +10,7 @@ import 'react-quill/dist/quill.snow.css'; // import the styles
 import { DisconnectWebSocket, ConnectToWebSocket, sendmessage } from '../services/WebSocket';
 import { convertDeltaToCrdt, CRDTinstance, siteId } from '../services/CRDTS';
 import { baseUrl } from "../Constants"
-
+import moment from 'moment';
 
 
 const toolbarOptions = [
@@ -75,6 +75,7 @@ const TextEditor = ({ userInfo }) => {
     const [permissionType, setPermissionType] = useState("");
     const [isOpenVersionHistory, setIsOpenVersionHistory] = useState(false);
     const [history, setHistory] = useState([]);
+    const [noHistory, setNoHistory] = useState(false);
 
 
     const save = async () => {
@@ -86,13 +87,17 @@ const TextEditor = ({ userInfo }) => {
 
     const getVersionHistory = async () => {
         setIsOpenVersionHistory(prev => !prev);
-        if(isOpenVersionHistory)
+        if (isOpenVersionHistory)
             return;
         const response = await getRequestWithToken(`${baseUrl}/documentversion/get/${id}`);
         if (response.status == 200 || response.status == 201) {
-            setHistory(response.data);
+            const sortedHistory = response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            const recentSix = sortedHistory.slice(0, 6);
+            setHistory(recentSix);
         }
-
+        else if (response.status == 403) {
+            setNoHistory(true);
+        }
     }
 
     useEffect(() => {
@@ -221,12 +226,12 @@ const TextEditor = ({ userInfo }) => {
                     </div>
 
 
-                   { editPermission && <div onClick={save} className="mr-4 ml-auto flex flex-row justify-center items-center w-13 h-[32px] px-1 cursor-pointer rounded-3xl bg-blue-600 hover:bg-blue-500">
+                    {editPermission && <div onClick={save} className="mr-4 ml-auto flex flex-row justify-center items-center w-13 h-[32px] px-1 cursor-pointer rounded-3xl bg-blue-600 hover:bg-blue-500">
                         <h1 className="text-[12px] text-white font-semibold">Save</h1>
                     </div>
-}
+                    }
 
-                    <div onClick={getVersionHistory} className={`mr-4 ${!editPermission?'ml-auto':''} flex flex-row justify-center items-center w-9 h-9 cursor-pointer rounded-full hover:bg-gray-200`}>
+                    <div onClick={getVersionHistory} className={`mr-4 ${!editPermission ? 'ml-auto' : ''} flex flex-row justify-center items-center w-9 h-9 cursor-pointer rounded-full hover:bg-gray-200`}>
                         <ArrowPathIcon className="w-6 h-6" />
                     </div>
 
@@ -315,13 +320,17 @@ const TextEditor = ({ userInfo }) => {
                     <h1 className="text-[26px] px-4 ">Version history</h1>
                 </div>
 
-                <div className="flex mt-1 flex-col h-full w-full space-y-2 py-1 ">
-                    {history.map((item, index) => (
-                        <div key={index} className="w-full flex flex-row items-center justify-between px-4 h-10 bg-white rounded-md">
-                            <h1 className="text-[14px]">{item.title}</h1>
-                            <h1 className="text-[14px]">{item.date}</h1>
+                <div className="flex mt-1 flex-col h-full w-full space-y-1 py-1 ">
+                    {!noHistory && history.map((item, index) => (
+                        <div key={index} className="w-full flex flex-col justify-center px-6 cursor-pointer py-4 hover:bg-[#DDE3EA]">
+                            <h1 className="text-[18px] font-semibold">{moment(item.createdAt).format('D MMMM YYYY, h:mm A')}</h1>
+                            {item.version.length > 52 && <h1 className="text-[14px] mt-2 ">preview: {item.version.substring(0, 53)}...</h1>}
+                            {item.version.length <= 52 && <h1 className="text-[14px] mt-2 ">preview: {item.version.substring(0, 53)}</h1>}
                         </div>
                     ))}
+                    {
+                        noHistory && <h1 className="text-[18px] px-[18px] mt-5 font-semibold">There is no history for this document yet.</h1>
+                    }
                 </div>
             </div>}
         </div>
