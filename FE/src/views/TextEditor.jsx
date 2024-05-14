@@ -73,6 +73,8 @@ const TextEditor = ({ userInfo }) => {
     const navigate = useNavigate();
     const [editPermission, setEditPermission] = useState(false);
     const [permissionType, setPermissionType] = useState("");
+    const [isOpenVersionHistory, setIsOpenVersionHistory] = useState(false);
+    const [history, setHistory] = useState([]);
 
 
     const save = async () => {
@@ -80,6 +82,17 @@ const TextEditor = ({ userInfo }) => {
         if (response.status == 200 || response.status == 201) {
             window.location.reload();
         }
+    }
+
+    const getVersionHistory = async () => {
+        setIsOpenVersionHistory(prev => !prev);
+        if(isOpenVersionHistory)
+            return;
+        const response = await getRequestWithToken(`${baseUrl}/documentversion/get/${id}`);
+        if (response.status == 200 || response.status == 201) {
+            setHistory(response.data);
+        }
+
     }
 
     useEffect(() => {
@@ -183,7 +196,7 @@ const TextEditor = ({ userInfo }) => {
     }
 
     return (
-        <div className="w-full overflow-hidden min-w-[350px] h-fit flex flex-col bg-[#F9FBFD]">
+        <div className="w-full relative overflow-hidden min-w-[350px] h-fit flex flex-col bg-[#F9FBFD]">
             <div className="w-full h-14 px-2 py-2">
                 <div className="w-full h-full flex items-center flex-row ">
 
@@ -208,14 +221,16 @@ const TextEditor = ({ userInfo }) => {
                     </div>
 
 
-                    <div onClick={save} className="mr-4 ml-auto flex flex-row justify-center items-center w-13 h-[32px] px-1 cursor-pointer rounded-3xl bg-blue-600 hover:bg-blue-500">
+                   { editPermission && <div onClick={save} className="mr-4 ml-auto flex flex-row justify-center items-center w-13 h-[32px] px-1 cursor-pointer rounded-3xl bg-blue-600 hover:bg-blue-500">
                         <h1 className="text-[12px] text-white font-semibold">Save</h1>
                     </div>
+}
 
-
-                    <div className="mr-4 flex flex-row justify-center items-center w-9 h-9 cursor-pointer rounded-full hover:bg-gray-200">
+                    <div onClick={getVersionHistory} className={`mr-4 ${!editPermission?'ml-auto':''} flex flex-row justify-center items-center w-9 h-9 cursor-pointer rounded-full hover:bg-gray-200`}>
                         <ArrowPathIcon className="w-6 h-6" />
                     </div>
+
+
 
                     <div onClick={(e) => { e.stopPropagation(); setIsOpenedShareMenu(true) }} className="w-20 mr-1 h-9 bg-blue-200 cursor-pointer hover:bg-blue-300 rounded-full  flex flex-row justify-center items-center">
                         <LockClosedIcon className="w-[18px] h-[18px] mr-1" />
@@ -294,6 +309,21 @@ const TextEditor = ({ userInfo }) => {
                     </div>
                 </div>
             )}
+            {<div className={`absolute h-full py-3 w-[300px] border-[1px] border-blue-100 items-center right-4 top-[111px] rounded-sm flex flex-col z-40 bg-[#F0F4F8] transition-all duration-300 overflow-hidden ${isOpenVersionHistory ? 'opacity-100 max-h-screen' : 'opacity-0 max-h-0'}`}>
+
+                <div className="flex flex-row w-full">
+                    <h1 className="text-[26px] px-4 ">Version history</h1>
+                </div>
+
+                <div className="flex mt-1 flex-col h-full w-full space-y-2 py-1 ">
+                    {history.map((item, index) => (
+                        <div key={index} className="w-full flex flex-row items-center justify-between px-4 h-10 bg-white rounded-md">
+                            <h1 className="text-[14px]">{item.title}</h1>
+                            <h1 className="text-[14px]">{item.date}</h1>
+                        </div>
+                    ))}
+                </div>
+            </div>}
         </div>
     );
 }
