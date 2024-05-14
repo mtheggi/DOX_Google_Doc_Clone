@@ -46,6 +46,7 @@ public class Socket {
         } else if (operationMsg.getOperation().equals("cursor")) {
             liveUsers.addValue(operationMsg.getDocumentId(), operationMsg.getUserName());
         }
+        System.out.println(liveUsers.getValues(operationMsg.getDocumentId()));
 
         return operationMsg;
     }

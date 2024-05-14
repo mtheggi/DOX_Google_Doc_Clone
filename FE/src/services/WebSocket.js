@@ -31,7 +31,7 @@ export const ConnectToWebSocket = async (quillRef, userInfo) => {
             // done : operation extracted from the forwared 
             // TODO: CRDTs 
 
-         
+
             const op = JSON.parse(data.body);
             // console.log("data ; ", data.body);
 
@@ -59,16 +59,20 @@ export const ConnectToWebSocket = async (quillRef, userInfo) => {
                         console.log("remoteInsert deltas: ", deltas);
 
                     }
-                    else if(op.operation=='cursor') {
+                    else if (op.operation == 'cursor') {
                         const cursors = quill.getModule('cursors');
                         cursors.createCursor(`cursor-${op.userName}`, `${op.userName}`, 'red');
                         cursors.moveCursor(`cursor-${op.userName}`, { index: op.cursorIndex, length: 0 });
                     }
-                    else if(op.operation=='cursor_remove')
-                    {
+                    else if (op.operation == 'cursor_remove') {
                         const cursors = quill.getModule('cursors');
-                            console.log("remoooooooooooooooooove cursor: ", `cursor-${op.userName}`);
-                            cursors.removeCursor(`cursor-${op.userName}`);
+                        console.log("remoooooooooooooooooove cursor: ", `cursor-${op.userName}`);
+                        cursors.removeCursor(`cursor-${op.userName}`);
+                    }
+                    else if (op.operation == 'disconnect') {
+                        const cursors = quill.getModule('cursors');
+                        console.log("Disconnect: ", `cursor-${op.userName}`);
+                        cursors.removeCursor(`cursor-${op.userName}`);
                     }
                     quill.updateContents(deltas, 'silent');
                 }
