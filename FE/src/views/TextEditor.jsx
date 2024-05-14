@@ -119,18 +119,30 @@ const TextEditor = ({ userInfo }) => {
 
         return () => {
             document.removeEventListener('click', closeDropdown);
-            const op = { operation: 'disconnect', documentId: id, userName: userInfo.userName, siteId: siteId};
-            sendmessage(op);
+            if (userInfo) {
+                const op = { operation: 'disconnect', documentId: id, userName: userInfo.userName, siteId: siteId };
+                sendmessage(op);
+            }
+
         };
     }, [editPermission]);
+
+
+
+    const handleBlur = () => {
+        if (userInfo) {
+            const op = { operation: 'cursor_remove', documentId: id, userName: userInfo.userName, siteId: siteId };
+            sendmessage(op);
+        }
+    }
 
 
     useEffect(() => {
         quillRef.current.getEditor().on('selection-change', function (range, oldRange, source) {
             if (range && userInfo) {
                 console.log("Cursor Sent", range.index);
-                const op = { operation: 'cursor', documentId: id, cursorIndex: range.index, userName: userInfo.userName, siteId: siteId};
-                console.log("cursooooooooooor seeeeeeeeent",op);
+                const op = { operation: 'cursor', documentId: id, cursorIndex: range.index, userName: userInfo.userName, siteId: siteId };
+                console.log("cursooooooooooor seeeeeeeeent", op);
                 sendmessage(op);
             }
         });
@@ -139,17 +151,14 @@ const TextEditor = ({ userInfo }) => {
             if (source === 'user' && userInfo) {
                 const range = quillRef.current.getEditor().getSelection();
                 if (range) {
-                    const op = { operation: 'cursor', documentId: id, cursorIndex: range.index, userName: userInfo.userName, siteId: siteId};
-                    console.log("cursooooooooooor seeeeeeeeent",op);
+                    const op = { operation: 'cursor', documentId: id, cursorIndex: range.index, userName: userInfo.userName, siteId: siteId };
+                    console.log("cursooooooooooor seeeeeeeeent", op);
                     sendmessage(op);
                 }
             }
         });
 
     }, [userInfo])
-
-
-
 
     useEffect(() => {
         if (!renameMode) {
@@ -173,9 +182,7 @@ const TextEditor = ({ userInfo }) => {
 
     }
 
-
     return (
-
         <div className="w-full overflow-hidden min-w-[350px] h-fit flex flex-col bg-[#F9FBFD]">
             <div className="w-full h-14 px-2 py-2">
                 <div className="w-full h-full flex items-center flex-row ">
@@ -238,6 +245,7 @@ const TextEditor = ({ userInfo }) => {
                         <div className="w-[790px] mx-auto h-fit">
                             <ReactQuill className="w-full bg-white border-[0.5px] border-gray-300 focus:border-[0.5px] focus:border-gray-300 text-black p-7  h-[1000px] mb-2 resize-none focus:outline-none focus:ring-0"
                                 value={pageContent}
+                                onBlur={handleBlur}
                                 ref={quillRef}
                                 readOnly={!editPermission}
                                 modules={{

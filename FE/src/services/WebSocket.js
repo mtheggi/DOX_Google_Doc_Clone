@@ -31,7 +31,7 @@ export const ConnectToWebSocket = async (quillRef, userInfo) => {
             // done : operation extracted from the forwared 
             // TODO: CRDTs 
 
-            const quill = quillRef.current.getEditor();
+         
             const op = JSON.parse(data.body);
             // console.log("data ; ", data.body);
 
@@ -39,6 +39,8 @@ export const ConnectToWebSocket = async (quillRef, userInfo) => {
             if (op.documentId === CRDTinstance.documentId) {
                 // console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa333333333333333333333333333333");
                 if (op.siteId !== siteId) {
+
+                    const quill = quillRef.current.getEditor();
                     let deltas;
                     // console.log("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
                     if (op.operation === 'style') {
@@ -62,14 +64,12 @@ export const ConnectToWebSocket = async (quillRef, userInfo) => {
                         cursors.createCursor(`cursor-${op.userName}`, `${op.userName}`, 'red');
                         cursors.moveCursor(`cursor-${op.userName}`, { index: op.cursorIndex, length: 0 });
                     }
-                    else if(op.operation=='disconnect')
+                    else if(op.operation=='cursor_remove')
                     {
                         const cursors = quill.getModule('cursors');
-                        if (cursors.cursors[`cursor-${op.userName}`]) {
+                            console.log("remoooooooooooooooooove cursor: ", `cursor-${op.userName}`);
                             cursors.removeCursor(`cursor-${op.userName}`);
-                        }
                     }
-
                     quill.updateContents(deltas, 'silent');
                 }
 
