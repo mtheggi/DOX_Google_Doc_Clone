@@ -114,9 +114,10 @@ public class DocumentController {
             @RequestHeader("Authorization") String token) {
         String email = jwtService.extractEmail(token.substring(7));
         String userId;
-
+        String userNameUser;
         if (userService.getUserByEmail(email).isPresent()) {
             userId = userService.getUserByEmail(email).get().getId();
+            userNameUser = userService.getUserByEmail(email).get().getRealUserName();
         } else {
             return new ResponseEntity<>(new DocumentWithPermissions(), HttpStatus.BAD_REQUEST);
         }
@@ -131,7 +132,7 @@ public class DocumentController {
         DocumentWithPermissions documentWithPermissions = new DocumentWithPermissions(temp.getId(), temp.getTitle(),
                 temp.getContent(), temp.getOwnername(), temp.getCreatedAt(), userPermissions.isOwner(),
                 userPermissions.isEdit(), userPermissions.isViewOnly());
-        liveUsers.addValue(doc_id, userId);
+        liveUsers.addValue(doc_id, userNameUser);
         return new ResponseEntity<>(documentWithPermissions, HttpStatus.OK);
     }
 
