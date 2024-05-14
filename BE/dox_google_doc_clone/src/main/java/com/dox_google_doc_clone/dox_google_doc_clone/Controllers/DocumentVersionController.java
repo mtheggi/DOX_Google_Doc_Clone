@@ -45,7 +45,7 @@ public class DocumentVersionController {
     }
 
     @GetMapping("/documentversion/get/{documentId}")
-    public ResponseEntity<List<VersionAndDate>> getMethodName(@RequestParam String documentId,
+    public ResponseEntity<List<VersionAndDate>> getMethodName(@PathVariable String documentId,
             @RequestHeader("Authorization") String token) {
         String email = jwtService.extractEmail(token.substring(7));
         String userId;
@@ -56,9 +56,13 @@ public class DocumentVersionController {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
 
-        if (liveUsers.getValues(documentId).size() > 1 && liveUsers.getValues(documentId).size() == 0) {
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-        }
+        // if(liveUsers.getValues(documentId)==null){
+        // liveUsers.addValue(documentId, userId);
+        // }
+        // if (liveUsers.getValues(documentId).size() > 1 &&
+        // liveUsers.getValues(documentId).size() == 0) {
+        // return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        // }
         List<VersionAndDate> documentVersions = documentVersionService.getDocumentVersionByDocumentId(documentId)
                 .getDocumentVersions();
         return new ResponseEntity<>(documentVersions, HttpStatus.OK);
