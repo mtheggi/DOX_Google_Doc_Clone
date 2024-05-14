@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dox_google_doc_clone.dox_google_doc_clone.Dto.DocumentWithPermissions;
+import com.dox_google_doc_clone.dox_google_doc_clone.Dto.VersionAndDate;
 import com.dox_google_doc_clone.dox_google_doc_clone.Models.DocumentModel;
 import com.dox_google_doc_clone.dox_google_doc_clone.Models.DocumentVersionTable;
 import com.dox_google_doc_clone.dox_google_doc_clone.Models.UserPermissions;
@@ -44,7 +45,7 @@ public class DocumentVersionController {
     }
 
     @GetMapping("/documentversion/get/{documentId}")
-    public ResponseEntity<List<String>> getMethodName(@RequestParam String documentId,
+    public ResponseEntity<List<VersionAndDate>> getMethodName(@RequestParam String documentId,
             @RequestHeader("Authorization") String token) {
         String email = jwtService.extractEmail(token.substring(7));
         String userId;
@@ -58,7 +59,7 @@ public class DocumentVersionController {
         if (liveUsers.getValues(documentId).size() > 1 && liveUsers.getValues(documentId).size() == 0) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
-        List<String> documentVersions = documentVersionService.getDocumentVersionByDocumentId(documentId)
+        List<VersionAndDate> documentVersions = documentVersionService.getDocumentVersionByDocumentId(documentId)
                 .getDocumentVersions();
         return new ResponseEntity<>(documentVersions, HttpStatus.OK);
     }
@@ -77,12 +78,12 @@ public class DocumentVersionController {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
         DocumentVersionTable documentVersionTable = documentVersionService.getDocumentVersionByDocumentId(documentId);
-        List<String> temp = documentVersionTable.getDocumentVersions();
+        List<VersionAndDate> temp = documentVersionTable.getDocumentVersions();
         if (userPermissions.isOwner() || userPermissions.isEdit()) {
-            managerOfCRDTS.addCRDTS(documentId, temp.get(version));
+            managerOfCRDTS.addCRDTS(documentId, temp.get(version).getVersion());
         }
         DocumentModel documentModel = documentService.getDocumentModel(documentId);
-        documentModel.setContent(temp.get(version));
+        documentModel.setContent(temp.get(version).getVersion());
         DocumentWithPermissions documentWithPermissions = new DocumentWithPermissions(
                 documentModel.getId(), documentModel.getTitle(), documentModel.getContent(),
                 documentModel.getOwnername(), documentModel.getCreatedAt(), userPermissions.isOwner(),
@@ -90,8 +91,8 @@ public class DocumentVersionController {
         return new ResponseEntity<DocumentWithPermissions>(documentWithPermissions, HttpStatus.OK);
     }
 
-    @GetMapping("delete/documentversion/{documentId}/{version}")
-    public ResponseEntity<Void> deleteVersionNumber(@PathVariable String documentId, @PathVariable String version,
+    @GetMapping("delete/documentversion/{index}")
+    public ResponseEntity<Void> deleteVersionNumber(@PathVariable String documentId, @PathVariable int index,
             @RequestHeader("Authorization") String token) {
         String email = jwtService.extractEmail(token.substring(7));
         String userId;
@@ -101,7 +102,7 @@ public class DocumentVersionController {
         } else {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
-        documentVersionService.deleteDocumentVersion(documentId, version);
+        documentVersionService.deleteDocumentVersion(documentId, index);
         return ResponseEntity.noContent().build();
     }
 

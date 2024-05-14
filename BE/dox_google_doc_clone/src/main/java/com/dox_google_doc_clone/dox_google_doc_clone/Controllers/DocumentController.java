@@ -7,6 +7,7 @@ import java.util.List;
 import com.dox_google_doc_clone.dox_google_doc_clone.Dto.DocumentAndOwnerName;
 import com.dox_google_doc_clone.dox_google_doc_clone.Dto.DocumentWithPermissions;
 import com.dox_google_doc_clone.dox_google_doc_clone.Dto.SharedDocument;
+import com.dox_google_doc_clone.dox_google_doc_clone.Dto.VersionAndDate;
 import com.dox_google_doc_clone.dox_google_doc_clone.Models.User;
 import com.dox_google_doc_clone.dox_google_doc_clone.Models.UserPermissions;
 import com.dox_google_doc_clone.dox_google_doc_clone.Services.UserPermissionsService;
@@ -69,8 +70,9 @@ public class DocumentController {
                 .saveDocument(new DocumentModel(title, content, LocalDateTime.now(), user.getRealUserName()));
         // LocalDateTime createdAt, String id, List<String> documentVersions,
         // String documentId
-        List<String> documentVersions = new ArrayList<>();
-        documentVersions.add(documentModel.getContent());
+        List<VersionAndDate> documentVersions = new ArrayList<>();
+        VersionAndDate temp = new VersionAndDate(documentModel.getContent(), LocalDateTime.now());
+        documentVersions.add(temp);
         DocumentVersionTable documentVersionTable = new DocumentVersionTable(LocalDateTime.now(), documentVersions,
                 documentModel.getId());
         documentVersionService.saveDocumentVersion(documentVersionTable);

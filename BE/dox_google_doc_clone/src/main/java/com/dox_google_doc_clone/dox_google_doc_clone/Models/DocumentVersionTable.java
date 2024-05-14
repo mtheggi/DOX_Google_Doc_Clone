@@ -8,6 +8,8 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.dox_google_doc_clone.dox_google_doc_clone.Dto.VersionAndDate;
+
 @Document
 public class DocumentVersionTable {
     @CreatedDate
@@ -16,11 +18,11 @@ public class DocumentVersionTable {
     @Id
     private String id;
 
-    private List<String> documentVersions;
+    private List<VersionAndDate> documentVersions;
 
     private String documentId;
 
-    public DocumentVersionTable(LocalDateTime createdAt, List<String> documentVersions,
+    public DocumentVersionTable(LocalDateTime createdAt, List<VersionAndDate> documentVersions,
             String documentId) {
         this.createdAt = createdAt;
         this.documentVersions = documentVersions;
@@ -43,11 +45,11 @@ public class DocumentVersionTable {
         this.id = id;
     }
 
-    public List<String> getDocumentVersions() {
+    public List<VersionAndDate> getDocumentVersions() {
         return documentVersions;
     }
 
-    public void setDocumentVersions(List<String> documentVersions) {
+    public void setDocumentVersions(List<VersionAndDate> documentVersions) {
         this.documentVersions = documentVersions;
     }
 

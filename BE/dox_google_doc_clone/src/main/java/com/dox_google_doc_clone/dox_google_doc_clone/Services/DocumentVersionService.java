@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.dox_google_doc_clone.dox_google_doc_clone.Dto.VersionAndDate;
 import com.dox_google_doc_clone.dox_google_doc_clone.Models.DocumentVersionTable;
 import com.dox_google_doc_clone.dox_google_doc_clone.Repositories.DocumentVersionRepository;
 
@@ -27,23 +28,25 @@ public class DocumentVersionService {
 
     public void addDocumentVersion(String documentId, String version) {
         DocumentVersionTable table = documentVersionRepository.findByDocumentId(documentId);
+        VersionAndDate temp = new VersionAndDate(version, LocalDateTime.now());
         if (table == null) {
-            List<String> versions = List.of(version);
+
+            List<VersionAndDate> versions = List.of(temp);
             table = new DocumentVersionTable(LocalDateTime.now(), versions, documentId);
 
             documentVersionRepository.save(table);
             return;
         }
-        List<String> versions = table.getDocumentVersions();
-        versions.add(version);
+        List<VersionAndDate> versions = table.getDocumentVersions();
+        versions.add(temp);
         table.setDocumentVersions(versions);
         documentVersionRepository.save(table);
     }
 
-    public void deleteDocumentVersion(String documentId, String version) {
+    public void deleteDocumentVersion(String documentId, int index) {
         DocumentVersionTable table = documentVersionRepository.findByDocumentId(documentId);
-        List<String> versions = table.getDocumentVersions();
-        versions.remove(version);
+        List<VersionAndDate> versions = table.getDocumentVersions();
+        versions.remove(versions.get(index));
         table.setDocumentVersions(versions);
         documentVersionRepository.save(table);
     }
