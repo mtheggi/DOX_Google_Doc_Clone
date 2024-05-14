@@ -151,6 +151,28 @@ public class DocumentController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @GetMapping("/document/delete/{doc_id}")
+    public ResponseEntity deleteDocumentByID(@PathVariable String doc_id,
+            @RequestHeader("Authorization") String token) {
+        String email = jwtService.extractEmail(token.substring(7));
+        String userId;
+
+        if (userService.getUserByEmail(email).isPresent()) {
+            userId = userService.getUserByEmail(email).get().getId();
+        } else {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        UserPermissions temp = userPermissionsService.getUserPermissionByDocumentIdAndUserId(doc_id, userId);
+        if (temp.isOwner()) {
+            documentService.deleteByOwnerByDocID(doc_id);
+            userPermissionsService.deleteByDocumentID(doc_id);
+        } else {
+            userPermissionsService.deleteByDocumentIdAndUserId(doc_id, userId);
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @GetMapping("/document/shared/{page_num}")
     public ResponseEntity<List<SharedDocument>> getSharedDocuments(@PathVariable int page_num,
             @RequestHeader("Authorization") String token) {
