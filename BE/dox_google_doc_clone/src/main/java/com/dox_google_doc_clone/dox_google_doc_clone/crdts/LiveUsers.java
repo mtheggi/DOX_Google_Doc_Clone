@@ -31,4 +31,10 @@ public class LiveUsers {
         return this.map.get(key);
     }
 
+    public void removeValue(String key, String value) {
+        if (this.map.containsKey(key) && this.map.get(key).contains(value)) {
+            this.map.get(key).remove(value);
+        }
+    }
+
 }

@@ -41,10 +41,8 @@ public class Socket {
                     operationMsg.getItalic() != null ? operationMsg.getItalic() : oldItem.italic);
 
             managerOfCRDTS.update(operationMsg.getDocumentId(), oldItem, tempChar);
-        }
-        List<String> test = liveUsers.getValues(operationMsg.getDocumentId());
-        if (!test.contains(operationMsg.getSiteId())) {
-            liveUsers.addValue(operationMsg.getDocumentId(), operationMsg.getSiteId());
+        } else if (operationMsg.getOperation().equals("disconnect")) {
+            liveUsers.removeValue(operationMsg.getDocumentId(), operationMsg.getUserName());
         }
 
         return operationMsg;
