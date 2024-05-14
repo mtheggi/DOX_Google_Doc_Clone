@@ -86,6 +86,10 @@ public class DocumentVersionController {
         } else {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
+        System.err.println(liveUsers.getValues(documentId));
+        if (liveUsers.getValues(documentId).size() > 1) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
         DocumentVersionTable documentVersionTable = documentVersionService.getDocumentVersionByDocumentId(documentId);
 
         List<VersionAndDate> temp = documentVersionTable.getDocumentVersions();
