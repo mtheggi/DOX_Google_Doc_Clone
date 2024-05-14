@@ -12,8 +12,6 @@ import com.dox_google_doc_clone.dox_google_doc_clone.Dto.VersionAndDate;
 
 @Document
 public class DocumentVersionTable {
-    @CreatedDate
-    private LocalDateTime createdAt;
 
     @Id
     private String id;
@@ -22,19 +20,11 @@ public class DocumentVersionTable {
 
     private String documentId;
 
-    public DocumentVersionTable(LocalDateTime createdAt, List<VersionAndDate> documentVersions,
+    public DocumentVersionTable(List<VersionAndDate> documentVersions,
             String documentId) {
-        this.createdAt = createdAt;
+
         this.documentVersions = documentVersions;
         this.documentId = documentId;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
     }
 
     public String getId() {

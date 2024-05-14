@@ -73,7 +73,7 @@ public class DocumentController {
         List<VersionAndDate> documentVersions = new ArrayList<>();
         VersionAndDate temp = new VersionAndDate(documentModel.getContent(), LocalDateTime.now());
         documentVersions.add(temp);
-        DocumentVersionTable documentVersionTable = new DocumentVersionTable(LocalDateTime.now(), documentVersions,
+        DocumentVersionTable documentVersionTable = new DocumentVersionTable(documentVersions,
                 documentModel.getId());
         documentVersionService.saveDocumentVersion(documentVersionTable);
         UserPermissions userPermissions = new UserPermissions(userId, documentModel.getId(), true, true, true);
