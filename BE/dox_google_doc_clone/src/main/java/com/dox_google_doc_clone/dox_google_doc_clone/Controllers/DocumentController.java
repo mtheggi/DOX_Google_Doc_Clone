@@ -91,7 +91,7 @@ public class DocumentController {
         }
     }
 
-    @GetMapping("/document/owned/{page_num}")
+    @DeleteMapping("/document/owned/{page_num}")
     public ResponseEntity<List<DocumentModel>> getOwnedDocuments(@PathVariable int page_num,
             @RequestHeader("Authorization") String token) {
         String email = jwtService.extractEmail(token.substring(7));
