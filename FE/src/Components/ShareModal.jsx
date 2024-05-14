@@ -5,7 +5,7 @@ import TagInput from "./TagInput";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import {baseUrl} from "../Constants"
 
-const ShareModal = ({ setIsOpenedShareMenu, name, id, owner }) => {
+const ShareModal = ({ setIsOpenedShareMenu, name, id }) => {
 
 
 

@@ -24,17 +24,16 @@ function App() {
 
 
   useEffect(() => {
-    async function getUserData() {
+    const getUserData = async() => {
       const response = await getRequestWithToken(`${baseUrl}/user/info`);
       if (response.status === 201 || response.status === 200) {
         setUserInfo(response.data);
         console.log("userInfo", response.data);
       }
     }
-    if (isLoggedIn) {
       getUserData();
-    }
   }, [isLoggedIn])
+  
 
   // useEffect(() => {
   //   const socket = new SockJS({baseUrl}/ws);
@@ -76,5 +75,4 @@ function App() {
     </Router>
   )
 }
-
 export default App;

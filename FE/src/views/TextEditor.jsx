@@ -14,7 +14,7 @@ import { baseUrl } from "../Constants"
 
 
 const toolbarOptions = [
-    ['bold', 'italic'],        // toggled buttons
+    ['bold', 'italic'],
 ];
 
 
@@ -58,7 +58,7 @@ const CustomToolbar = ({ permissionType }) => {
 };
 
 
-const TextEditor = ({userInfo}) => {
+const TextEditor = ({ userInfo }) => {
 
     let { id } = useParams();
 
@@ -92,7 +92,7 @@ const TextEditor = ({userInfo}) => {
                 setLastValidName(response.data.title);
                 setPageContent(response.data.content);
                 setEditPermission(response.data.canEdit || response.data.owner);
-                setPermissionType( response.data.owner ? "Owner" : response.data.canEdit ? "Editor" : "Viewer");
+                setPermissionType(response.data.owner ? "Owner" : response.data.canEdit ? "Editor" : "Viewer");
                 CRDTinstance.setDocumentId(id);
                 CRDTinstance.constructTheSequence(response.data.content)
 
@@ -113,24 +113,31 @@ const TextEditor = ({userInfo}) => {
     }, [])
 
     useEffect(() => {
-        ConnectToWebSocket(quillRef);
-        if (quillRef.current) {
-            const quillInstance = quillRef.current.getEditor();
-            quillInstance.on('selection-change', function (range, oldRange, source) {
-                if (range) {
-                    console.log("Cursor is at index", range.index);
-                }
-            });
+        ConnectToWebSocket(quillRef, userInfo);
 
-            quillInstance.on('text-change', function (delta, oldDelta, source) {
-                if (source === 'user') {
-                    const range = quillInstance.getSelection();
-                    if (range) {
-                        console.log("Cursor is at index", range.index);
-                    }
-                }
-            });
-        }
+        // if (quillRef.current && editPermission) {
+        //     const quillInstance = quillRef.current.getEditor();
+        //     quillInstance.on('selection-change', function (range, oldRange, source) {
+        //         if (range) {
+        //             if (userInfo) {
+        //                 const cursorPosition = { CursorIndex: range.index, user: userInfo.userName };
+        //                 sendmessage(cursorPosition);
+        //             }
+        //         }
+        //     });
+
+        //     quillInstance.on('text-change', function (delta, oldDelta, source) {
+        //         if (source === 'user') {
+        //             const range = quillInstance.getSelection();
+        //             if (range) {
+        //                 if (userInfo) {
+        //                     const cursorPosition = { CursorIndex: range.index, user: userInfo.userName };
+        //                     sendmessage(cursorPosition);
+        //                 }
+        //             }
+        //         }
+        //     });
+        // }
         let closeDropdown = (e) => {
             if (sharedMenuRef.current && !sharedMenuRef.current.contains(e.target)) {
                 setIsOpenedShareMenu(false);
@@ -141,7 +148,7 @@ const TextEditor = ({userInfo}) => {
         return () => {
             document.removeEventListener('click', closeDropdown);
         };
-    }, []);
+    }, [editPermission]);
 
     useEffect(() => {
         if (!renameMode) {
@@ -152,6 +159,9 @@ const TextEditor = ({userInfo}) => {
 
 
     const renameFile = async (newName) => {
+        if(!editPermission)
+            return;
+
         const response = await putRequestWithToken(`${baseUrl}/document/rename/${id}`, { title: inputValue });
 
         if (response.status === 200) {
@@ -174,7 +184,7 @@ const TextEditor = ({userInfo}) => {
                     </div >
                     <div className="md:w-6/12 sm:5/12  w-3/12" onDoubleClick={() => setRenameMode(false)}>
                         {renameMode ? (<h1 className="text-black overflow-text w-full text-[18px] font-base">{inputValue}</h1>)
-                            : (<input maxLength={50} onBlur={(e) => {
+                            : (<input maxLength={50} readOnly={!editPermission} onBlur={(e) => {
                                 setRenameMode(true);
                                 if (e.target.value.trim() === "") {
                                     setInputValue(lastValidName); // If new name is empty, set back to last valid name
@@ -182,7 +192,6 @@ const TextEditor = ({userInfo}) => {
                                 } else {
                                     setLastValidName(e.target.value); // If new name is not empty, update last valid name
                                     renameFile(e.target.value);
-
                                 }
                             }} onChange={(e) => { setInputValue(e.target.value); }} ref={inputRef} className=" border-0 text-[18px] focus:ring-0 focus:outline-none w-full font-base bg-transparent focus:border-0" value={inputValue}
 
@@ -210,7 +219,7 @@ const TextEditor = ({userInfo}) => {
                     <div className=" rounded-lg w-fit px-2 h-10 hover:no-underline  items-center justify-center  inline-flex">
                         <div className="w-10 cursor-pointer h-10 rounded-full hover:bg-gray-200  flex flex-row items-center justify-center">
                             <div className="w-8 h-8 rounded-full bg-[#0097A7] flex flex-row items-center justify-center">
-                                <h1 className="text-white text-semibold">{userInfo.userName[0]}</h1>
+                                <h1 className="text-white text-semibold">{userInfo && userInfo.userName[0].toUpperCase()}</h1>
                             </div>
                         </div>
                     </div>
@@ -240,10 +249,8 @@ const TextEditor = ({userInfo}) => {
                                     //     CRDTinstance.localDelete(op.index);
                                     // }
 
-                                    console.log("content , ", content);
 
                                     if (source === 'user') {
-                                        console.log("quill delta", delta);
                                         const isconvertBold = delta.ops.some(op => (op.attributes?.hasOwnProperty('bold') && !op.hasOwnProperty('insert')));
                                         const isconvertItalic = delta.ops.some(op => (op.attributes?.hasOwnProperty('italic') && !op.hasOwnProperty('insert')));
 
@@ -253,7 +260,6 @@ const TextEditor = ({userInfo}) => {
                                         }
 
                                         const op = convertDeltaToCrdt(delta);
-                                        console.log("operation correct ?  : ", op);
                                         if (op.operation === 'insert') {
                                             CRDTinstance.localInsert(op.character, op.index, op.attributes, id);
                                         } else {
@@ -269,7 +275,7 @@ const TextEditor = ({userInfo}) => {
                 <div onClick={(e) => { e.stopPropagation() }} className="community-modal flex flex-row items-center justify-center">
                     <div className='overlay'></div>
                     <div ref={sharedMenuRef} className='z-20 flex flex-col w-100% h-100%  msm:w-132 msm:h-160'>
-                        <ShareModal setIsOpenedShareMenu={setIsOpenedShareMenu} />
+                        <ShareModal setIsOpenedShareMenu={setIsOpenedShareMenu} id={id} name={lastValidName} />
                     </div>
                 </div>
             )}

@@ -6,7 +6,7 @@ export default class Char {
     bold;
     italic;
     constructor(siteId, value, counter, fractionIndex, bold, italic) {
-        console.log("Char Constructor bolld italuc : , ", bold, italic)
+        // console.log("Char Constructor bolld italuc : , ", bold, italic)
         this.siteId = siteId;
         this.value = value;
         this.counter = counter;

@@ -130,7 +130,7 @@ export class CRDTs {
         }
 
 
-        console.log("Sequence Constructed : , ", this.sequence);
+        // console.log("Sequence Constructed : , ", this.sequence);
 
     }
 
