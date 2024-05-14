@@ -26,18 +26,25 @@ public class DocumentVersionService {
         return documentVersionRepository.findByDocumentId(documentId);
     }
 
-    public void addDocumentVersion(String documentId, String version) {
+    public void addDocumentVersion(String documentId, String content) {
+
         DocumentVersionTable table = documentVersionRepository.findByDocumentId(documentId);
-        VersionAndDate temp = new VersionAndDate(version, LocalDateTime.now());
+
+        VersionAndDate temp = new VersionAndDate(content, LocalDateTime.now());
+
+        List<VersionAndDate> versions;
+
         if (table == null) {
 
-            List<VersionAndDate> versions = List.of(temp);
-            table = new DocumentVersionTable(LocalDateTime.now(), versions, documentId);
+            versions = List.of(temp);
+            table = new DocumentVersionTable(versions, documentId);
 
             documentVersionRepository.save(table);
+
             return;
         }
-        List<VersionAndDate> versions = table.getDocumentVersions();
+
+        versions = table.getDocumentVersions();
         versions.add(temp);
         table.setDocumentVersions(versions);
         documentVersionRepository.save(table);

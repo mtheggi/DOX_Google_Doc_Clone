@@ -120,9 +120,13 @@ public class DocumentService {
         if (document == null) {
             return;
         }
+
         document.setContent(content);
-        documentVersionService.addDocumentVersion(docID, content);
+
         DocumentRepository.save(document);
+
+        documentVersionService.addDocumentVersion(docID, content);
+
     }
 
     public List<DocumentModel> getOwnedDocuments(String userId, int page_num) {
