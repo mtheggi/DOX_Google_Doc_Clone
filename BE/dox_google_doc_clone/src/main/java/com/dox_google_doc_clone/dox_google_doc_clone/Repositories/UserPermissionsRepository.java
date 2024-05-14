@@ -8,5 +8,10 @@ import java.util.List;
 
 public interface UserPermissionsRepository extends MongoRepository<UserPermissions, String> {
     UserPermissions findByDocumentIdAndUserId(String documentId, String userId);
+
+    void deleteByDocumentId(String documentId);
+
+    void deleteByDocumentIdAndUserId(String documentId, String userId);
+
     List<UserPermissions> findByUserId(String userId);
 }

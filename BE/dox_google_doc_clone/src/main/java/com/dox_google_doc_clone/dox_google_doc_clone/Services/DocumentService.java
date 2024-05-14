@@ -192,6 +192,10 @@ public class DocumentService {
         return DocumentRepository.save(document);
     }
 
+    public void deleteByOwnerByDocID(String documentid) {
+        DocumentRepository.deleteByDocumentId(documentid);
+    }
+
     public DocumentModel renameDocument(String documentId, String newName) {
         DocumentModel document = DocumentRepository.findById(documentId).orElse(null);
         if (document == null) {
