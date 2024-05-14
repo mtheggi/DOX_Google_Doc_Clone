@@ -1,8 +1,12 @@
 package com.dox_google_doc_clone.dox_google_doc_clone.Controllers;
 
 import com.dox_google_doc_clone.dox_google_doc_clone.Dto.OperationMsg;
+import com.dox_google_doc_clone.dox_google_doc_clone.crdts.CRDTS;
 import com.dox_google_doc_clone.dox_google_doc_clone.crdts.CharItem;
+import com.dox_google_doc_clone.dox_google_doc_clone.crdts.LiveUsers;
 import com.dox_google_doc_clone.dox_google_doc_clone.crdts.ManagerOfCRDTS;
+
+import java.util.List;
 
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -13,6 +17,7 @@ import org.springframework.stereotype.Controller;
 public class Socket {
 
     private static ManagerOfCRDTS managerOfCRDTS = ManagerOfCRDTS.getInstance();
+    private static LiveUsers liveUsers = LiveUsers.getInstance();
 
     @MessageMapping("/broadcast")
     @SendTo("/topic/public")
@@ -26,6 +31,16 @@ public class Socket {
             CharItem temp = new CharItem(operationMsg.getCharacter(), operationMsg.getFractionIndex(),
                     false, false);
             managerOfCRDTS.delete(operationMsg.getDocumentId(), temp);
+        } else if (operationMsg.getOperation().equals("style")) {
+            CRDTS tempSeq = managerOfCRDTS.geCrdts(operationMsg.getDocumentId());
+            CharItem tempChar = new CharItem(operationMsg.getCharacter(), operationMsg.getFractionIndex(),
+                    operationMsg.getBold(), operationMsg.getItalic());
+            CharItem oldItem = tempSeq.search(operationMsg.getFractionIndex());
+            managerOfCRDTS.update(operationMsg.getDocumentId(), oldItem, tempChar);
+        }
+        List<String> test = liveUsers.getValues(operationMsg.getDocumentId());
+        if (!test.contains(operationMsg.getSiteId())) {
+            liveUsers.addValue(operationMsg.getDocumentId(), operationMsg.getSiteId());
         }
 
         return operationMsg;

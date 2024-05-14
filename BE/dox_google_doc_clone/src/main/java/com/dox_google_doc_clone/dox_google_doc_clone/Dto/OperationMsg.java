@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
 @Data
 @Builder
 @AllArgsConstructor
@@ -17,8 +16,10 @@ public class OperationMsg {
     private String siteId;
     private int counter; // index of the character in the document
     private String fractionIndex; // index of the character in the document
-    private Boolean bold; //if recieved  null  then nochange to be made on it  
-    private Boolean italic; // 
+    private Boolean bold; // if recieved null then nochange to be made on it
+    private Boolean italic; //
+    private int cursorIndex;
+    private String userName;
 
     @Override
     public String toString() {
@@ -28,7 +29,7 @@ public class OperationMsg {
                 ", character='" + character + '\'' +
                 ", siteId='" + siteId + '\'' +
                 ", counter=" + counter +
-                ", fractionIndex=" + fractionIndex + 
+                ", fractionIndex=" + fractionIndex +
                 ", bold=" + bold +
                 ", italic=" + italic +
                 '}';
