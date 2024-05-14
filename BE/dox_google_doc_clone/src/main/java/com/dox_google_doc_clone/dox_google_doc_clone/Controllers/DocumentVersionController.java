@@ -56,6 +56,13 @@ public class DocumentVersionController {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
 
+        // if(liveUsers.getValues(documentId)==null){
+        // liveUsers.addValue(documentId, userId);
+        // }
+        // if (liveUsers.getValues(documentId).size() > 1 &&
+        // liveUsers.getValues(documentId).size() == 0) {
+        // return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        // }
         List<VersionAndDate> documentVersions = documentVersionService.getDocumentVersionByDocumentId(documentId)
                 .getDocumentVersions();
         return new ResponseEntity<>(documentVersions, HttpStatus.OK);
@@ -70,7 +77,7 @@ public class DocumentVersionController {
         UserPermissions userPermissions;
         if (userService.getUserByEmail(email).isPresent()) {
             userId = userService.getUserByEmail(email).get().getId();
-            userPermissions = userPermissionsService.getUserPermissionByDocumentIdAndUserId(userId, documentId);
+            userPermissions = userPermissionsService.getUserPermissionByDocumentIdAndUserId(documentId, userId);
         } else {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
