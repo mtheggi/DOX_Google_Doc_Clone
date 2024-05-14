@@ -16,6 +16,7 @@ import com.dox_google_doc_clone.dox_google_doc_clone.Services.DocumentVersionSer
 import com.dox_google_doc_clone.dox_google_doc_clone.Services.UserPermissionsService;
 import com.dox_google_doc_clone.dox_google_doc_clone.Services.UserService;
 import com.dox_google_doc_clone.dox_google_doc_clone.config.JwtService;
+import com.dox_google_doc_clone.dox_google_doc_clone.crdts.LiveUsers;
 import com.dox_google_doc_clone.dox_google_doc_clone.crdts.ManagerOfCRDTS;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,6 +32,7 @@ public class DocumentVersionController {
     private JwtService jwtService;
     private UserService userService;
     private ManagerOfCRDTS managerOfCRDTS = ManagerOfCRDTS.getInstance();
+    private static LiveUsers liveUsers = LiveUsers.getInstance();
 
     public DocumentVersionController(DocumentService documentService, UserPermissionsService userPermissionsService,
             JwtService jwtService, UserService userService, DocumentVersionService documentVersionService) {
@@ -50,6 +52,10 @@ public class DocumentVersionController {
         if (userService.getUserByEmail(email).isPresent()) {
             userId = userService.getUserByEmail(email).get().getId();
         } else {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
+
+        if (liveUsers.getValues(documentId).size() > 1 && liveUsers.getValues(documentId).size() == 0) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
         List<String> documentVersions = documentVersionService.getDocumentVersionByDocumentId(documentId)
