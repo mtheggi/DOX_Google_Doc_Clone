@@ -19,7 +19,6 @@ function App() {
 
   useEffect(() => {
     localStorage.setItem('isLoggedIn', JSON.stringify(isLoggedIn));
-    console.log("isLoggedIn", isLoggedIn);
   }, [isLoggedIn]);
 
 
@@ -28,7 +27,6 @@ function App() {
       const response = await getRequestWithToken(`${baseUrl}/user/info`);
       if (response.status === 201 || response.status === 200) {
         setUserInfo(response.data);
-        console.log("userInfo", response.data);
       }
     }
       getUserData();

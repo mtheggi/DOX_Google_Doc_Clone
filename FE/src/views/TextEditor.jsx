@@ -5,12 +5,14 @@ import { getRequestWithToken, postRequest, putRequestWithToken } from "../Reques
 import { useNavigate } from "react-router-dom";
 import ShareModal from "../Components/ShareModal";
 import { useParams } from "react-router-dom";
-import ReactQuill from 'react-quill';
+import ReactQuill, { Quill } from 'react-quill';
 import 'react-quill/dist/quill.snow.css'; // import the styles
 import { DisconnectWebSocket, ConnectToWebSocket, sendmessage } from '../services/WebSocket';
-import { convertDeltaToCrdt, CRDTinstance } from '../services/CRDTS';
+import { convertDeltaToCrdt, CRDTinstance, siteId } from '../services/CRDTS';
 import { baseUrl } from "../Constants"
+import QuillCursors from "quill-cursors";
 
+Quill.register('modules/cursors', QuillCursors);
 
 
 const toolbarOptions = [
@@ -74,6 +76,19 @@ const TextEditor = ({ userInfo }) => {
     const [editPermission, setEditPermission] = useState(false);
     const [permissionType, setPermissionType] = useState("");
 
+    useEffect(() => {
+        if (quillRef.current) {
+            const quillInstance = quillRef.current.getEditor();
+            const cursors = quillInstance.getModule('cursors');
+
+            cursors.createCursor('cursor-id', 'User Name', 'blue');
+            cursors.createCursor('cursor-id2', 'User Name2', 'red');
+
+            cursors.moveCursor('cursor-id', { index: 10, length: 0 });
+            cursors.moveCursor('cursor-id2', { index: 12, length: 0 });
+        }
+    }, []);
+
 
 
     const save = async () => {
@@ -95,7 +110,7 @@ const TextEditor = ({ userInfo }) => {
                 setPermissionType(response.data.owner ? "Owner" : response.data.canEdit ? "Editor" : "Viewer");
                 CRDTinstance.setDocumentId(id);
                 CRDTinstance.constructTheSequence(response.data.content)
-            } 
+            }
         }
 
         getDoc();
@@ -111,30 +126,6 @@ const TextEditor = ({ userInfo }) => {
 
     useEffect(() => {
         ConnectToWebSocket(quillRef, userInfo);
-
-        // if (quillRef.current && editPermission) {
-        //     const quillInstance = quillRef.current.getEditor();
-        //     quillInstance.on('selection-change', function (range, oldRange, source) {
-        //         if (range) {
-        //             if (userInfo) {
-        //                 const cursorPosition = { CursorIndex: range.index, user: userInfo.userName };
-        //                 sendmessage(cursorPosition);
-        //             }
-        //         }
-        //     });
-
-        //     quillInstance.on('text-change', function (delta, oldDelta, source) {
-        //         if (source === 'user') {
-        //             const range = quillInstance.getSelection();
-        //             if (range) {
-        //                 if (userInfo) {
-        //                     const cursorPosition = { CursorIndex: range.index, user: userInfo.userName };
-        //                     sendmessage(cursorPosition);
-        //                 }
-        //             }
-        //         }
-        //     });
-        // }
         let closeDropdown = (e) => {
             if (sharedMenuRef.current && !sharedMenuRef.current.contains(e.target)) {
                 setIsOpenedShareMenu(false);
@@ -147,6 +138,33 @@ const TextEditor = ({ userInfo }) => {
         };
     }, [editPermission]);
 
+
+    useEffect(() => {
+        quillRef.current.getEditor().on('selection-change', function (range, oldRange, source) {
+            if (range && userInfo) {
+                console.log("Cursor Sent", range.index);
+                const op = { operation: 'cursor', documentId: id, cursorIndex: range.index, userName: userInfo.userName, siteId: siteId};
+                console.log("cursooooooooooor seeeeeeeeent",op);
+                sendmessage(op);
+            }
+        });
+
+        quillRef.current.getEditor().on('text-change', function (delta, oldDelta, source) {
+            if (source === 'user' && userInfo) {
+                const range = quillRef.current.getEditor().getSelection();
+                if (range) {
+                    const op = { operation: 'cursor', documentId: id, cursorIndex: range.index, userName: userInfo.userName, siteId: siteId};
+                    console.log("cursooooooooooor seeeeeeeeent",op);
+                    sendmessage(op);
+                }
+            }
+        });
+
+    }, [userInfo])
+
+
+
+
     useEffect(() => {
         if (!renameMode) {
             inputRef.current.focus();
@@ -156,7 +174,7 @@ const TextEditor = ({ userInfo }) => {
 
 
     const renameFile = async (newName) => {
-        if(!editPermission)
+        if (!editPermission)
             return;
 
         const response = await putRequestWithToken(`${baseUrl}/document/rename/${id}`, { title: inputValue });
@@ -232,10 +250,14 @@ const TextEditor = ({ userInfo }) => {
                 <div className="w-full h-fit ">
                     <div className="w-full h-full border-[0.5px] border-t-[0px] p-4 flex flex-row border-gray-300">
                         <div className="w-[790px] mx-auto h-fit">
-                            <ReactQuill className="w-full bg-white border-[0.5px] border-gray-300 focus:border-[0.5px] focus:border-gray-300 text-black p-7  h-[1000px] mb-2 resize-none focus:outline-none focus:ring-0" modules={{ toolbar: toolbarOptions }}
+                            <ReactQuill className="w-full bg-white border-[0.5px] border-gray-300 focus:border-[0.5px] focus:border-gray-300 text-black p-7  h-[1000px] mb-2 resize-none focus:outline-none focus:ring-0"
                                 value={pageContent}
                                 ref={quillRef}
                                 readOnly={!editPermission}
+                                modules={{
+                                    toolbar: toolbarOptions,
+                                    cursors: true,
+                                }}
                                 onChange={(content, delta, source, editor) => {
                                     // console.log("quill delta", delta);
                                     // const op = convertDeltaToCrdt(delta);
@@ -262,6 +284,8 @@ const TextEditor = ({ userInfo }) => {
                                         } else {
                                             CRDTinstance.localDelete(op.index, id);
                                         }
+
+
                                     }
                                 }} />
                         </div>
