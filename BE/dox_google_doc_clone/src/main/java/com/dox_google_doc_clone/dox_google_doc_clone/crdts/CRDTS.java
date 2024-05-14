@@ -12,6 +12,15 @@ public class CRDTS {
         this.sequence = new ArrayList<>();
     }
 
+    public CharItem search(String id) {
+        for (CharItem item : this.sequence) {
+            if (item.fractionIndex.equals(id)) {
+                return item;
+            }
+        }
+        return null;
+    }
+
     public void ConvertTextIntoSeq(String content) {
 
         boolean bold = false;
@@ -167,6 +176,13 @@ public class CRDTS {
         }
         System.out.println("Item value: " + item.value);
         this.sequence.add(indx, item);
+    }
+
+    public void updateInCrdts(CharItem oldItem, CharItem newItem) {
+        int index = this.sequence.indexOf(oldItem);
+        if (index != -1) {
+            this.sequence.set(index, newItem);
+        }
     }
 
     public int getDeleteIndex(String fractionIndex) {

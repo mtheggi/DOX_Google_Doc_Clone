@@ -12,6 +12,7 @@ import com.dox_google_doc_clone.dox_google_doc_clone.Models.UserPermissions;
 import com.dox_google_doc_clone.dox_google_doc_clone.Services.UserPermissionsService;
 import com.dox_google_doc_clone.dox_google_doc_clone.Services.UserService;
 import com.dox_google_doc_clone.dox_google_doc_clone.config.JwtService;
+import com.dox_google_doc_clone.dox_google_doc_clone.crdts.LiveUsers;
 import com.dox_google_doc_clone.dox_google_doc_clone.crdts.ManagerOfCRDTS;
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -36,6 +37,7 @@ public class DocumentController {
     private JwtService jwtService;
     private UserService userService;
     private ManagerOfCRDTS managerOfCRDTS = ManagerOfCRDTS.getInstance();
+    private static LiveUsers liveUsers = LiveUsers.getInstance();
 
     public DocumentController(DocumentService documentService, UserPermissionsService userPermissionsService,
             JwtService jwtService, UserService userService, DocumentVersionService documentVersionService) {
@@ -129,6 +131,7 @@ public class DocumentController {
         DocumentWithPermissions documentWithPermissions = new DocumentWithPermissions(temp.getId(), temp.getTitle(),
                 temp.getContent(), temp.getOwnername(), temp.getCreatedAt(), userPermissions.isOwner(),
                 userPermissions.isEdit(), userPermissions.isViewOnly());
+        liveUsers.addValue(doc_id, userId);
         return new ResponseEntity<>(documentWithPermissions, HttpStatus.OK);
     }
 

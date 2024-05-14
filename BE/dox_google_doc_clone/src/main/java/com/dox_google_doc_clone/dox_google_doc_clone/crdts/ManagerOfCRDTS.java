@@ -29,9 +29,11 @@ public class ManagerOfCRDTS {
     }
 
     public void insert(String key, CharItem temp) {
-
         this.map.get(key).insertInCrdts(temp);
+    }
 
+    public CRDTS geCrdts(String key) {
+        return this.map.get(key);
     }
 
     public boolean checkMap(String key) {
@@ -40,6 +42,12 @@ public class ManagerOfCRDTS {
 
     public void delete(String key, CharItem temp) {
         this.map.get(key).deleteInCrdts(temp);
+    }
+
+    public void update(String key, CharItem oldItem, CharItem newItem) {
+        if (this.map.containsKey(key)) {
+            this.map.get(key).updateInCrdts(oldItem, newItem);
+        }
     }
 
     public String SavedInDB(String key) {
