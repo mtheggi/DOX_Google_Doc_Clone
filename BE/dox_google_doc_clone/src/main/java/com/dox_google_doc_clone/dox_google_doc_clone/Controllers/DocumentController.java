@@ -71,7 +71,7 @@ public class DocumentController {
         // LocalDateTime createdAt, String id, List<String> documentVersions,
         // String documentId
         List<VersionAndDate> documentVersions = new ArrayList<>();
-        VersionAndDate temp = new VersionAndDate(documentModel.getContent(), LocalDateTime.now());
+        VersionAndDate temp = new VersionAndDate(documentModel.getContent(), LocalDateTime.now(), 0);
         documentVersions.add(temp);
         DocumentVersionTable documentVersionTable = new DocumentVersionTable(documentVersions,
                 documentModel.getId());

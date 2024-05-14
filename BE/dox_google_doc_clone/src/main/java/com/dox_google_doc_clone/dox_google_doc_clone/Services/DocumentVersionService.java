@@ -29,13 +29,9 @@ public class DocumentVersionService {
     public void addDocumentVersion(String documentId, String content) {
 
         DocumentVersionTable table = documentVersionRepository.findByDocumentId(documentId);
-
-        VersionAndDate temp = new VersionAndDate(content, LocalDateTime.now());
-
         List<VersionAndDate> versions;
-
         if (table == null) {
-
+            VersionAndDate temp = new VersionAndDate(content, LocalDateTime.now(), 0);
             versions = List.of(temp);
             table = new DocumentVersionTable(versions, documentId);
 
@@ -43,6 +39,8 @@ public class DocumentVersionService {
 
             return;
         }
+
+        VersionAndDate temp = new VersionAndDate(content, LocalDateTime.now(), table.getDocumentVersions().size() + 1);
 
         versions = table.getDocumentVersions();
         versions.add(temp);
