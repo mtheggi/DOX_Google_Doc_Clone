@@ -119,6 +119,8 @@ const TextEditor = ({ userInfo }) => {
 
         return () => {
             document.removeEventListener('click', closeDropdown);
+            const op = { operation: 'disconnect', documentId: id, userName: userInfo.userName, siteId: siteId};
+            sendmessage(op);
         };
     }, [editPermission]);
 
