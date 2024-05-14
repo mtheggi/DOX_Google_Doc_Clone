@@ -12,6 +12,7 @@ import { DisconnectWebSocket, ConnectToWebSocket, sendmessage } from './services
 import NotFound from './views/NotFound'
 import { baseUrl } from "./Constants"
 import { getRequestWithToken } from './Requests'
+
 function App() {
 
   const [isLoggedIn, setIsLoggedIn] = useState(JSON.parse(localStorage.getItem('isLoggedIn')) || false);

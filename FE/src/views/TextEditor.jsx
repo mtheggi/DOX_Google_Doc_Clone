@@ -10,9 +10,7 @@ import 'react-quill/dist/quill.snow.css'; // import the styles
 import { DisconnectWebSocket, ConnectToWebSocket, sendmessage } from '../services/WebSocket';
 import { convertDeltaToCrdt, CRDTinstance, siteId } from '../services/CRDTS';
 import { baseUrl } from "../Constants"
-import QuillCursors from "quill-cursors";
 
-Quill.register('modules/cursors', QuillCursors);
 
 
 const toolbarOptions = [
@@ -75,20 +73,6 @@ const TextEditor = ({ userInfo }) => {
     const navigate = useNavigate();
     const [editPermission, setEditPermission] = useState(false);
     const [permissionType, setPermissionType] = useState("");
-
-    useEffect(() => {
-        if (quillRef.current) {
-            const quillInstance = quillRef.current.getEditor();
-            const cursors = quillInstance.getModule('cursors');
-
-            cursors.createCursor('cursor-id', 'User Name', 'blue');
-            cursors.createCursor('cursor-id2', 'User Name2', 'red');
-
-            cursors.moveCursor('cursor-id', { index: 10, length: 0 });
-            cursors.moveCursor('cursor-id2', { index: 12, length: 0 });
-        }
-    }, []);
-
 
 
     const save = async () => {

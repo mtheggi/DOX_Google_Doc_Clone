@@ -33,9 +33,13 @@ public class Socket {
             managerOfCRDTS.delete(operationMsg.getDocumentId(), temp);
         } else if (operationMsg.getOperation().equals("style")) {
             CRDTS tempSeq = managerOfCRDTS.geCrdts(operationMsg.getDocumentId());
-            CharItem tempChar = new CharItem(operationMsg.getCharacter(), operationMsg.getFractionIndex(),
-                    operationMsg.getBold(), operationMsg.getItalic());
+
             CharItem oldItem = tempSeq.search(operationMsg.getFractionIndex());
+
+            CharItem tempChar = new CharItem(operationMsg.getCharacter(), operationMsg.getFractionIndex(),
+                    operationMsg.getBold() != null ? operationMsg.getBold() : oldItem.bold,
+                    operationMsg.getItalic() != null ? operationMsg.getItalic() : oldItem.italic);
+
             managerOfCRDTS.update(operationMsg.getDocumentId(), oldItem, tempChar);
         }
         List<String> test = liveUsers.getValues(operationMsg.getDocumentId());
