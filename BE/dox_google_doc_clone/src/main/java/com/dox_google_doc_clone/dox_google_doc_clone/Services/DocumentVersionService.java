@@ -40,7 +40,7 @@ public class DocumentVersionService {
             return;
         }
 
-        VersionAndDate temp = new VersionAndDate(content, LocalDateTime.now(), table.getDocumentVersions().size() + 1);
+        VersionAndDate temp = new VersionAndDate(content, LocalDateTime.now(), table.getDocumentVersions().size());
 
         versions = table.getDocumentVersions();
         versions.add(temp);
