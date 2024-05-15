@@ -24,15 +24,16 @@ function App() {
 
 
   useEffect(() => {
-    const getUserData = async() => {
+    const getUserData = async () => {
       const response = await getRequestWithToken(`${baseUrl}/user/info`);
       if (response.status === 201 || response.status === 200) {
         setUserInfo(response.data);
       }
     }
+    if (isLoggedIn)
       getUserData();
   }, [isLoggedIn])
-  
+
 
   // useEffect(() => {
   //   const socket = new SockJS({baseUrl}/ws);
@@ -63,7 +64,7 @@ function App() {
           <Route path="/" element={<LogIn setIsLoggedIn={setIsLoggedIn} />} />
           <Route path="/signup" element={<SignUp setIsLoggedIn={setIsLoggedIn} />} />
 
-          {isLoggedIn && <Route path="/home" element={<Home setIsLoggedIn={setIsLoggedIn}  userInfo={userInfo} />} />}
+          {isLoggedIn && <Route path="/home" element={<Home setIsLoggedIn={setIsLoggedIn} isLoggedIn={isLoggedIn} userInfo={userInfo} />} />}
           {isLoggedIn && <Route path="/texteditor" element={<TextEditor userInfo={userInfo} />} />}
           {isLoggedIn && <Route path="/texteditor/:id" element={<TextEditor userInfo={userInfo} />} />}
 

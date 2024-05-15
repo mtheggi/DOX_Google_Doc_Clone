@@ -8,9 +8,10 @@ import RenameModal from "../Components/RenameModal";
 import File from "../Components/File";
 import Loading from "../Components/Loading";
 import {baseUrl} from "../Constants"
+import { useLocation } from "react-router-dom";
 
 
-const Home = ({ setIsLoggedIn,  userInfo }) => {
+const Home = ({ setIsLoggedIn,  userInfo, isLoggedIn }) => {
     const [sortValue, setSortValue] = useState(() => {
         return localStorage.getItem('sortValue') || "All";
     });
@@ -28,10 +29,11 @@ const Home = ({ setIsLoggedIn,  userInfo }) => {
     const [loading, setLoading] = useState(true);
     const [hasMore, setHasMore] = useState(true);
     const [userInfoState, setUserInfoState]=useState(userInfo);
+    const location = useLocation();
 
     useEffect(()=>{
         setUserInfoState(userInfo);
-    }, [userInfo])
+    }, [userInfo, isLoggedIn])
 
 
     const [sortChanged, setSortChanged] = useState(0);

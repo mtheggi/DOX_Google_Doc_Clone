@@ -41,6 +41,7 @@ export const ConnectToWebSocket = async (quillRef, userInfo) => {
                 if (op.siteId !== siteId) {
 
                     const quill = quillRef.current.getEditor();
+                    let cursors = quill.getModule('cursors');
                     let deltas;
                     // console.log("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
                     if (op.operation === 'style') {
@@ -60,17 +61,14 @@ export const ConnectToWebSocket = async (quillRef, userInfo) => {
 
                     }
                     else if (op.operation == 'cursor') {
-                        const cursors = quill.getModule('cursors');
                         cursors.createCursor(`cursor-${op.userName}`, `${op.userName}`, 'red');
                         cursors.moveCursor(`cursor-${op.userName}`, { index: op.cursorIndex, length: 0 });
                     }
                     else if (op.operation == 'cursor_remove') {
-                        const cursors = quill.getModule('cursors');
                         console.log("remoooooooooooooooooove cursor: ", `cursor-${op.userName}`);
                         cursors.removeCursor(`cursor-${op.userName}`);
                     }
                     else if (op.operation == 'disconnect') {
-                        const cursors = quill.getModule('cursors');
                         console.log("Disconnect: ", `cursor-${op.userName}`);
                         cursors.removeCursor(`cursor-${op.userName}`);
                     }

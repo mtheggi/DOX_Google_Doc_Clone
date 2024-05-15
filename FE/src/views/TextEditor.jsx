@@ -1,4 +1,4 @@
-import { ArrowPathIcon, DocumentIcon, EyeIcon, LockClosedIcon, PencilIcon, UserCircleIcon } from "@heroicons/react/24/outline";
+import { ArrowPathIcon, DocumentIcon, EyeIcon, LockClosedIcon, PencilIcon, UserCircleIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { DocumentTextIcon, EllipsisVerticalIcon } from "@heroicons/react/24/outline";
 import { useState, useRef, useEffect } from "react";
 import { getRequestWithToken, postRequest, putRequestWithToken } from "../Requests";
@@ -11,6 +11,11 @@ import { DisconnectWebSocket, ConnectToWebSocket, sendmessage } from '../service
 import { convertDeltaToCrdt, CRDTinstance, siteId } from '../services/CRDTS';
 import { baseUrl } from "../Constants"
 import moment from 'moment';
+import AlertDemo from "../Components/AlertDemo";
+
+
+
+
 
 
 const toolbarOptions = [
@@ -76,6 +81,7 @@ const TextEditor = ({ userInfo }) => {
     const [isOpenVersionHistory, setIsOpenVersionHistory] = useState(false);
     const [history, setHistory] = useState([]);
     const [noHistory, setNoHistory] = useState(false);
+
     const [alertState, setAlertState] = useState({
         show: false,
         message: "",
@@ -151,13 +157,23 @@ const TextEditor = ({ userInfo }) => {
 
         return () => {
             document.removeEventListener('click', closeDropdown);
+
+        };
+    }, [editPermission]);
+
+
+    useEffect(() => {
+
+        return () => {
             if (userInfo) {
                 const op = { operation: 'disconnect', documentId: id, userName: userInfo.userName, siteId: siteId };
                 sendmessage(op);
             }
+        }
+    }, [userInfo])
 
-        };
-    }, [editPermission]);
+
+
 
 
 
@@ -219,21 +235,24 @@ const TextEditor = ({ userInfo }) => {
         if (response.status === 200 || response.status === 201) {
             window.location.reload();
         }
-        else if (response.status == 400) {
-            showAlertForTime("error", "Can't change version while other users are opening the document");
+        // else if (response.status == 400) {
+        //     // showAlertForTime("error", "Can't change version while other users are opening the document");
+        //     alert("Can't change version while other users are opening the document");
 
-        }
+        // }
     }
+
+
 
     return (
         <div className="w-full relative overflow-hidden min-w-[350px] h-fit flex flex-col bg-[#F9FBFD]">
-            {alertState.show && (
+            {/* {alertState.show && (
                 <AlertDemo
                     conditon={alertState.condition}
                     message={alertState.message}
                     showAlert={alertState.show}
                 />
-            )}
+            )} */}
             <div className="w-full h-14 px-2 py-2">
                 <div className="w-full h-full flex items-center flex-row ">
 
@@ -285,6 +304,7 @@ const TextEditor = ({ userInfo }) => {
                     </div>
                 </div>
             </div>
+
 
             <div className="w-full flex flex-col  h-16 border-gray-300 min-h-9 px-4">
                 <CustomToolbar permissionType={permissionType} />
@@ -355,7 +375,10 @@ const TextEditor = ({ userInfo }) => {
                 <div className="flex mt-1 flex-col h-full w-full space-y-1 py-1 ">
                     {!noHistory && history.map((item, index) => (
                         <div onClick={() => getVersionData(item.index)} key={index} className="w-full flex flex-col justify-center px-6 cursor-pointer py-4 hover:bg-[#DDE3EA]">
-                            <h1 className="text-[18px] font-semibold">{moment(item.createdAt).format('D MMMM YYYY, h:mm A')}</h1>
+                            <div className="flex flex-row w-full items-center">
+                                <h1 className="text-[18px] font-semibold">{moment(item.createdAt).format('D MMMM YYYY, h:mm A')}</h1>
+                               
+                            </div>
                             {item.version.length > 49 && <h1 className="text-[14px] mt-2 ">preview: {item.version.substring(0, 50)}...</h1>}
                             {item.version.length <= 49 && <h1 className="text-[14px] mt-2 ">preview: {item.version.substring(0, 50)}</h1>}
                         </div>

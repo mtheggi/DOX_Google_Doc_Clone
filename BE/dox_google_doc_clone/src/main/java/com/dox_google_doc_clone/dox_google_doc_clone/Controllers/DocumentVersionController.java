@@ -86,10 +86,10 @@ public class DocumentVersionController {
         } else {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
-        System.err.println(liveUsers.getValues(documentId));
-        if (liveUsers.getValues(documentId).size() > 1) {
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-        }
+//        System.err.println(liveUsers.getValues(documentId));
+//        if (liveUsers.getValues(documentId).size() > 1) {
+//            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+//        }
         DocumentVersionTable documentVersionTable = documentVersionService.getDocumentVersionByDocumentId(documentId);
 
         List<VersionAndDate> temp = documentVersionTable.getDocumentVersions();
@@ -110,7 +110,7 @@ public class DocumentVersionController {
         return new ResponseEntity<DocumentWithPermissions>(documentWithPermissions, HttpStatus.OK);
     }
 
-    @GetMapping("delete/documentversion/{index}")
+    @GetMapping("delete/documentversion/{documentId}/{index}")
     public ResponseEntity<Void> deleteVersionNumber(@PathVariable String documentId, @PathVariable int index,
             @RequestHeader("Authorization") String token) {
         String email = jwtService.extractEmail(token.substring(7));
