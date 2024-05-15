@@ -14,6 +14,8 @@ const userId = siteId;
 const socket = new SockJS(`${baseUrl}/ws`);
 const client = Stomp.over(socket);
 
+export let cursors;
+
 export const ConnectToWebSocket = async (quillRef, userInfo) => {
     console.log("Connecting to WebSocket...");
     console.log("Client: ", client)
@@ -41,7 +43,7 @@ export const ConnectToWebSocket = async (quillRef, userInfo) => {
                 if (op.siteId !== siteId) {
 
                     const quill = quillRef.current.getEditor();
-                    let cursors = quill.getModule('cursors');
+                    cursors = quill.getModule('cursors');
                     let deltas;
                     // console.log("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
                     if (op.operation === 'style') {
@@ -80,6 +82,7 @@ export const ConnectToWebSocket = async (quillRef, userInfo) => {
         });
     };
 
+    console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
     await client.connect({}, onConnected, onError);
 }
 

@@ -4,6 +4,7 @@ export const siteId = uuidv1();
 import Char from './Char';
 import { sendmessage } from './WebSocket';
 import { generateKeyBetween } from 'fractional-indexing';
+import { cursors } from './WebSocket';
 
 
 //convert String to crts obecjt
