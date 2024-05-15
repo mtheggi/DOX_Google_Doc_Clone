@@ -48,7 +48,7 @@ const File = ({ name, id, owner, createdAt, lastPostRef }) => {
 
     const renameFile = async (newName) => {
 
-        if(!editPermission)
+        if (!editPermission)
             return;
 
         const response = putRequestWithToken(`${baseUrl}/document/rename/${id}`, { title: newName });
@@ -60,8 +60,6 @@ const File = ({ name, id, owner, createdAt, lastPostRef }) => {
     }
 
     const removeDoc = async () => {
-        if(!editPermission)
-            return;
 
         const response = await deleteRequestWithToken(`${baseUrl}/document/delete/${id}`);
         if (response.status === 200 || response.status === 201) {
@@ -137,7 +135,7 @@ const File = ({ name, id, owner, createdAt, lastPostRef }) => {
                                 {editPermission && <li onClick={() => { setRenameMode(true); setOptionsDropDownOpen(false) }} id="vote_2_day" className={`cursor-pointer border-b-[0.5px] border-gray-400`}>
                                     <p className={`block px-4 py-2  text-black hover:bg-blue-400`}>Rename</p>
                                 </li>}
-                                {editPermission && <li onClick={removeDoc} id="vote_3_day" className={`cursor-pointer rounded-b-lg border-b-[0.5px] border-gray-400`}>
+                                {<li onClick={removeDoc} id="vote_3_day" className={`cursor-pointer rounded-b-lg border-b-[0.5px] border-gray-400`}>
                                     <p className={`block px-4 py-2 rounded-b-lg  text-black hover:bg-blue-400`}>Remove</p>
                                 </li>}
                             </ul>
